@@ -32,8 +32,12 @@ reuse0 <- brm(
 #    prior(dirichlet(2), class = "simo", coef = "moeducation_level_oc71", resp = Oreusedlogicvalidationb),
     prior(lkj(1), class = "L")
   ),
+#  empty = TRUE,
+#  sample_prior = "only",
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
   iter = 5e3,
+  file = "fits/reuse0",
+  file_refit = "on_change"
 )
