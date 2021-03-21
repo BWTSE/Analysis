@@ -21,7 +21,8 @@ reuse0 <- brm(
   # + wp_td_tracking_b
   # + wp_coding_stds_b
   # + scenario_c2
-  # + mo(sys_qual_score)+(1 | c | id),
+  # + mo(sys_qual_score)
+  +(1 | c | id),
   family = bernoulli(),
   data = d.reuse,
   prior = c(
