@@ -1,5 +1,3 @@
-library(brms)
-
 doc0 <- brm(
   O_documentation_oc3 ~ 1
   + was_high_debt_b
@@ -13,17 +11,16 @@ doc0 <- brm(
   # + wp_td_tracking_b
   # + wp_coding_stds_b
   # + scenario_c2
-  # + mo(sys_qual_score)
-  + (1 | id),
+  # + mo(sys_qual_score)+(1 | id),
   family = cumulative(),
   data = d,
   prior = c(
     prior(normal(0, 0.1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),
     prior(exponential(1), class = "sd")
-
+    
     # prior(dirichlet(2), class = "simo", coef = "moeducation_level_oc71"),
-    # 
+    #
     # prior(dirichlet(2), class = "simo", coef = "mosys_qual_score1")
     
     # prior(lkj(1), class = "L")
