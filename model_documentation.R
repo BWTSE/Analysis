@@ -22,8 +22,6 @@ doc0 <- brm(
     # prior(dirichlet(2), class = "simo", coef = "moeducation_level_oc71"),
     #
     # prior(dirichlet(2), class = "simo", coef = "mosys_qual_score1")
-    
-    # prior(lkj(1), class = "L")
   ),
   # empty = TRUE, # If you only want to check prior definitions
   # sample_prior = "only",
