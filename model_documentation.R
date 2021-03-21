@@ -1,3 +1,7 @@
+d.doc = subset(d, task_completion_oc4 == 4)
+d.doc$prof_prog_exp_months.s = scale(d.doc$prof_prog_exp_months)
+d.doc$prof_java_exp_months.s = scale(d.doc$prof_java_exp_months)
+
 doc0 <- brm(
   O_documentation_oc3 ~ 1
   + was_high_debt_b
@@ -14,7 +18,7 @@ doc0 <- brm(
   # + mo(sys_qual_score)
   + (1 | id),
   family = cumulative(),
-  data = d,
+  data = d.doc,
   prior = c(
     prior(normal(0, 0.1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),

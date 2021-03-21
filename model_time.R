@@ -1,4 +1,8 @@
 
+d.time = subset(d, task_completion_oc4 == 4)
+d.time$prof_prog_exp_months.s = scale(d.time$prof_prog_exp_months)
+d.time$prof_java_exp_months.s = scale(d.time$prof_java_exp_months)
+
 time0 <- brm(
   O_time_seconds ~ 1
   + was_high_debt_b
@@ -15,7 +19,7 @@ time0 <- brm(
   # + mo(sys_qual_score)
   + (1 | id),
   family = negbinomial(),
-  data = d,
+  data = d.time,
   prior = c(
     prior(normal(0, 0.1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),

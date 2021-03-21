@@ -1,3 +1,8 @@
+
+d.reuse = subset(d, task_completion_oc4 == 4)
+d.reuse$prof_prog_exp_months.s = scale(d.reuse$prof_prog_exp_months)
+d.reuse$prof_java_exp_months.s = scale(d.reuse$prof_java_exp_months)
+
 reuse0 <- brm(
   mvbind(
     O_reused_logic_constructor_b,
@@ -9,8 +14,8 @@ reuse0 <- brm(
   # + mo(education_level_oc7)
   # + education_field_c2
   # + work_exp_field_c6
-  # + prof_prog_exp_months
-  # + prof_java_exp_months
+  # + prof_prog_exp_months.s
+  # + prof_java_exp_months.s
   # + wp_peer_review_b
   # + wp_pair_program_b
   # + wp_td_tracking_b
@@ -18,7 +23,7 @@ reuse0 <- brm(
   # + scenario_c2
   # + mo(sys_qual_score)+(1 | c | id),
   family = bernoulli(),
-  data = d,
+  data = d.reuse,
   prior = c(
     prior(normal(0, 0.1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),
