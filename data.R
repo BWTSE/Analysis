@@ -1,6 +1,6 @@
 library(curl)
 
-data.original <- read.csv(curl("https://raw.githubusercontent.com/BrokenWindowsInvestigation/Submissions/master/data.csv?token=AB26LHOJ2HHR76KBME4K6Z3AKNDRU"))
+data.original <- read.csv(curl("https://raw.githubusercontent.com/BrokenWindowsInvestigation/Submissions/master/data.csv?token=AB26LHNZN57NNIJI7CVUKCTAK4NCQ"))
 
 # filter out the rows we want to use
 data.onlyCompleted = subset(data.original, task_completion == "Completed")
@@ -32,6 +32,11 @@ encode.bool <- function(column) {
   encode.categorical(column, c("true", "false"))
 }
 
+# convert categories to int 1..n in the order given
+encode.orderedcategorical <- function(column, categories) {
+  as.ordered(encode.categorical(column, categories))
+}
+
 # Convert year float to  int months
 encode.yearToMonth <- function(column) {
   round(column * 12)
@@ -39,7 +44,7 @@ encode.yearToMonth <- function(column) {
 
 # Change likert scales from -3 to 3 to 1 to 7
 encode.likert <- function(column) {
-  column + 4
+  as.ordered(column + 4)
 }
 
 # Build dataframe
@@ -55,7 +60,7 @@ data.clean <- data.frame(
   O_has_equals_b                = encode.bool(data$has_equals),
   O_has_hashcode_b              = encode.bool(data$has_hashcode),
   
-  O_documentation_c3            = encode.categorical(data$documentation, c("Incorrect", "None", "Correct")),
+  O_documentation_oc3           = encode.orderedcategorical(data$documentation, c("Incorrect", "None", "Correct")),
   
   O_var_names_copied_all        = data$var_names_copied_all,
   O_var_names_copied_good       = data$var_names_copied_good,
@@ -66,7 +71,7 @@ data.clean <- data.frame(
   O_sonarqube_issues            = data$sonarqube_issues,
   
   group_c2                      = encode.categorical(data$group, c("students", "consultants")),
-  education_level_oc7           = encode.categorical(data$education_level, c("None", "Some bachelor studies", "Bachelor degree", "Some master studies", "Master degree", "Some Ph.D. studies", "Ph. D.")),
+  education_level_oc7           = encode.orderedcategorical(data$education_level, c("None", "Some bachelor studies", "Bachelor degree", "Some master studies", "Master degree", "Some Ph.D. studies", "Ph. D.")),
   education_field_c2            = encode.categorical(data$education_field, c("Computer Science", "Software Engineering")),
   work_exp_field_c6             = encode.categorical(data$work_domain, c("None", "Automotive", "Finance", "Web", "Adtech", "Research")),
   
@@ -78,7 +83,7 @@ data.clean <- data.frame(
   wp_td_tracking_b              = encode.bool(data$workplace_td_tracking),
   wp_coding_stds_b              = encode.bool(data$workplace_coding_standards),
   
-  task_completion_oc4           = encode.categorical(data$task_completion, c("Not submitted", "Does not compile", "Incorrect solution", "Completed")),
+  task_completion_oc4           = encode.orderedcategorical(data$task_completion, c("Not submitted", "Does not compile", "Incorrect solution", "Completed")),
   
   sys_qual_score                = encode.likert(data$quality_pre_task),
   own_work_qual_score           = encode.likert(data$quality_post_task),
@@ -97,4 +102,4 @@ d <- data.clean
 rm(data.clean, data.onlyCompleted, data.original)
 
 
-rm(encode.bool, encode.categorical, encode.likert, encode.unique, encode.yearToMonth)
+rm(encode.bool, encode.categorical, encode.likert, encode.unique, encode.yearToMonth, encode.orderedcategorical)
