@@ -1,9 +1,28 @@
-library(curl)
+---
+title: "Halftime presentation"
+output: html_notebook
+---
+Load some libraries
 
+```{r}
+library(dplyr)
+library(curl)
+library(ggplot2)
+library(brms)
+```
+
+## Data Preparation
+We begin by importing the csv data
+
+```{r}
 # d.orig <- read.csv(curl("https://raw.githubusercontent.com/BrokenWindowsInvestigation/Submissions/master/data.csv?token=AB26LHN6X2UD5NOF3RBOKI3AMGIJS"))
 d.orig <- read.csv("/home/gurgy/Projects/RobotResearcher/submissions/data.csv")
+head(d.orig)
+```
 
+We also define some utility functions for data processing
 
+```{r}
 # convert categories to int 1..n in the order given
 encode.categorical <- function(column, categories) {
   factor(column, level = categories)
@@ -23,8 +42,11 @@ encode.orderedcategorical <- function(column, categories) {
 encode.likert <- function(column) {
   as.ordered(column + 4)
 }
+```
 
-# Build dataframe
+We use the utility function to set the correct types for each data column
+
+```{r}
 d <- data.frame(
   session                       = factor(d.orig$session), 
   
@@ -77,4 +99,144 @@ d <- data.frame(
   large_structure_change        = encode.bool(d.orig$large_structure_change)
 )
 
-rm(encode.bool, encode.categorical, encode.likert, encode.orderedcategorical)
+str(d)
+```
+
+Pick out some subdata sets
+```{r}
+d.sessions <- d %>% group_by(session) %>% summarise(
+  across(task_completion, min),
+  across(c(
+    education_level, 
+    education_field, 
+    work_domain, 
+    work_experience_java, 
+    work_experience_programming, 
+    workplace_coding_standards, 
+    workplace_pair_programming, 
+    workplace_peer_review, 
+    workplace_td_tracking
+  ), first)
+  ) 
+
+d.sessions.completed <- d.sessions %>% filter(task_completion == "Completed")
+d.only_submitted <- d %>% filter(task_completion != "Not submitted")
+```
+## Descriptive statistics
+
+Dropouts:
+```{r}
+ggplot(data = d.sessions, aes(task_completion)) + geom_bar()
+```
+
+Education Level:
+```{r}
+ggplot(data = d.sessions.completed, aes(education_level)) + geom_bar()
+```
+Education filed:
+```{r}
+ggplot(data = d.sessions.completed, aes(education_field)) + geom_bar()
+```
+
+Work domain:
+```{r}
+ggplot(data = d.sessions.completed, aes(work_domain)) + geom_bar()
+```
+Work experience:
+```{r}
+ggplot(data = d.sessions.completed, aes(work_experience_programming)) + geom_histogram()
+
+ggplot(data = d.sessions.completed, aes(work_experience_java)) + geom_histogram()
+```
+
+Sonarqube issues:
+
+```{r}
+ggplot(data = d.only_submitted %>% filter(high_debt_version == "true"), aes(sonarqube_issues)) + 
+  geom_histogram()
+
+ggplot(data = d.only_submitted %>% filter(high_debt_version == "false"), aes(sonarqube_issues)) + geom_histogram()
+
+ggplot(data = d.only_submitted, aes(x=sonarqube_issues, fill=high_debt_version)) + geom_boxplot()
+```
+
+Model:
+
+```{r}
+sonarqube_issues0 <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  #    + mo(education_level_oc7)
+  #    + education_field_c2
+  #    + work_exp_field_c6
+  #    + prof_prog_exp_months
+  #    + prof_java_exp_months
+  #    + wp_peer_review_b
+  #    + wp_pair_program_b
+  #    + wp_td_tracking_b
+  #    + wp_coding_stds_b
+  #    + scenario
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01,0.01), class = "shape") #default choice, dk if reasonable
+  ),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues0",
+  file_refit = "on_change"
+)
+
+plot(sonarqube_issues0)
+summary(sonarqube_issues0)
+```
+
+```{r}
+sonarqube_issues1 <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+      + mo(education_level)
+      + education_field
+      + work_domain
+      + work_experience_programming
+      + work_experience_java
+      + workplace_peer_review
+      + workplace_pair_programming
+      + workplace_coding_standards
+      + workplace_td_tracking
+      + scenario
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01,0.01), class = "shape") #default choice, dk if reasonable
+  ),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1",
+  file_refit = "on_change"
+)
+
+plot(sonarqube_issues1)
+summary(sonarqube_issues1)
+
+loo(sonarqube_issues0, sonarqube_issues1)
+```
+
+
+

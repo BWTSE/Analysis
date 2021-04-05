@@ -22,11 +22,11 @@ reuse0 <- brm(
   # + wp_coding_stds_b
   # + scenario_c2
   # + mo(sys_qual_score)
-  +(1 | c | id),
+  + (1 | c | id),
   family = bernoulli(),
   data = d.reuse,
   prior = c(
-    prior(normal(0, 0.1), class = "b"),
+    prior(normal(0, 1.5), class = "b"),
     prior(normal(0, 1), class = "Intercept"),
     prior(exponential(1), class = "sd", resp = Oreusedlogicconstructorb),
     prior(exponential(1), class = "sd", resp = Oreusedlogicequalsb),
@@ -42,7 +42,7 @@ reuse0 <- brm(
     # prior(dirichlet(2), class = "simo", coef = "mosys_qual_score1", resp = Oreusedlogicequalsb),
     # prior(dirichlet(2), class = "simo", coef = "mosys_qual_score1", resp = Oreusedlogichashcodeb),
     # prior(dirichlet(2), class = "simo", coef = "mosys_qual_score1", resp = Oreusedlogicvalidationb),
-    prior(lkj(1), class = "L")
+    prior(lkj(2), class = "L")
   ),
   # empty = TRUE, # If you only want to check prior definitions
   # sample_prior = "only",
