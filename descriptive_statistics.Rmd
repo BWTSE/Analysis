@@ -1,0 +1,80 @@
+---
+title: "Descriptive statistics"
+output: html_notebook
+---
+
+Dropouts:
+```{r}
+d.sessions %>%
+  ggplot(aes(task_completion)) +
+  geom_bar() +
+  labs(title = "Task completion per session") +
+  xlab("Least completed task per session") +
+  ylab("Number of sessions")
+
+d %>%
+  filter(task_completion == "Not submitted") %>%
+  group_by(high_debt_version) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(x=high_debt_version, y=n)) +
+  geom_bar(stat = "identity") +
+  # geom_text(aes(label=n), vjust=1.7, size=5, color = "white") +
+  labs(title = "Dropputs per debt level") +
+  xlab("High debt version") +
+  ylab("Number of dropouts")
+
+
+d %>%
+  filter(task_completion == "Not submitted") %>%
+  ggplot(aes(scenario)) +
+  geom_bar() +
+  labs(title = "Dropputs per scenraio") +
+  ylab("Number of dropouts") +
+  xlab("Scenario")
+```
+
+Education:
+```{r}
+d.sessions.completed %>%
+  ggplot(aes(education_level)) +
+  geom_bar() +
+  labs(title = "Education level distribution") +
+  xlab("Education Level") +
+  ylab("Count")
+
+d.sessions.completed %>%
+  ggplot(aes(education_field)) + geom_bar() +
+  geom_bar() +
+  labs(title = "Education field distribution") +
+  xlab("Education field") +
+  ylab("Count")
+```
+
+
+Work experience:
+```{r}
+d.sessions.completed %>%
+  ggplot(aes(work_domain)) +
+  geom_bar() +
+  labs(title = "Work domain distribution") +
+  xlab("Work domain") +
+  ylab("Count")
+
+
+d.sessions.completed %>%
+  ggplot(aes(work_experience_programming)) +
+  geom_histogram(breaks = c(-1, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60), closed="right") +
+  labs(title = "Professional programming experience distribution") +
+  xlab("Experience in years") +
+  ylab("Count")
+
+d.sessions.completed %>%
+  ggplot(aes(work_experience_java)) +
+  geom_histogram(breaks = c(-1, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60), closed="right") +
+  labs(title = "Professional Java experience distribution") +
+  xlab("Experience in years") +
+  ylab("Count")
+```
+
+
+

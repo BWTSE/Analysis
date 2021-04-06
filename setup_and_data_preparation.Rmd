@@ -1,14 +1,14 @@
 ---
-title: "Halftime presentation"
+title: "Setup and Data preparation"
 output: html_notebook
 ---
 Load some libraries
 
 ```{r}
-library(dplyr)
-library(curl)
-library(ggplot2)
-library(brms)
+library(dplyr) # for dta manipulation
+library(curl) # data fetching
+library(ggplot2) # plotting
+library(brms) # modeling
 ```
 
 ## Data Preparation
@@ -28,23 +28,23 @@ encode.categorical <- function(column, categories) {
   factor(column, level = categories)
 }
 
-# convert bool to int true = 1, false = 2
+# convert bool to factor
 encode.bool <- function(column) {
   encode.categorical(column, c("true", "false"))
 }
 
-# convert categories to int 1..n in the order given
+# convert ordered categories to ordered factors in the order given
 encode.orderedcategorical <- function(column, categories) {
   as.ordered(encode.categorical(column, categories))
 }
 
-# Change likert scales from -3 to 3 to 1 to 7
+# Change likert scales to ordered factors
 encode.likert <- function(column) {
-  as.ordered(column + 4)
+  encode.orderedcategorical(column, c(-3, -2, -1, 0, 1, 2, 3))
 }
 ```
 
-We use the utility function to set the correct types for each data column
+We use the utility function to set the correct types for each data column and list the columns for manual inspection
 
 ```{r}
 d <- data.frame(
@@ -122,32 +122,6 @@ d.sessions <- d %>% group_by(session) %>% summarise(
 d.sessions.completed <- d.sessions %>% filter(task_completion == "Completed")
 d.only_submitted <- d %>% filter(task_completion != "Not submitted")
 ```
-## Descriptive statistics
-
-Dropouts:
-```{r}
-ggplot(data = d.sessions, aes(task_completion)) + geom_bar()
-```
-
-Education Level:
-```{r}
-ggplot(data = d.sessions.completed, aes(education_level)) + geom_bar()
-```
-Education filed:
-```{r}
-ggplot(data = d.sessions.completed, aes(education_field)) + geom_bar()
-```
-
-Work domain:
-```{r}
-ggplot(data = d.sessions.completed, aes(work_domain)) + geom_bar()
-```
-Work experience:
-```{r}
-ggplot(data = d.sessions.completed, aes(work_experience_programming)) + geom_histogram()
-
-ggplot(data = d.sessions.completed, aes(work_experience_java)) + geom_histogram()
-```
 
 Sonarqube issues:
 
@@ -203,11 +177,11 @@ summary(sonarqube_issues0)
 sonarqube_issues1 <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
-      + mo(education_level)
-      + education_field
-      + work_domain
-      + work_experience_programming
-      + work_experience_java
+      # + mo(education_level)
+      # + education_field
+      # + work_domain
+      # + work_experience_programming
+      # + work_experience_java
       + workplace_peer_review
       + workplace_pair_programming
       + workplace_coding_standards
