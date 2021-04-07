@@ -1,0 +1,312 @@
+---
+title: "SonarQube Issues"
+output: html_notebook
+---
+
+Sonarqube issues:
+
+```{r}
+d.only_submitted %>%
+  ggplot(aes(x=sonarqube_issues, fill=high_debt_version)) + 
+  geom_boxplot()
+
+mean(d.only_submitted$sonarqube_issues)
+var(d.only_submitted$sonarqube_issues)
+```
+
+Basic Model with negative binomial distribution:
+
+```{r}
+sonarqube_issues0 <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues0",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues0)
+```
+
+
+```{r}
+sonarqube_issues0.poisson <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + (1 | session),
+  family = poisson(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues0.poisson",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues0.poisson)
+```
+
+```{r}
+loo(sonarqube_issues0, sonarqube_issues0.poisson)
+```
+
+negbin.. seems better but poisson give a better conficence interval for predictor, how to interpret that?
+
+```{r}
+sonarqube_issues1_exp <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + work_experience_programming.s
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_exp",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_exp)
+```
+
+```{r}
+sonarqube_issues1_java <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + work_experience_java.s
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_java",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_java)
+```
+```{r}
+sonarqube_issues1_education_field <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + education_field
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_education_field",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_education_field)
+```
+
+```{r}
+sonarqube_issues1_education_level <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + mo(education_level)
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_education_level",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_education_level)
+```
+
+```{r}
+sonarqube_issues1_practice_peer_reviews <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + workplace_peer_review
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_practice_peer_reviews",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_practice_peer_reviews)
+```
+
+```{r}
+sonarqube_issues1_practice_td_tracking <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + workplace_td_tracking
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_practice_td_tracking",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_practice_td_tracking)
+```
+
+```{r}
+sonarqube_issues1_practice_pair_programming <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + workplace_pair_programming
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_practice_pair_programming",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_practice_pair_programming)
+```
+
+```{r}
+sonarqube_issues1_practice_coding_standards <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + workplace_coding_standards
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_practice_coding_standards",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_practice_coding_standards)
+```
+
+```{r}
+sonarqube_issues1_work_domain <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + work_domain
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_work_domain",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_work_domain)
+```
+
+```{r}
+sonarqube_issues1_group <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + group
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_group",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_group)
+```
+
+```{r}
+sonarqube_issues1_scenario <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + scenario
+  + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_scenario",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_scenario)
+```
+
+```{r}
+loo(
+  sonarqube_issues0,
+  sonarqube_issues1_exp,
+  sonarqube_issues1_java,
+  sonarqube_issues1_education_field,
+  sonarqube_issues1_education_level,
+  sonarqube_issues1_practice_peer_reviews,
+  sonarqube_issues1_practice_td_tracking,
+  sonarqube_issues1_practice_pair_programming,
+  sonarqube_issues1_practice_coding_standards,
+  sonarqube_issues1_scenario,
+  sonarqube_issues1_group,
+  sonarqube_issues1_work_domain
+)
+```
+

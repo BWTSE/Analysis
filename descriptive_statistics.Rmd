@@ -31,6 +31,13 @@ d %>%
   labs(title = "Dropputs per scenraio") +
   ylab("Number of dropouts") +
   xlab("Scenario")
+
+d.sessions %>%
+  ggplot(aes(group, fill=task_completion)) +
+  geom_bar() +
+  labs(title = "Dropputs per signup group") +
+  ylab("Number of dropouts") +
+  xlab("Signup Group")
 ```
 
 Education:
@@ -77,4 +84,14 @@ d.sessions.completed %>%
 ```
 
 
+Signup Codes:
+```{r}
+d.sessions.completed %>%
+  ggplot(aes(group)) +
+  geom_bar() +
+  labs(title = "signup group distribution") +
+  xlab("Signup Group") +
+  ylab("Count")
+
+```
 
