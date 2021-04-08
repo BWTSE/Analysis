@@ -310,3 +310,34 @@ loo(
 )
 ```
 
+```{r}
+sonarqube_issues1_scenario.poisson <- brm(
+  sonarqube_issues ~ 1 
+  + high_debt_version
+  + scenario
+  + (1 | session),
+  family = poisson(),
+  data = as.data.frame(d.only_submitted),
+  control = list(adapt_delta = 0.99),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  file = "fits/sonarqube_issues1_scenario.poisson",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues1_scenario.poisson)
+```
+
+
+
+```{r}
+loo(
+  sonarqube_issues0,
+  sonarqube_issues1_scenario,
+  sonarqube_issues0.poisson,
+  sonarqube_issues1_scenario.poisson
+)
+```

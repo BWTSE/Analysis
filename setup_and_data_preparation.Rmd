@@ -5,10 +5,11 @@ output: html_notebook
 Load some libraries
 
 ```{r}
-library(dplyr) # for dta manipulation
+library(dplyr) # for data manipulation
 library(curl) # data fetching
 library(ggplot2) # plotting
 library(brms) # modeling
+library(tidyr) # for data manipulation
 ```
 
 ## Data Preparation
@@ -127,7 +128,6 @@ d.only_submitted$sonarqube_issues.s = scale(d.only_submitted$sonarqube_issues)
 d.only_submitted$work_experience_programming.s = scale(d.only_submitted$work_experience_programming)
 d.only_submitted$work_experience_java.s = scale(d.only_submitted$work_experience_java)
 ```
-
 
 
 
