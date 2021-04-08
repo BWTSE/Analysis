@@ -6,12 +6,12 @@ output: html_notebook
 Sonarqube issues:
 
 ```{r}
-d.only_submitted %>%
+d.completed %>%
   ggplot(aes(x=sonarqube_issues, fill=high_debt_version)) + 
   geom_boxplot()
 
-mean(d.only_submitted$sonarqube_issues)
-var(d.only_submitted$sonarqube_issues)
+mean(d.completed$sonarqube_issues)
+var(d.completed$sonarqube_issues)
 ```
 
 Basic Model with negative binomial distribution:
@@ -22,7 +22,7 @@ sonarqube_issues0 <- brm(
   + high_debt_version
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -43,7 +43,7 @@ sonarqube_issues0.poisson <- brm(
   + high_debt_version
   + (1 | session),
   family = poisson(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -70,7 +70,7 @@ sonarqube_issues1_exp <- brm(
   + work_experience_programming.s
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -91,7 +91,7 @@ sonarqube_issues1_java <- brm(
   + work_experience_java.s
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -111,7 +111,7 @@ sonarqube_issues1_education_field <- brm(
   + education_field
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -132,7 +132,7 @@ sonarqube_issues1_education_level <- brm(
   + mo(education_level)
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -153,7 +153,7 @@ sonarqube_issues1_practice_peer_reviews <- brm(
   + workplace_peer_review
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -174,7 +174,7 @@ sonarqube_issues1_practice_td_tracking <- brm(
   + workplace_td_tracking
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -195,7 +195,7 @@ sonarqube_issues1_practice_pair_programming <- brm(
   + workplace_pair_programming
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -216,7 +216,7 @@ sonarqube_issues1_practice_coding_standards <- brm(
   + workplace_coding_standards
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -237,7 +237,7 @@ sonarqube_issues1_work_domain <- brm(
   + work_domain
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -258,7 +258,7 @@ sonarqube_issues1_group <- brm(
   + group
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -279,7 +279,7 @@ sonarqube_issues1_scenario <- brm(
   + scenario
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
@@ -317,7 +317,7 @@ sonarqube_issues1_scenario.poisson <- brm(
   + scenario
   + (1 | session),
   family = poisson(),
-  data = as.data.frame(d.only_submitted),
+  data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   chains = 4,
