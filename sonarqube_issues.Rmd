@@ -23,12 +23,19 @@ sonarqube_issues0 <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
   iter = 5e3,
   #empty = TRUE
+  #sample_prior = "only",
   file = "fits/sonarqube_issues0",
   file_refit = "on_change"
 )
@@ -44,11 +51,17 @@ sonarqube_issues0.poisson <- brm(
   + (1 | session),
   family = poisson(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+      prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2.2, 1), class = "Intercept"),
+    prior(exponential(0.5), class = "sd")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
   iter = 5e3,
+  #sample_prior = "only",
   #empty = TRUE
   file = "fits/sonarqube_issues0.poisson",
   file_refit = "on_change"
@@ -71,7 +84,13 @@ sonarqube_issues1_exp <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -92,7 +111,13 @@ sonarqube_issues1_java <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -112,7 +137,13 @@ sonarqube_issues1_education_field <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -133,7 +164,13 @@ sonarqube_issues1_education_level <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -154,7 +191,13 @@ sonarqube_issues1_practice_peer_reviews <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -175,7 +218,13 @@ sonarqube_issues1_practice_td_tracking <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -196,7 +245,13 @@ sonarqube_issues1_practice_pair_programming <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -217,7 +272,13 @@ sonarqube_issues1_practice_coding_standards <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -238,7 +299,13 @@ sonarqube_issues1_work_domain <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -258,8 +325,14 @@ sonarqube_issues1_group <- brm(
   + group
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -280,7 +353,13 @@ sonarqube_issues1_scenario <- brm(
   + (1 | session),
   family = negbinomial(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+      prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(0.6), class = "sd"),
+    prior(gamma(2000,0.002), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
@@ -318,13 +397,19 @@ sonarqube_issues1_scenario.poisson <- brm(
   + (1 | session),
   family = poisson(),
   data = as.data.frame(d.completed),
-  control = list(adapt_delta = 0.99),
+      prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2.2, 1), class = "Intercept"),
+    prior(exponential(0.5), class = "sd")
+  ),
+  control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
   iter = 5e3,
+  #sample_prior = "only",
   #empty = TRUE
-  file = "fits/sonarqube_issues1_scenario.poisson",
+  file = "fits/sonarqube_issues0.poisson",
   file_refit = "on_change"
 )
 
