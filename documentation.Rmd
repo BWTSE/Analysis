@@ -1,0 +1,434 @@
+---
+title: "Documentation"
+output: html_notebook
+---
+
+```{r}
+d.completed %>%
+  ggplot(aes(high_debt_version, fill = documentation)) +
+  geom_bar(position = "fill") +
+  scale_y_reverse() +
+  scale_fill_manual("legend", values = c("Correct" = "green", "None" = "yellow", "Incorrect" = "red"), guide = guide_legend(reverse = TRUE))
+```
+
+
+```{r}
+documentation0 <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation0",
+  file_refit = "on_change"
+)
+
+pp_check(documentation0, nsamples = 200, type = "bars")
+
+summary(documentation0)
+```
+
+
+```{r}
+documentation1_exp <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + work_experience_programming.s
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_exp",
+  file_refit = "on_change"
+)
+
+summary(documentation1_exp)
+```
+
+```{r}
+documentation1_java <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + work_experience_java.s
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_java",
+  file_refit = "on_change"
+)
+
+summary(documentation1_java)
+```
+
+```{r}
+documentation1_education_field <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + education_field
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_education_field",
+  file_refit = "on_change"
+)
+
+summary(documentation1_education_field)
+```
+
+```{r}
+documentation1_education_level <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + mo(education_level)
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muCorrect"),
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_education_level",
+  file_refit = "on_change"
+)
+
+summary(documentation1_education_level)
+```
+
+```{r}
+documentation1_practice_peer_reviews <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + workplace_peer_review
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_practice_peer_reviews",
+  file_refit = "on_change"
+)
+
+summary(documentation1_practice_peer_reviews)
+```
+
+```{r}
+documentation1_practice_td_tracking <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + workplace_td_tracking
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_practice_td_tracking",
+  file_refit = "on_change"
+)
+
+summary(documentation1_practice_td_tracking)
+```
+
+
+
+```{r}
+documentation1_practice_pair_programming <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + workplace_pair_programming
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_practice_pair_programming",
+  file_refit = "on_change"
+)
+
+summary(documentation1_practice_pair_programming)
+```
+
+```{r}
+documentation1_practice_coding_standards <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + workplace_coding_standards
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_practice_coding_standards",
+  file_refit = "on_change"
+)
+
+summary(documentation1_practice_coding_standards)
+```
+
+```{r}
+documentation1_scenario <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + scenario
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_scenario",
+  file_refit = "on_change"
+)
+
+summary(documentation1_scenario)
+```
+
+```{r}
+documentation1_group <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + group
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_group",
+  file_refit = "on_change"
+)
+
+summary(documentation1_group)
+```
+
+```{r}
+documentation1_work_domain <- brm(
+  documentation ~ 1
+  + high_debt_version
+  + work_domain
+  + (1 | c | session),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muCorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone"),
+    prior(lkj(2), class = "L")
+  ),
+  # empty = TRUE, # If you only want to check prior definitions
+  # sample_prior = "only",
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  file = "fits/documentation1_work_domain",
+  file_refit = "on_change"
+)
+
+summary(documentation1_work_domain)
+```
+
+```{r}
+
+
+loo(
+  documentation0,
+  documentation1_exp,
+  documentation1_java,
+  documentation1_education_field,
+  documentation1_education_level,
+  documentation1_practice_peer_reviews,
+  documentation1_practice_td_tracking,
+  documentation1_practice_pair_programming,
+  documentation1_practice_coding_standards,
+  documentation1_scenario,
+  documentation1_group,
+  documentation1_work_domain
+)
+```
+
+
+
+```{r}
+# brm(
+#   documentation ~ 1
+#   + high_debt_version
+#   + work_domain
+#   + (1 | c | session),
+#   family = categorical(),
+#   data = as.data.frame(d.completed),
+#   prior = c(
+#     prior(normal(0, 0.9), class = "b"),
+#     prior(normal(0, 0.9), class = "Intercept"),
+#     prior(exponential(1), class = "sd", dpar = "muCorrect"),
+#     prior(exponential(1), class = "sd", dpar = "muNone"),
+#     prior(lkj(2), class = "L")
+#   ),
+#   # empty = TRUE, # If you only want to check prior definitions
+#   # sample_prior = "only",
+#   backend = "cmdstanr",
+#   chains = 4,
+#   cores = 4,
+#   file = "fits/documentation1_work_domain",
+#   file_refit = "on_change"
+# )
+
+model_variations <- list(
+  list(
+    "work_domain",
+    c()
+  ),
+  list(
+    "education_level",
+    c(
+      prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muCorrect"),
+      prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muNone")
+    )
+  )
+)
+
+model_name <- "documentation1"
+
+
+for (model_variation in model_variations) {
+  
+  m <-brm(
+    as.formula(paste("documentation", paste("high_debt_version", model_variation[1], "(1 | c | session)", sep = " + "), sep = " ~ ")),
+    family = categorical(),
+    data = as.data.frame(d.completed),
+    prior = c(
+      c(
+        prior(normal(0, 0.9), class = "b"),
+        prior(normal(0, 0.9), class = "Intercept"),
+        prior(exponential(1), class = "sd", dpar = "muCorrect"),
+        prior(exponential(1), class = "sd", dpar = "muNone"),
+        prior(lkj(2), class = "L")
+      ),
+      model_variation[2]
+    ),
+    # empty = TRUE, # If you only want to check prior definitions
+    # sample_prior = "only",
+    backend = "cmdstanr",
+    chains = 4,
+    cores = 4,
+    file = paste("fits", paste(model_name, model_variation[1], sep = "."), sep = "/"),
+    file_refit = "on_change"
+  )
+  
+  summary(m)
+}
+```
