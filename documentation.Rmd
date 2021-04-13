@@ -63,6 +63,7 @@ documentation0.work_domain <- documentation0.with("work_domain")
 
 summary(documentation0.work_domain)
 ```
+
 ```{r}
 documentation0.work_experience_programming <- documentation0.with("work_experience_programming.s")
 
