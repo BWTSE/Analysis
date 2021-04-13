@@ -1,0 +1,250 @@
+---
+title: "Variable Names"
+output: html_notebook
+---
+
+Sonarqube issues:
+
+```{r}
+
+d.completed %>%
+  ggplot(aes(x=var_names_new_good.ratio, fill=high_debt_version)) + 
+  geom_boxplot()
+
+d.completed %>%
+  filter(!is.nan(var_names_copied_good.ratio)) %>%
+  ggplot(aes(x=var_names_copied_good.ratio, fill=high_debt_version)) + 
+  geom_boxplot()
+
+
+mean(d.completed$var_names_new_good)
+var(d.completed$var_names_new_good)
+```
+
+
+
+Basic model with binomial distribution:
+
+```{r}
+var_names0 <- brm(
+  var_names_new_good | trials(var_names_new_all) ~ 1
+    + high_debt_version
+  + (1 | session),
+  #    + mo(education_level_oc7)
+  #    + education_field_c2
+  #    + work_exp_field_c6
+  #    + prof_prog_exp_months
+  #    + prof_java_exp_months
+  #    + wp_peer_review_b    
+  #    + wp_pair_program_b
+  #    + wp_td_tracking_b    
+  #    + wp_coding_stds_b
+  #    + scenario_c2
+  family = binomial(),
+  data = as.data.frame(d.completed),
+    prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  control = list(adapt_delta = 0.95),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  #sample_prior = "only",
+  file = "fits/var_names_new_good0",
+  file_refit = "on_change"
+)
+
+#pp_check(var_names0, type="bars", nsamples=100)
+summary(var_names0)
+
+```
+
+```{r}
+var_names1_education_level <- brm(
+  var_names_new_good | trials(var_names_new_all) ~ 1
+    + high_debt_version
+    + mo(education_level)
+    + (1 | session),
+  #    + education_field_
+  #    + work_exp_field_c6
+  #    + prof_prog_exp_months
+  #    + prof_java_exp_months
+  #    + wp_peer_review_b    
+  #    + wp_pair_program_b
+  #    + wp_td_tracking_b    
+  #    + wp_coding_stds_b
+  #    + scenario_c2
+  family = binomial(),
+  data = as.data.frame(d.completed),
+    prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  control = list(adapt_delta = 0.95),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  #sample_prior = "only",
+  file = "fits/var_names_new_good0",
+  file_refit = "on_change"
+)
+
+#pp_check(var_names1_education_level, type="bars", nsamples=100)
+summary(var_names1_education_level)
+
+```
+
+```{r}
+var_names0 <- brm(
+  var_names_new_good | trials(var_names_new_all) ~ 1
+    + high_debt_version
+  + (1 | session),
+  #    + mo(education_level_oc7)
+  #    + education_field_c2
+  #    + work_exp_field_c6
+  #    + prof_prog_exp_months
+  #    + prof_java_exp_months
+  #    + wp_peer_review_b    
+  #    + wp_pair_program_b
+  #    + wp_td_tracking_b    
+  #    + wp_coding_stds_b
+  #    + scenario_c2
+  family = binomial(),
+  data = as.data.frame(d.completed),
+    prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  control = list(adapt_delta = 0.95),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  #sample_prior = "only",
+  file = "fits/var_names_new_good0",
+  file_refit = "on_change"
+)
+
+summary(var_names0)
+
+```
+
+```{r}
+var_names0 <- brm(
+  var_names_new_good | trials(var_names_new_all) ~ 1
+    + high_debt_version
+  + (1 | session),
+  #    + mo(education_level_oc7)
+  #    + education_field_c2
+  #    + work_exp_field_c6
+  #    + prof_prog_exp_months
+  #    + prof_java_exp_months
+  #    + wp_peer_review_b    
+  #    + wp_pair_program_b
+  #    + wp_td_tracking_b    
+  #    + wp_coding_stds_b
+  #    + scenario_c2
+  family = binomial(),
+  data = as.data.frame(d.completed),
+    prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  control = list(adapt_delta = 0.95),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  #sample_prior = "only",
+  file = "fits/var_names_new_good0",
+  file_refit = "on_change"
+)
+
+summary(var_names0)
+
+```
+
+```{r}
+var_names0 <- brm(
+  var_names_new_good | trials(var_names_new_all) ~ 1
+    + high_debt_version
+  + (1 | session),
+  #    + mo(education_level_oc7)
+  #    + education_field_c2
+  #    + work_exp_field_c6
+  #    + prof_prog_exp_months
+  #    + prof_java_exp_months
+  #    + wp_peer_review_b    
+  #    + wp_pair_program_b
+  #    + wp_td_tracking_b    
+  #    + wp_coding_stds_b
+  #    + scenario_c2
+  family = binomial(),
+  data = as.data.frame(d.completed),
+    prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  control = list(adapt_delta = 0.95),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  #sample_prior = "only",
+  file = "fits/var_names_new_good0",
+  file_refit = "on_change"
+)
+
+summary(var_names0)
+
+```
+
+```{r}
+var_names0 <- brm(
+  var_names_new_good | trials(var_names_new_all) ~ 1
+    + high_debt_version
+  + (1 | session),
+  #    + mo(education_level_oc7)
+  #    + education_field_c2
+  #    + work_exp_field_c6
+  #    + prof_prog_exp_months
+  #    + prof_java_exp_months
+  #    + wp_peer_review_b    
+  #    + wp_pair_program_b
+  #    + wp_td_tracking_b    
+  #    + wp_coding_stds_b
+  #    + scenario_c2
+  family = binomial(),
+  data = as.data.frame(d.completed),
+    prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  control = list(adapt_delta = 0.95),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  #empty = TRUE
+  #sample_prior = "only",
+  file = "fits/var_names_new_good0",
+  file_refit = "on_change"
+)
+
+summary(var_names0)
+
+```
