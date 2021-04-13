@@ -1,0 +1,151 @@
+---
+title: "Time"
+output: html_notebook
+---
+
+```{r}
+d.completed %>%
+  ggplot(aes(x=time, fill=high_debt_version)) + 
+  geom_boxplot()
+
+mean(d.completed$time)
+var(d.completed$time)
+```
+
+
+var > mean => neg binomial
+
+```{r}
+time0 <- brm(
+  time ~ 1 
+  + high_debt_version
+  + (1 | c | session),
+  family = negbinomial(),
+  data = as.data.frame(d.completed),
+  prior = c(
+    prior(normal(0, 0.1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape")
+  ),
+  backend = "cmdstanr",
+  chains = 4,
+  cores = 4,
+  iter = 5e3,
+  # empty = TRUE
+  # sample_prior = "only",
+  file = "fits/time0",
+  file_refit = "on_change"
+)
+
+# pp_check(time0, nsamples = 200)
+
+summary(time0)
+```
+
+
+```{r}
+time0.with <- extendable_model(
+  base_name = "time0",
+  base_formula = "time ~ 1 + high_debt_version + (1 | c | session)",
+  base_priors = c(
+    prior(normal(0, 0.1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape")
+  ),
+  family = negbinomial(),
+  data = d.completed
+)
+```
+
+
+
+```{r}
+time0.work_domain <- time0.with("work_domain")
+
+summary(time0.work_domain)
+```
+
+```{r}
+time0.work_experience_programming <- time0.with("work_experience_programming.s")
+
+summary(time0.work_experience_programming)
+```
+
+
+```{r}
+time0.work_experience_java <- time0.with("work_experience_java.s")
+
+summary(time0.work_experience_java)
+```
+
+```{r}
+time0.education_field <- time0.with("education_field")
+
+summary(time0.education_field)
+```
+
+```{r}
+time0.education_level <- time0.with(
+  "mo(education_level)", 
+  c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+  )
+)
+
+summary(time0.education_level)
+```
+```{r}
+time0.workplace_peer_review <- time0.with("workplace_peer_review")
+
+summary(time0.workplace_peer_review)
+```
+
+```{r}
+time0.workplace_td_tracking <- time0.with("workplace_td_tracking")
+
+summary(time0.workplace_td_tracking)
+```
+
+```{r}
+time0.workplace_pair_programming <- time0.with("workplace_pair_programming")
+
+summary(time0.workplace_pair_programming)
+```
+
+```{r}
+time0.workplace_coding_standards <- time0.with("workplace_coding_standards")
+
+summary(time0.workplace_coding_standards)
+```
+
+```{r}
+time0.scenario <- time0.with("scenario")
+
+summary(time0.scenario)
+```
+
+```{r}
+time0.group <- time0.with("group")
+
+summary(time0.group)
+```
+
+```{r}
+
+loo(
+  time0,
+  time0.work_domain,
+  time0.work_experience_programming,
+  time0.work_experience_java,
+  time0.education_field,
+  time0.education_level,
+  time0.workplace_peer_review,
+  time0.workplace_td_tracking,
+  time0.workplace_pair_programming,
+  time0.workplace_coding_standards,
+  time0.scenario,
+  time0.group
+)
+```
