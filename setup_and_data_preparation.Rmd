@@ -123,10 +123,16 @@ d.sessions <- d %>% group_by(session) %>% summarise(
 
 d.sessions.completed <- d.sessions %>% filter(task_completion == "Completed")
 d.completed <- d %>% filter(task_completion == "Completed")
+d.both_compleeted <- d %>% semi_join(d.sessions.completed, by = "session")
 
-d.completed$sonarqube_issues.s = scale(d.completed$sonarqube_issues)
+d$work_experience_programming.s = scale(d$work_experience_programming)
+d$work_experience_java.s = scale(d$work_experience_java)
+
 d.completed$work_experience_programming.s = scale(d.completed$work_experience_programming)
 d.completed$work_experience_java.s = scale(d.completed$work_experience_java)
+
+d.both_compleeted$work_experience_programming.s = scale(d.both_compleeted$work_experience_programming)
+d.both_compleeted$work_experience_java.s = scale(d.both_compleeted$work_experience_java)
 ```
 
 
