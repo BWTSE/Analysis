@@ -3,3 +3,4 @@
 *.RData
 *.Ruserdata
 fits/*.rds
+.Rprofile
