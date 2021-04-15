@@ -5,38 +5,53 @@ output: html_notebook
 
 Sonarqube issues:
 
+Descriptive statistics:
+
 ```{r}
-d.completed %>%
+d.both_completed %>%
   ggplot(aes(x=sonarqube_issues, fill=high_debt_version)) + 
   geom_boxplot()
 
-mean(d.completed$sonarqube_issues)
-var(d.completed$sonarqube_issues)
+mean(d.both_completed$sonarqube_issues)
+var(d.both_completed$sonarqube_issues)
 ```
+
+```{r}
+sonarqube_issues1.formula <- sonarqube_issues ~ 1 + (1 | c | session)
+sonarqube_issues0.priors <- c(
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01,0.01), class = "shape")
+  )
+
+sonarqube_issues1.priors <- c(
+  sonarqube_issues0.priors,
+    prior(normal(0, 1), class = "b")
+  )
+
+sonarqube_issues2.priors <- c(
+  sonarqube_issues0.priors
+  )
+
+
+pp_check(sonarqube_issues1, nsamples = 200, resp = "reusedlogicconstructor")
+pp_check(sonarqube_issues1, nsamples = 200, resp = "reusedlogicconstructor", type="bars")
+```
+
 
 Basic Model with negative binomial distribution:
 
 ```{r}
 sonarqube_issues0 <- brm(
   sonarqube_issues ~ 1 
-  + high_debt_version
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues0.priors,
   control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
   #empty = TRUE
   #sample_prior = "only",
-  file = "fits/sonarqube_issues0",
+  file = "fits/sonarqube_issues1",
   file_refit = "on_change"
 )
 
@@ -57,114 +72,87 @@ sonarqube_issues0.poisson <- brm(
     prior(exponential(0.5), class = "sd")
   ),
   control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
   #sample_prior = "only",
   #empty = TRUE
   file = "fits/sonarqube_issues0.poisson",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues0.poisson)
+summary(sonarqube_issues1.poisson)
 ```
 
 ```{r}
-loo(sonarqube_issues0, sonarqube_issues0.poisson)
+loo(sonarqube_issues1, sonarqube_issues1.poisson)
 ```
 
 negbin.. seems better but poisson give a better conficence interval for predictor, how to interpret that?
 
 ```{r}
-sonarqube_issues1_exp <- brm(
+sonarqube_issues2_exp <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + work_experience_programming.s
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors,
   control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_exp",
+  file = "fits/sonarqube_issues2_exp",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_exp)
+summary(sonarqube_issues2_exp)
 ```
 
 ```{r}
-sonarqube_issues1_java <- brm(
+sonarqube_issues2_java <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + work_experience_java.s
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors,
   control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_java",
+  file = "fits/sonarqube_issues2_java",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_java)
+summary(sonarqube_issues2_java)
 ```
 ```{r}
-sonarqube_issues1_education_field <- brm(
+sonarqube_issues2_education_field <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + education_field
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors,
   control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
   chains = 4,
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_education_field",
+  file = "fits/sonarqube_issues2_education_field",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_education_field)
+summary(sonarqube_issues2_education_field)
 ```
 
 ```{r}
-sonarqube_issues1_education_level <- brm(
+sonarqube_issues2_education_level <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + mo(education_level)
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
     prior(exponential(0.6), class = "sd"),
@@ -176,22 +164,22 @@ sonarqube_issues1_education_level <- brm(
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_education_level",
+  file = "fits/sonarqube_issues2_education_level",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_education_level)
+summary(sonarqube_issues2_education_level)
 ```
 
 ```{r}
-sonarqube_issues1_practice_peer_reviews <- brm(
+sonarqube_issues2_practice_peer_reviews <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + workplace_peer_review
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
     prior(exponential(0.6), class = "sd"),
@@ -203,22 +191,22 @@ sonarqube_issues1_practice_peer_reviews <- brm(
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_practice_peer_reviews",
+  file = "fits/sonarqube_issues2_practice_peer_reviews",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_practice_peer_reviews)
+summary(sonarqube_issues2_practice_peer_reviews)
 ```
 
 ```{r}
-sonarqube_issues1_practice_td_tracking <- brm(
+sonarqube_issues2_practice_td_tracking <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + workplace_td_tracking
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
     prior(exponential(0.6), class = "sd"),
@@ -230,22 +218,22 @@ sonarqube_issues1_practice_td_tracking <- brm(
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_practice_td_tracking",
+  file = "fits/sonarqube_issues2_practice_td_tracking",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_practice_td_tracking)
+summary(sonarqube_issues2_practice_td_tracking)
 ```
 
 ```{r}
-sonarqube_issues1_practice_pair_programming <- brm(
+sonarqube_issues2_practice_pair_programming <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + workplace_pair_programming
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
     prior(exponential(0.6), class = "sd"),
@@ -257,22 +245,22 @@ sonarqube_issues1_practice_pair_programming <- brm(
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_practice_pair_programming",
+  file = "fits/sonarqube_issues2_practice_pair_programming",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_practice_pair_programming)
+summary(sonarqube_issues2_practice_pair_programming)
 ```
 
 ```{r}
-sonarqube_issues1_practice_coding_standards <- brm(
+sonarqube_issues2_practice_coding_standards <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + workplace_coding_standards
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
     prior(exponential(0.6), class = "sd"),
@@ -284,22 +272,22 @@ sonarqube_issues1_practice_coding_standards <- brm(
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_practice_coding_standards",
+  file = "fits/sonarqube_issues2_practice_coding_standards",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_practice_coding_standards)
+summary(sonarqube_issues2_practice_coding_standards)
 ```
 
 ```{r}
-sonarqube_issues1_work_domain <- brm(
+sonarqube_issues2_work_domain <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + work_domain
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
+  data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
     prior(exponential(0.6), class = "sd"),
@@ -311,22 +299,22 @@ sonarqube_issues1_work_domain <- brm(
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_work_domain",
+  file = "fits/sonarqube_issues2_work_domain",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_work_domain)
+summary(sonarqube_issues2_work_domain)
 ```
 
 ```{r}
-sonarqube_issues1_group <- brm(
+sonarqube_issues2_group <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + group
   + (1 | session),
   family = negbinomial(),
-data = as.data.frame(d.completed),
-  prior = c(
+data = as.data.frame(d.both_completed),
+  prior = sonarqube_issues1.priors
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
     prior(exponential(0.6), class = "sd"),
@@ -338,22 +326,22 @@ data = as.data.frame(d.completed),
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_group",
+  file = "fits/sonarqube_issues2_group",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_group)
+summary(sonarqube_issues2_group)
 ```
 
 ```{r}
-sonarqube_issues1_scenario <- brm(
+sonarqube_issues2_scenario <- brm(
   sonarqube_issues ~ 1 
   + high_debt_version
   + scenario
   + (1 | session),
   family = negbinomial(),
-  data = as.data.frame(d.completed),
-      prior = c(
+  data = as.data.frame(d.both_completed),
+      prior = sonarqube_issues1.priors
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
     prior(exponential(0.6), class = "sd"),
@@ -365,64 +353,71 @@ sonarqube_issues1_scenario <- brm(
   cores = 4,
   iter = 5e3,
   #empty = TRUE
-  file = "fits/sonarqube_issues1_scenario",
+  file = "fits/sonarqube_issues2_scenario",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_scenario)
+summary(sonarqube_issues2_scenario)
 ```
 
 ```{r}
 loo(
-  sonarqube_issues0,
-  sonarqube_issues1_exp,
-  sonarqube_issues1_java,
-  sonarqube_issues1_education_field,
-  sonarqube_issues1_education_level,
-  sonarqube_issues1_practice_peer_reviews,
-  sonarqube_issues1_practice_td_tracking,
-  sonarqube_issues1_practice_pair_programming,
-  sonarqube_issues1_practice_coding_standards,
-  sonarqube_issues1_scenario,
-  sonarqube_issues1_group,
-  sonarqube_issues1_work_domain
+  sonarqube_issues1,
+  sonarqube_issues2_exp,
+  sonarqube_issues2_java,
+  sonarqube_issues2_education_field,
+  sonarqube_issues2_education_level,
+  sonarqube_issues2_practice_peer_reviews,
+  sonarqube_issues2_practice_td_tracking,
+  sonarqube_issues2_practice_pair_programming,
+  sonarqube_issues2_practice_coding_standards,
+  sonarqube_issues2_scenario,
+  sonarqube_issues2_group,
+  sonarqube_issues2_work_domain
 )
 ```
 
 ```{r}
-sonarqube_issues1_scenario.poisson <- brm(
-  sonarqube_issues ~ 1 
+sonarqube_issues2_scenario.poisson <- brm(
+  sonarqube_issues ~ 1
   + high_debt_version
+  + work_experience_programming.s
+  + work_experience_java.s
+  + education_field
+  #+ mo(education_level)
+  + workplace_peer_review
+  + workplace_td_tracking
+  + workplace_pair_programming
+  + workplace_coding_standards
+  + work_domain
+  + group
   + scenario
   + (1 | session),
   family = poisson(),
-  data = as.data.frame(d.completed),
-      prior = c(
+  data = as.data.frame(d.both_completed),
+  prior = c(
     prior(normal(0, 1), class = "b"),
-    prior(normal(2.2, 1), class = "Intercept"),
-    prior(exponential(0.5), class = "sd")
+    prior(normal(2.2, 1), class = "Intercept")
+    #prior(exponential(0.5), class = "sd")
   ),
   control = list(adapt_delta = 0.95),
   backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
   #sample_prior = "only",
   #empty = TRUE
-  file = "fits/sonarqube_issues0.poisson",
+  file = "fits/sonarqube_issues1.poisson",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues1_scenario.poisson)
+summary(sonarqube_issues2_scenario.poisson)
 ```
 
 
 
 ```{r}
 loo(
-  sonarqube_issues0,
-  sonarqube_issues1_scenario,
-  sonarqube_issues0.poisson,
-  sonarqube_issues1_scenario.poisson
+  sonarqube_issues1,
+  sonarqube_issues2_scenario,
+  sonarqube_issues1.poisson,
+  sonarqube_issues2_scenario.poisson
 )
 ```
