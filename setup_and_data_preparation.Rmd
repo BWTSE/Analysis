@@ -138,36 +138,74 @@ d.both_completed$work_experience_java.s = scale(d.both_completed$work_experience
 
 
 Utility function
-
 ```{r}
+library(hashr)
 
-extendable_model <- function(base_name, base_formula, base_priors, family, data) {
-  function(additinal_variable, additional_priors = NULL, only_priors = FALSE, sample_prior = "no") {
+extendable_model <- function(base_name, base_formula, family, data, base_priors = NULL) {
+  function(additional_variables = NULL, additional_priors = NULL, only_priors = FALSE, sample_prior = "no") {
+    
+    additional_variables.sorted <- sort(additional_variables)
+    additional_variables.formula <- paste(additional_variables.sorted, collapse = " + ")
+    additional_variables.name <- paste(additional_variables.sorted, collapse = ".")
     
     priors <- base_priors
     if (!is.null(additional_priors)) {
-      priors <- c(priors, additional_priors)
+      priors <- c(base_priors, additional_priors)
     }
-    
     if (only_priors) {
       priors <- NULL
     }
     
+    formula <- base_formula
+    if (!is.null(additional_variables)) {
+      formula <- paste(base_formula, additional_variables.formula, sep = " + ")
+    }
+    
+    name <- base_name
+    if (!is.null(additional_variables)) {
+      name <- paste(base_name, additional_variables.name, sep = ".")
+    }
+    name <- paste(name, paste("sample_priors-", sample_prior, sep = ""), sep = ".")
+    name <- paste(name, paste("priors_hash-", hash(priors), sep = ""), sep = ".")
     brm(
-      as.formula(paste(base_formula, additinal_variable, sep = " + ")),
+      formula = as.formula(formula),
       family = family,
       data = as.data.frame(data),
       prior = priors,
-      empty = only_priors, # If you only want to check prior definitions
+      empty = only_priors,
       sample_prior = sample_prior,
       backend = "cmdstanr",
       chains = 4,
       cores = 4,
-      file = paste("fits", paste(base_name, additinal_variable, paste("sample_priors-", sample_prior, sep = ""), sep = "."), sep = "/"),
+      file = paste("fits", name, sep = "/"),
       file_refit = "on_change"
     )
   }
 }
 
+# m0.with <- extendable_model(
+#   base_name = "m0", 
+#   base_formula = "time ~ 1",
+#   family = negbinomial(), 
+#   data = d.both_compleeted, 
+#   base_priors = c(
+#     prior(normal(0, 1), class = "Intercept")
+#   )
+# )
+# 
+# prior_summary(m0.with(only_priors = TRUE))
+# 
+# pp_check(m0.with(sample_prior = "only"), nsamples = 200)
+# 
+# summary(m0.with())
+# 
+# 
+# pp_check(m0.with(), nsamples = 200)
+# 
+# loo(
+#   m0.with(),
+#   m0.with("high_debt_version"),
+#   m0.with(c("high_debt_version", "scenario"))
+# )
 
 ```
