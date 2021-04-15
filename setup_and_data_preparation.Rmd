@@ -163,10 +163,11 @@ extendable_model <- function(base_name, base_formula, family, data, base_priors 
     
     name <- base_name
     if (!is.null(additional_variables)) {
-      name <- paste(base_name, additional_variables.name, sep = ".")
+      name <- paste(base_name, hash(additional_variables.name), sep = ".")
     }
     name <- paste(name, paste("sample_priors-", sample_prior, sep = ""), sep = ".")
     name <- paste(name, paste("priors_hash-", hash(priors), sep = ""), sep = ".")
+    name <- paste(name, paste("formula_hash-", hash(formula), sep = ""), sep = ".")
     
     control <- base_control
     if (!is.null(control_override)) {
