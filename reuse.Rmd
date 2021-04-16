@@ -43,560 +43,238 @@ d.completed %>%
 ```
 
 Initial model:
+
 ```{r}
 reuse0 <- brm(
   mvbind(
     reused_logic_validation,
     reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + (1 | c | session),
+  ) ~ 1 
+  + (1 |c| session),
   family = bernoulli(),
-  data = as.data.frame(d.completed),
+  data = as.data.frame(d.both_completed),
   prior = c(
-    prior(normal(0, 1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),
     prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
     prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
     prior(lkj(2), class = "L")
   ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "cmdstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
+  control = list(adapt_delta = 0.95),
+  #empty = TRUE
+  #sample_prior = "only",
   file = "fits/reuse0",
   file_refit = "on_change"
 )
 
+pp_check(reuse0, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse0, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+prior_summary(reuse0)
 summary(reuse0)
 ```
 
+Adding debt level as predictor:
 
 ```{r}
-reuse1_scenario <- brm(
-  mvbind(
+reuse1.with <- extendable_model(
+  base_name = "reuse1",
+  base_formula = "mvbind(
     reused_logic_validation,
     reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + scenario
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
+  ) ~ 1 + high_debt_version + (1 | c | session)",
+    base_priors = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),
     prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
     prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
     prior(lkj(2), class = "L")
   ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_scenario",
-  file_refit = "on_change"
+  family = bernoulli(),
+  data = d.both_completed,
+  base_control = list(adapt_delta = 0.95)
 )
 
-summary(reuse1_scenario)
+
+reuse1 <- reuse1.with()
+summary(reuse1)
 ```
 
-```{r}
-reuse1_experience_programming <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + work_experience_programming.s
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_experience_programming",
-  file_refit = "on_change"
-)
+Compare
 
-summary(reuse1_experience_programming)
+```{r}
+loo(reuse0, reuse1.with())
+
 ```
 
 
 ```{r}
-reuse1_experience_java <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + work_experience_java.s
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_experience_java",
-  file_refit = "on_change"
-)
-
-summary(reuse1_experience_java)
+summary(reuse1.with("work_domain"))
 ```
 
 ```{r}
-reuse1_education_field <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + education_field
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_education_field",
-  file_refit = "on_change"
-)
-
-summary(reuse1_education_field)
+summary(reuse1.with("work_experience_programming.s"))
 ```
 
 
 ```{r}
-reuse1_education_level <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + mo(education_level)
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = reusedlogicconstructor),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_education_level",
-  file_refit = "on_change"
-)
-
-summary(reuse1_education_level)
-```
-
-
-
-
-```{r}
-reuse1_workplace_peer_review <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + workplace_peer_review
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_workplace_peer_review",
-  file_refit = "on_change"
-)
-
-summary(reuse1_workplace_peer_review)
+summary(reuse1.with("work_experience_java.s"))
 ```
 
 ```{r}
-reuse1_workplace_td_tracking <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + workplace_td_tracking
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_workplace_td_tracking",
-  file_refit = "on_change"
-)
-
-summary(reuse1_workplace_td_tracking)
+summary(reuse1.with("education_field"))
 ```
 
 ```{r}
-reuse1_workplace_pair_programming <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + workplace_pair_programming
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_workplace_pair_programming",
-  file_refit = "on_change"
-)
-
-summary(reuse1_workplace_pair_programming)
+summary(reuse1.with(
+  "mo(education_level)", 
+  c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicconstructor"),
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicvalidation")
+  )
+))
 ```
 
 ```{r}
-reuse1_workplace_coding_standards <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + workplace_coding_standards
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_workplace_coding_standards",
-  file_refit = "on_change"
-)
-
-summary(reuse1_workplace_coding_standards)
-```
-
-
-```{r}
-reuse1_work_domain <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + work_domain
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_work_domain",
-  file_refit = "on_change"
-)
-
-summary(reuse1_work_domain)
+summary(reuse1.with("workplace_peer_review"))
 ```
 
 ```{r}
-reuse1_group <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + group
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "rstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse1_group",
-  file_refit = "on_change"
-)
+summary(reuse1.with("workplace_td_tracking"))
+```
 
-summary(reuse1_group)
+```{r}
+summary(reuse1.with("workplace_pair_programming"))
+```
+
+```{r}
+summary(reuse1.with("workplace_coding_standards"))
+```
+
+```{r}
+summary(reuse1.with("scenario"))
+```
+
+```{r}
+summary(reuse1.with("group"))
 ```
 
 ```{r}
 loo(
-  reuse1_group,
-  reuse1_work_domain,
-  reuse1_workplace_coding_standards,
-  reuse1_workplace_pair_programming,
-  reuse1_workplace_td_tracking,
-  reuse1_workplace_peer_review,
-  reuse1_education_level,
-  reuse1_education_field,
-  reuse1_experience_java,
-  reuse1_experience_programming,
-  reuse1_scenario,
-  reuse0
-)
-
-```
-
-
-
-```{r}
-reuse2_all <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + workplace_peer_review
-  + workplace_td_tracking
-  + mo(education_level)
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = reusedlogicconstructor),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
+  reuse1.with(),
+  reuse1.with("work_domain"),
+  reuse1.with("work_experience_programming.s"),
+  reuse1.with("work_experience_java.s"),
+  reuse1.with("education_field"),
+  reuse1.with(
+  "mo(education_level)", 
+    c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicconstructor"),
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicvalidation")
+  )
   ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "cmdstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse2_all",
-  file_refit = "on_change"
+  reuse1.with("workplace_peer_review"),
+  reuse1.with("workplace_td_tracking"),
+  reuse1.with("workplace_pair_programming"),
+  reuse1.with("workplace_coding_standards"),
+  reuse1.with("scenario"),
+  reuse1.with("group"),
+  reuse1.with(
+  c("work_domain", 
+    "work_experience_programming.s",
+    "work_experience_java.s",
+    "education_field",
+    "mo(education_level)",
+    "workplace_peer_review",
+    "workplace_td_tracking",
+    "workplace_pair_programming",
+    "workplace_coding_standards",
+    "scenario",
+    "group"
+    ),
+    c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicconstructor"),
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicvalidation")
+  )
+)
 )
 
-summary(reuse2_all)
+
 ```
 
 ```{r}
-reuse2_no_education_level <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + workplace_peer_review
-  + workplace_td_tracking
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "cmdstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse2_no_education_level",
-  file_refit = "on_change"
-)
+reuse_cand1 <-   reuse1.with()
+summary(reuse_cand1)
+ranef(reuse_cand1)
 
-summary(reuse2_no_education_level)
-```
-
-
-```{r}
-reuse2_no_workplace_td_tracking <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + workplace_peer_review
-  + mo(education_level)
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = reusedlogicconstructor),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "cmdstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse2_no_workplace_td_tracking",
-  file_refit = "on_change"
-)
-
-summary(reuse2_no_workplace_td_tracking)
+plot(reuse_cand1)
+pp_check(reuse_cand1, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse_cand1, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
 ```
 
 ```{r}
-reuse2_no_workplace_peer_review <- brm(
-  mvbind(
-    reused_logic_validation,
-    reused_logic_constructor
-  ) ~ 1
-  + high_debt_version
-  + workplace_td_tracking
-  + mo(education_level)
-  + (1 | c | session),
-  family = bernoulli(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
-    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = reusedlogicconstructor),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = reusedlogicvalidation),
-    prior(lkj(2), class = "L")
-  ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "cmdstan",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  file = "fits/reuse2_no_workplace_peer_review",
-  file_refit = "on_change"
-)
-
-summary(reuse2_no_workplace_peer_review)
+reuse_cand2 <-   reuse1.with("workplace_peer_review")
+summary(reuse_cand2)
+ranef(reuse_cand2)
+plot(reuse_cand2)
+pp_check(reuse_cand2, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse_cand2, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
 ```
-
 
 ```{r}
-loo(
-  reuse1_workplace_td_tracking,
-  reuse1_workplace_peer_review,
-  reuse1_education_level,
-  reuse2_no_workplace_td_tracking,
-  reuse2_no_workplace_peer_review,
-  reuse2_no_education_level,
-  reuse0,
-  reuse2_all
-)
-
+reuse_cand3 <- reuse1.with("workplace_coding_standards")
+summary(reuse_cand3)
+ranef(reuse_cand3)
+plot(reuse_cand3)
+pp_check(reuse_cand3, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse_cand3, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
 ```
 
+```{r}
+reuse_cand4 <-   reuse1.with("workplace_pair_programming")
+summary(reuse_cand4)
+ranef(reuse_cand4)
+plot(reuse_cand4)
+pp_check(reuse_cand4, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse_cand4, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+```
 
+```{r}
+reuse_cand34 <-   reuse1.with(c("workplace_pair_programming","workplace_coding_standards"))
+summary(reuse_cand34)
+ranef(reuse_cand34)
+plot(reuse_cand34)
+pp_check(reuse_cand34, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse_cand34, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+```
 
+```{r}
+reuse_cand23 <-   reuse1.with(c("workplace_peer_review","workplace_coding_standards"))
+summary(reuse_cand23)
+ranef(reuse_cand23)
+plot(reuse_cand23)
+pp_check(reuse_cand23, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse_cand23, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+```
 
+```{r}
+reuse_cand42 <-   reuse1.with(c("workplace_peer_review","workplace_pair_programming"))
+summary(reuse_cand23)
+ranef(reuse_cand23)
+plot(reuse_cand23)
+pp_check(reuse_cand23, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse_cand23, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+```
 
+```{r}
+reuse_cand234 <-   reuse1.with(c("workplace_peer_review","workplace_pair_programming","workplace_coding_standards"))
+summary(reuse_cand23)
+ranef(reuse_cand23)
+plot(reuse_cand23)
+pp_check(reuse_cand23, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
+pp_check(reuse_cand23, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+```
 
+```{r}
+loo(reuse_cand1,reuse_cand2,reuse_cand3,reuse_cand4,reuse_cand23,reuse_cand34,reuse_cand42,reuse_cand234)
+```
 
+Verdict: while candidates 2,3,4 are rated slightly better by loo, its very minor, and well within the margin of error. We choose cand 1, the one using only session and debt level as predictors.
