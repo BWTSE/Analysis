@@ -217,27 +217,14 @@ pre code {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZC5jb21wbGV0ZWQgJT4lXG4gIGdncGxvdChhZXMoeD10aW1lLCBmaWxsPWhpZ2hfZGVidF92ZXJzaW9uKSkgKyBcbiAgZ2VvbV9ib3hwbG90KClcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZC5jb21wbGV0ZWQgJT4lXG4gIGdncGxvdChhZXMoeD10aW1lLCBmaWxsPWhpZ2hfZGVidF92ZXJzaW9uKSkgKyBcbiAgZ2VvbV9ib3hwbG90KClcblxubWVhbihkLmNvbXBsZXRlZCR0aW1lKVxudmFyKGQuY29tcGxldGVkJHRpbWUpXG5gYGAifQ== -->
 <pre class="r"><code>d.completed %&gt;%
   ggplot(aes(x=time, fill=high_debt_version)) + 
-  geom_boxplot()</code></pre>
+  geom_boxplot()
+
+mean(d.completed$time)
+var(d.completed$time)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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sKcBAOAbDhw48Oyzzz744INz5851Op3iv3fIZ2VlPf/880lJSZ999tncuXMXLlxYz4L12LVrV3Jy8i9/+cslS5a4z3zu3LmXX355xIgRzzzzzIEDB9wX+fTTTx977LEnn3xyy5YtQog9e/ZMnjzZarUOGTLkH//4x1V7OXbs2JAhQ86fP+9qGTNmzPLly6/V0bJly956663MzMzRo0cfPXrU6XSmp6cnJSU9+OCD06ZNq6qquuzVyM3NffHFF0eOHPniiy/m5uaqjStWrEhLS1u7du3o0aMffPDBefPmXffVuAyhAQDgA7KzsydMmNCzZ8+uXbtOnjz5o48+EkKcPHny2LFjQojvv/++f//+FRUVd9111+uvvz516lTXN+VVF7yWjRs3Dho0qLi4uHfv3vPnz3/33XfV9lOnTvXo0SM3N3fYsGE6nW7IkCF79uxRJ61YsWL69Om9evWyWq0///nPV65c2bVr13HjxhmNxj//+c+xsbFX7ei22247duzY2rVr1adZWVmrVq3q3bv3tTr68ccfMzIyJk6c2Ldv37Zt27799tuTJk3q0KHDnXfeOWfOHPXEC9erkZWV1atXrxMnTtxzzz0nTpzo2bNnVlaWEOL06dNLliyZMmXKPffc06lTpxdeeGHx4sUN2gocngAA+ID8/Pw9e/a0a9dOCJGXl7dnz56nn37aNTUtLW348OHp6elCiCeeeKJDhw6SC17mlVdeeeKJJ5YuXSqEmDRpUpcuXdT2119/fejQoatWrVKfRkdHP/PMM0ePHhVCVFZWHj582GKxCCEiIyNfffXVxx9/PD4+XlGUQYMGXasjg8GQmJj45ZdfTpgwQQjx2Wef9enT54477hg3bty1Otq3b19ubq46kA0bNjz++OPTp08XQvTt2zczM9N95X/+85/79++/YcMGIcSLL744bNiwN954Y/Xq1UKI8+fP79y5U11Jdna2ultF5vX/V9nyswIAoJXu3burX3VCiMjIyOrqavep33777V/+8hf1cZs2bXr37i25oLvq6uojR47Mnj1bfWqxWBITEw8dOiSE+O6774QQQ4cOVSddvHjxhx9+UB8/+OCDamIQQowdO/a9994rKiqSGdHo0aMfeOCBkpKS8PDw1atXP//88/V3dMcdd7gGMnDgwDlz5tjt9hEjRgwaNOiBBx5wX/O+fftee+0119Nf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AAAAKYQGAAAghdAAAACkEBoAAIAUQgMAAJBCaAAAAFIIDQAAQIrBaz2ZzWav9eUpBoNBCKHX/ydaGY1G7cpppoxGo5c3rqIovvh2upL61jKZTAEBAVrX4gF+s10MBoNer/ebsYj//hADGsN7ocFms3mtL0/R6/VOp9O9crvdrmE9zZPdbvfyxnU4HL74drqSoihCCLvd7h/vK7/ZLgaD4bI/fN+l0+mEb378onnyXmioq6vzWl+eosZz98r948Pds+x2u5c3rtPp9MW305WcTqcQwmaz+cFnuk6n85vtYjQa/WYsV36IAY3BPisAACCF0AAAAKQQGgAAgBRCAwAAkEJoAAAAUggNAABACqEBAABIITQAAAAphAYAACCF0AAAAKQQGgAAgBRCAwAAkEJoAAAAUggNAABACqEBAABIITQAAAAphAYAACCF0AAAAKQQGgAAgBRCAwAAkEJoAAAAUggNAABACqEBAABIITQAAAApBq0L8EkLc0/rhM6DKyyvs6kPTlda38857cE1N6lym13rEgAA3kNoaJibb765TZs2f69xeHa1TqeIiooSQlTrdH+raZJvYkVRnE6nw+Hhytu1axcTE+PZdQIAmidCQ8P07Nlz6dKlWldxIyIjI2tqaiorK7UuBADgqzinAQAASCE0AAAAKYQGAAAghdAAAACkEBoAAIAUQgMAAJBCaAAAAFIIDQAAQAqhAQAASCE0AAAAKYQGAAAghdAAAACkEBoAAIAUQgMAAJBCaAAAAFJ0TqdT6xrgDUuXLu3WrVtCQoLWheA/Ll68uHr16qSkpNatW2tdC/7j22+/zcnJGT9+vNaFAM0Oexpais8//zwzM1PrKvBf8vPzly1bVlBQoHUh+C/79+//4osvtK4CaI4IDQAAQAqhAQAASOGchpbiwoULFoslNDRU60LwH7W1tfn5+a1atTIajVrXgv8oLS21Wq0xMTFaFwI0O4QGAAAghcMTAABAikHrAuABn3zyydatW61Wa79+/Z599lmDwSCE+L//+781a9YIIcaMGXPvvfeqc8o3wlP279/fqlWrW265RQhhs9kWLVq0e/fuqKioiRMndu7cuUGNaLza2tqFCxdmZmaGhIS88MIL6gtbWFg4Z86c3Nzcbt26paamhoWFNagRaDnY0+Dztm3btnPnzhkzZrzzzjsnT55ct26dEOL06dNffPHF9OnTp06d+r//+7/5+fkNaoSnnD17dvr06adOnVKfbtq0KT8//6OPPhozZszMmTPVg4PyjWi8hQsXhoeHL1my5NFHH/3www/VxsWLF8fFxaWnp8fGxi5fvryhjUDLQWjweceOHbv//vvDwsKio6Pvu+++48ePCyG2bds2ZMiQqKiomJiYhISE7du3N6gRHmG32+fMmeN+46atW7eOGjXKaDT27dtXUZQffvihQY1opOrq6t27dyclJSmKMnjw4N/+9rdOp9NqtWZmZo4aNUpRlMTExB07djSoUesxAV5FaPB548ePHzZsmPr45MmT6u7WS5cu3XzzzWrjzTffrO4/kG+ER6xcubJfv37t27d3teTn58fGxqqPY2Nj1VdbvhGNlJ+fHxISsmrVqueee27KlClWq1Wn0xUVFUVERAQGBgohwsPDAwICysrK5Bs1HhLgXYQGnxcSEmIymerq6tLT07Ozs9UAUV5ebjab1RnMZnN5eXmDGtF433//fXZ29sMPP+zeWFZWZrFY1MeuV1u+EY1UWVl54cIFg8Ewa9ashISEtLQ0m81WXl7ueqmFEGazuaysTL7RqwMAtEZo8Ac//vjjCy+8cP78+b/+9a/qmVnBwcFWq1WdarVag4ODG9SIRqqurl64cGFqaqpOp3NvZ7toy2KxGI3GxMREi8UybNiwioqKM2fOBAUFuV5q8e9XW77RqwMAtMbVEz7v3Llzr7/++tNPPz1w4EBX40033XTu3DnXDOphdflGNFJ+fn5+fn5qaqoQorq6ev/+/bm5uU899ZT6akdFRYkrNoFMIxopKirKPcYpiqIoSnR0dHFxcW1trdFoLCsrs9lsYWFhgYGBko0aDgfwPvY0+Lw1a9bcf//97olBCDFw4MBt27ZVVVWVlpbu3r37Zz/7WYMa0Ug333zzJ//Wr1+/lJSUp556Sghx9913f/XVV06nMysrq6ampmvXrg1qRCMFBQV17949IyNDCLFt27agoKDY2Fiz2RwfH79582YhREZGRkJCgl6vl2/UdkSAl3FHSJ/329/+Nicnx/V0wIABL7/8shAiIyNj/fr1QojRo0cPHjxYnSrfCE+ZPn1637591RfW4XAsXLjw8OHDQUFBv/nNbzp27NigRjReYWHhO++8c/r06ZiYmJSUlA4dOgghSkpKZs2adfHixdjY2MmTJwcFBTWoEWg5CA0AAEAK+9YAAIAUQgMAAJBCaAAAAFIIDQAAQAqhAQAASCE0AB5z8ODBs2fPal0FADQVQgPQKIcPH962bZv6+Pnnn//88881LQcAmhC3kQYa5fPPPz906JB676aZM2e2bdtW64oAoKmwpwG4cSdPnjx9+nRhYeE333wj/v17SEKII0eOnD9//sKFC3v37nX9qvW5c+cOHDhQU1PjvoZLly7t27evuLjY+8UDQEMRGoAbt3nz5h07dvzwww9Tp04VbocnJk+enJqaevvtt48YMaJ169azZ88eN25c796977rrru7du5eUlAghCgsLR44c2aZNm2HDhrVp02bWrFkaDwYArofQANy4CRMmjB07tn///ps2bbps0jfffHPw4MELFy4888wzkydP7tChw/nz548ePZqbm/vVV18JISZNmmS1Wi9evFhcXLx169a0tLTPPvtMi0EAgCxCA9AkHn/88Q4dOiiK8tBDD+l0uj/84Q9CiLi4uNtuu624uLimpubTTz99+OGHjx8//u233zocjoSEhE8++UTrqgGgPpwICTSJ0NBQ9YHJZDKZTBaLxfVUCHH27Fm73b5ixQr3qy26devm/ToBQB6hAdBATEyMEGLhwoXx8fFqy2UnSAJAM8ThCUADFoulV69ey5YtU5+WlZV17Nhx0aJF2lYFAPVjTwPQKEFBQceOHfv000+TkpIatOC0adNGjhxZWFjYvXv3VatWmc3msWPHNlGRAOAR7GkAGmXcuHFDhgz59NNPhRB33nlnbGysECI+Pr5Dhw7qDBEREXfffbdr/rvuuqtdu3ZCiGHDhu3cuTMoKGj79u1Dhw7dvXt3eHi4BgMAAGk6p9OpdQ0AAMAHsKcBAABIITQAAAAphAYAACCF0AAAAKQQGgAAgBRCAwAAkEJoAAAAUggNAABACqEBAABIITQAAAAp/w9bxZUuJJK4HwAAAABJRU5ErkJggg==" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5tZWFuKGQuY29tcGxldGVkJHRpbWUpXG5gYGAifQ== -->
-<pre class="r"><code>
-mean(d.completed$time)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE3ODAuNjMzXG4ifQ== -->
-<pre><code>[1] 1780.633</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudmFyKGQuY29tcGxldGVkJHRpbWUpXG5gYGAifQ== -->
-<pre class="r"><code>var(d.completed$time)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE3NTc1ODhcbiJ9 -->
-<pre><code>[1] 1757588</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>var &gt; mean =&gt; neg binomial</p>
@@ -270,50 +257,378 @@ mean(d.completed$time)</code></pre>
 
 summary(time0)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSBcbiAgIERhdGE6IGFzLmRhdGEuZnJhbWUoZC5jb21wbGV0ZWQpIChOdW1iZXIgb2Ygb2JzZXJ2YXRpb25zOiA0OSkgXG5TYW1wbGVzOiA0IGNoYWlucywgZWFjaCB3aXRoIGl0ZXIgPSA1MDAwOyB3YXJtdXAgPSAyNTAwOyB0aGluID0gMTtcbiAgICAgICAgIHRvdGFsIHBvc3Qtd2FybXVwIHNhbXBsZXMgPSAxMDAwMFxuXG5Hcm91cC1MZXZlbCBFZmZlY3RzOiBcbn5zZXNzaW9uIChOdW1iZXIgb2YgbGV2ZWxzOiAyNykgXG4gICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zZChJbnRlcmNlcHQpICAgICAwLjQ1ICAgICAgMC4xNCAgICAgMC4xNyAgICAgMC43MyAxLjAwICAgICAxOTQ1ICAgICAyMDk3XG5cblBvcHVsYXRpb24tTGV2ZWwgRWZmZWN0czogXG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5JbnRlcmNlcHQgICAgICAgICAgICAgICAgICA3LjMyICAgICAgMC4xMyAgICAgNy4wNCAgICAgNy41NyAxLjAwICAgICA0MzY2ICAgICA0NjA2XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgIC0wLjA2ICAgICAgMC4wOCAgICAtMC4yMiAgICAgMC4xMSAxLjAwICAgIDE1MzkwICAgICA3MTY0XG5cbkZhbWlseSBTcGVjaWZpYyBQYXJhbWV0ZXJzOiBcbiAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgNC4wOCAgICAgIDEuMTUgICAgIDIuMjIgICAgIDYuNzQgMS4wMCAgICAgMjkyNCAgICAgNDYzN1xuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
-<pre><code> Family: negbinomial 
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeSh0aW1lMC53aXRoKCkpXG5cbmBgYCJ9 -->
+<pre class="r"><code>summary(time0.with())
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQ29tcGlsaW5nIFN0YW4gcHJvZ3JhbS4uLlxuIn0= -->
+<pre><code>Compiling Stan program...</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbnxcblxuL1xuXG4tXG5cblxcXG5cbiBcbiJ9 -->
+<pre><code>
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+|
+
+/
+
+-
+
+\
+
+ </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU3RhcnQgc2FtcGxpbmdcbiJ9 -->
+<pre><code>Start sampling</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUnVubmluZyBNQ01DIHdpdGggNCBwYXJhbGxlbCBjaGFpbnMuLi5cblxuQ2hhaW4gMSBJdGVyYXRpb246ICAgIDEgLyAyMDAwIFsgIDAlXSAgKFdhcm11cCkgXG5DaGFpbiAyIEl0ZXJhdGlvbjogICAgMSAvIDIwMDAgWyAgMCVdICAoV2FybXVwKSBcbkNoYWluIDMgSXRlcmF0aW9uOiAgICAxIC8gMjAwMCBbICAwJV0gIChXYXJtdXApIFxuQ2hhaW4gNCBJdGVyYXRpb246ICAgIDEgLyAyMDAwIFsgIDAlXSAgKFdhcm11cCkgXG5DaGFpbiAxIEl0ZXJhdGlvbjogIDEwMCAvIDIwMDAgWyAgNSVdICAoV2FybXVwKSBcbkNoYWluIDEgSXRlcmF0aW9uOiAgMjAwIC8gMjAwMCBbIDEwJV0gIChXYXJtdXApIFxuQ2hhaW4gMSBJdGVyYXRpb246ICAzMDAgLyAyMDAwIFsgMTUlXSAgKFdhcm11cCkgXG5DaGFpbiAxIEl0ZXJhdGlvbjogIDQwMCAvIDIwMDAgWyAyMCVdICAoV2FybXVwKSBcbkNoYWluIDEgSXRlcmF0aW9uOiAgNTAwIC8gMjAwMCBbIDI1JV0gIChXYXJtdXApIFxuQ2hhaW4gMiBJdGVyYXRpb246ICAxMDAgLyAyMDAwIFsgIDUlXSAgKFdhcm11cCkgXG5DaGFpbiAyIEl0ZXJhdGlvbjogIDIwMCAvIDIwMDAgWyAxMCVdICAoV2FybXVwKSBcbkNoYWluIDIgSXRlcmF0aW9uOiAgMzAwIC8gMjAwMCBbIDE1JV0gIChXYXJtdXApIFxuQ2hhaW4gMiBJdGVyYXRpb246ICA0MDAgLyAyMDAwIFsgMjAlXSAgKFdhcm11cCkgXG5DaGFpbiAzIEl0ZXJhdGlvbjogIDEwMCAvIDIwMDAgWyAgNSVdICAoV2FybXVwKSBcbkNoYWluIDMgSXRlcmF0aW9uOiAgMjAwIC8gMjAwMCBbIDEwJV0gIChXYXJtdXApIFxuQ2hhaW4gMyBJdGVyYXRpb246ICAzMDAgLyAyMDAwIFsgMTUlXSAgKFdhcm11cCkgXG5DaGFpbiAzIEl0ZXJhdGlvbjogIDQwMCAvIDIwMDAgWyAyMCVdICAoV2FybXVwKSBcbkNoYWluIDQgSXRlcmF0aW9uOiAgMTAwIC8gMjAwMCBbICA1JV0gIChXYXJtdXApIFxuQ2hhaW4gNCBJdGVyYXRpb246ICAyMDAgLyAyMDAwIFsgMTAlXSAgKFdhcm11cCkgXG5DaGFpbiA0IEl0ZXJhdGlvbjogIDMwMCAvIDIwMDAgWyAxNSVdICAoV2FybXVwKSBcbkNoYWluIDQgSXRlcmF0aW9uOiAgNDAwIC8gMjAwMCBbIDIwJV0gIChXYXJtdXApIFxuQ2hhaW4gMSBJdGVyYXRpb246ICA2MDAgLyAyMDAwIFsgMzAlXSAgKFdhcm11cCkgXG5DaGFpbiAxIEl0ZXJhdGlvbjogIDcwMCAvIDIwMDAgWyAzNSVdICAoV2FybXVwKSBcbkNoYWluIDEgSXRlcmF0aW9uOiAgODAwIC8gMjAwMCBbIDQwJV0gIChXYXJtdXApIFxuQ2hhaW4gMSBJdGVyYXRpb246ICA5MDAgLyAyMDAwIFsgNDUlXSAgKFdhcm11cCkgXG5DaGFpbiAyIEl0ZXJhdGlvbjogIDUwMCAvIDIwMDAgWyAyNSVdICAoV2FybXVwKSBcbkNoYWluIDIgSXRlcmF0aW9uOiAgNjAwIC8gMjAwMCBbIDMwJV0gIChXYXJtdXApIFxuQ2hhaW4gMiBJdGVyYXRpb246ICA3MDAgLyAyMDAwIFsgMzUlXSAgKFdhcm11cCkgXG5DaGFpbiAyIEl0ZXJhdGlvbjogIDgwMCAvIDIwMDAgWyA0MCVdICAoV2FybXVwKSBcbkNoYWluIDIgSXRlcmF0aW9uOiAgOTAwIC8gMjAwMCBbIDQ1JV0gIChXYXJtdXApIFxuQ2hhaW4gMyBJdGVyYXRpb246ICA1MDAgLyAyMDAwIFsgMjUlXSAgKFdhcm11cCkgXG5DaGFpbiAzIEl0ZXJhdGlvbjogIDYwMCAvIDIwMDAgWyAzMCVdICAoV2FybXVwKSBcbkNoYWluIDMgSXRlcmF0aW9uOiAgNzAwIC8gMjAwMCBbIDM1JV0gIChXYXJtdXApIFxuQ2hhaW4gMyBJdGVyYXRpb246ICA4MDAgLyAyMDAwIFsgNDAlXSAgKFdhcm11cCkgXG5DaGFpbiAzIEl0ZXJhdGlvbjogIDkwMCAvIDIwMDAgWyA0NSVdICAoV2FybXVwKSBcbkNoYWluIDQgSXRlcmF0aW9uOiAgNTAwIC8gMjAwMCBbIDI1JV0gIChXYXJtdXApIFxuQ2hhaW4gNCBJdGVyYXRpb246ICA2MDAgLyAyMDAwIFsgMzAlXSAgKFdhcm11cCkgXG5DaGFpbiA0IEl0ZXJhdGlvbjogIDcwMCAvIDIwMDAgWyAzNSVdICAoV2FybXVwKSBcbkNoYWluIDQgSXRlcmF0aW9uOiAgODAwIC8gMjAwMCBbIDQwJV0gIChXYXJtdXApIFxuQ2hhaW4gMSBJdGVyYXRpb246IDEwMDAgLyAyMDAwIFsgNTAlXSAgKFdhcm11cCkgXG5DaGFpbiAxIEl0ZXJhdGlvbjogMTAwMSAvIDIwMDAgWyA1MCVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMSBJdGVyYXRpb246IDExMDAgLyAyMDAwIFsgNTUlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDEgSXRlcmF0aW9uOiAxMjAwIC8gMjAwMCBbIDYwJV0gIChTYW1wbGluZykgXG5DaGFpbiAxIEl0ZXJhdGlvbjogMTMwMCAvIDIwMDAgWyA2NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMiBJdGVyYXRpb246IDEwMDAgLyAyMDAwIFsgNTAlXSAgKFdhcm11cCkgXG5DaGFpbiAyIEl0ZXJhdGlvbjogMTAwMSAvIDIwMDAgWyA1MCVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMiBJdGVyYXRpb246IDExMDAgLyAyMDAwIFsgNTUlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDIgSXRlcmF0aW9uOiAxMjAwIC8gMjAwMCBbIDYwJV0gIChTYW1wbGluZykgXG5DaGFpbiAyIEl0ZXJhdGlvbjogMTMwMCAvIDIwMDAgWyA2NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMyBJdGVyYXRpb246IDEwMDAgLyAyMDAwIFsgNTAlXSAgKFdhcm11cCkgXG5DaGFpbiAzIEl0ZXJhdGlvbjogMTAwMSAvIDIwMDAgWyA1MCVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMyBJdGVyYXRpb246IDExMDAgLyAyMDAwIFsgNTUlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDMgSXRlcmF0aW9uOiAxMjAwIC8gMjAwMCBbIDYwJV0gIChTYW1wbGluZykgXG5DaGFpbiAzIEl0ZXJhdGlvbjogMTMwMCAvIDIwMDAgWyA2NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gNCBJdGVyYXRpb246ICA5MDAgLyAyMDAwIFsgNDUlXSAgKFdhcm11cCkgXG5DaGFpbiA0IEl0ZXJhdGlvbjogMTAwMCAvIDIwMDAgWyA1MCVdICAoV2FybXVwKSBcbkNoYWluIDQgSXRlcmF0aW9uOiAxMDAxIC8gMjAwMCBbIDUwJV0gIChTYW1wbGluZykgXG5DaGFpbiA0IEl0ZXJhdGlvbjogMTEwMCAvIDIwMDAgWyA1NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gNCBJdGVyYXRpb246IDEyMDAgLyAyMDAwIFsgNjAlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDEgSXRlcmF0aW9uOiAxNDAwIC8gMjAwMCBbIDcwJV0gIChTYW1wbGluZykgXG5DaGFpbiAxIEl0ZXJhdGlvbjogMTUwMCAvIDIwMDAgWyA3NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMSBJdGVyYXRpb246IDE2MDAgLyAyMDAwIFsgODAlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDIgSXRlcmF0aW9uOiAxNDAwIC8gMjAwMCBbIDcwJV0gIChTYW1wbGluZykgXG5DaGFpbiAyIEl0ZXJhdGlvbjogMTUwMCAvIDIwMDAgWyA3NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMiBJdGVyYXRpb246IDE2MDAgLyAyMDAwIFsgODAlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDMgSXRlcmF0aW9uOiAxNDAwIC8gMjAwMCBbIDcwJV0gIChTYW1wbGluZykgXG5DaGFpbiAzIEl0ZXJhdGlvbjogMTUwMCAvIDIwMDAgWyA3NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMyBJdGVyYXRpb246IDE2MDAgLyAyMDAwIFsgODAlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDMgSXRlcmF0aW9uOiAxNzAwIC8gMjAwMCBbIDg1JV0gIChTYW1wbGluZykgXG5DaGFpbiA0IEl0ZXJhdGlvbjogMTMwMCAvIDIwMDAgWyA2NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gNCBJdGVyYXRpb246IDE0MDAgLyAyMDAwIFsgNzAlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDQgSXRlcmF0aW9uOiAxNTAwIC8gMjAwMCBbIDc1JV0gIChTYW1wbGluZykgXG5DaGFpbiAxIEl0ZXJhdGlvbjogMTcwMCAvIDIwMDAgWyA4NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMSBJdGVyYXRpb246IDE4MDAgLyAyMDAwIFsgOTAlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDEgSXRlcmF0aW9uOiAxOTAwIC8gMjAwMCBbIDk1JV0gIChTYW1wbGluZykgXG5DaGFpbiAyIEl0ZXJhdGlvbjogMTcwMCAvIDIwMDAgWyA4NSVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMiBJdGVyYXRpb246IDE4MDAgLyAyMDAwIFsgOTAlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDIgSXRlcmF0aW9uOiAxOTAwIC8gMjAwMCBbIDk1JV0gIChTYW1wbGluZykgXG5DaGFpbiAzIEl0ZXJhdGlvbjogMTgwMCAvIDIwMDAgWyA5MCVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMyBJdGVyYXRpb246IDE5MDAgLyAyMDAwIFsgOTUlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDMgSXRlcmF0aW9uOiAyMDAwIC8gMjAwMCBbMTAwJV0gIChTYW1wbGluZykgXG5DaGFpbiA0IEl0ZXJhdGlvbjogMTYwMCAvIDIwMDAgWyA4MCVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gNCBJdGVyYXRpb246IDE3MDAgLyAyMDAwIFsgODUlXSAgKFNhbXBsaW5nKSBcbkNoYWluIDQgSXRlcmF0aW9uOiAxODAwIC8gMjAwMCBbIDkwJV0gIChTYW1wbGluZykgXG5DaGFpbiAxIEl0ZXJhdGlvbjogMjAwMCAvIDIwMDAgWzEwMCVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gMSBmaW5pc2hlZCBpbiAxLjUgc2Vjb25kcy5cbkNoYWluIDIgSXRlcmF0aW9uOiAyMDAwIC8gMjAwMCBbMTAwJV0gIChTYW1wbGluZykgXG5DaGFpbiAyIGZpbmlzaGVkIGluIDEuNSBzZWNvbmRzLlxuQ2hhaW4gMyBmaW5pc2hlZCBpbiAxLjUgc2Vjb25kcy5cbkNoYWluIDQgSXRlcmF0aW9uOiAxOTAwIC8gMjAwMCBbIDk1JV0gIChTYW1wbGluZykgXG5DaGFpbiA0IEl0ZXJhdGlvbjogMjAwMCAvIDIwMDAgWzEwMCVdICAoU2FtcGxpbmcpIFxuQ2hhaW4gNCBmaW5pc2hlZCBpbiAxLjYgc2Vjb25kcy5cblxuQWxsIDQgY2hhaW5zIGZpbmlzaGVkIHN1Y2Nlc3NmdWxseS5cbk1lYW4gY2hhaW4gZXhlY3V0aW9uIHRpbWU6IDEuNSBzZWNvbmRzLlxuVG90YWwgZXhlY3V0aW9uIHRpbWU6IDEuNyBzZWNvbmRzLlxuIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSBcbiAgIERhdGE6IGFzLmRhdGEuZnJhbWUoZGF0YSkgKE51bWJlciBvZiBvYnNlcnZhdGlvbnM6IDQ5KSBcblNhbXBsZXM6IDQgY2hhaW5zLCBlYWNoIHdpdGggaXRlciA9IDIwMDA7IHdhcm11cCA9IDEwMDA7IHRoaW4gPSAxO1xuICAgICAgICAgdG90YWwgcG9zdC13YXJtdXAgc2FtcGxlcyA9IDQwMDBcblxuR3JvdXAtTGV2ZWwgRWZmZWN0czogXG5+c2Vzc2lvbiAoTnVtYmVyIG9mIGxldmVsczogMjcpIFxuICAgICAgICAgICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0kgdS05NSUgQ0lcbnNkKEludGVyY2VwdCkgICAgIDAuNDYgICAgICAwLjEzICAgICAwLjIwICAgICAwLjcxXG4gICAgICAgICAgICAgIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbnNkKEludGVyY2VwdCkgMS4wMCAgICAgMTE3MSAgICAgMTYwOFxuXG5Qb3B1bGF0aW9uLUxldmVsIEVmZmVjdHM6IFxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0lcbkludGVyY2VwdCAgICAgICAgICAgICAgICAgIDcuMzIgICAgICAwLjEzICAgICA3LjA2XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgIC0wLjA2ICAgICAgMC4wOCAgICAtMC4yMlxuICAgICAgICAgICAgICAgICAgICAgICB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTXG5JbnRlcmNlcHQgICAgICAgICAgICAgICAgICA3LjU3IDEuMDAgICAgIDIxNDdcbmhpZ2hfZGVidF92ZXJzaW9uZmFsc2UgICAgIDAuMTAgMS4wMCAgICAgNjIzMlxuICAgICAgICAgICAgICAgICAgICAgICBUYWlsX0VTU1xuSW50ZXJjZXB0ICAgICAgICAgICAgICAgICAgMjMyMlxuaGlnaF9kZWJ0X3ZlcnNpb25mYWxzZSAgICAgMzE0NVxuXG5GYW1pbHkgU3BlY2lmaWMgUGFyYW1ldGVyczogXG4gICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0kgdS05NSUgQ0kgUmhhdFxuc2hhcGUgICAgIDQuMTAgICAgICAxLjE0ICAgICAyLjI1ICAgICA2Ljc0IDEuMDBcbiAgICAgIEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgMTM5NCAgICAgMjMyMFxuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 4 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 4 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 4 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 4 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 4 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 4 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 4 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 4 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 4 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 4 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 1.5 seconds.
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 1.5 seconds.
+Chain 3 finished in 1.5 seconds.
+Chain 4 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 1.6 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 1.5 seconds.
+Total execution time: 1.7 seconds.
+ Family: negbinomial 
   Links: mu = log; shape = identity 
 Formula: time ~ 1 + high_debt_version + (1 | c | session) 
-   Data: as.data.frame(d.completed) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 5000; warmup = 2500; thin = 1;
-         total post-warmup samples = 10000
+   Data: as.data.frame(data) (Number of observations: 49) 
+Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup samples = 4000
 
 Group-Level Effects: 
 ~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.45      0.14     0.17     0.73 1.00     1945     2097
+              Estimate Est.Error l-95% CI u-95% CI
+sd(Intercept)     0.46      0.13     0.20     0.71
+              Rhat Bulk_ESS Tail_ESS
+sd(Intercept) 1.00     1171     1608
 
 Population-Level Effects: 
-                       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                  7.32      0.13     7.04     7.57 1.00     4366     4606
-high_debt_versionfalse    -0.06      0.08    -0.22     0.11 1.00    15390     7164
+                       Estimate Est.Error l-95% CI
+Intercept                  7.32      0.13     7.06
+high_debt_versionfalse    -0.06      0.08    -0.22
+                       u-95% CI Rhat Bulk_ESS
+Intercept                  7.57 1.00     2147
+high_debt_versionfalse     0.10 1.00     6232
+                       Tail_ESS
+Intercept                  2322
+high_debt_versionfalse     3145
 
 Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.08      1.15     2.22     6.74 1.00     2924     4637
+      Estimate Est.Error l-95% CI u-95% CI Rhat
+shape     4.10      1.14     2.25     6.74 1.00
+      Bulk_ESS Tail_ESS
+shape     1394     2320
 
 Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
 scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud2l0aCA8LSBleHRlbmRhYmxlX21vZGVsKFxuICBiYXNlX25hbWUgPSBcInRpbWUwXCIsXG4gIGJhc2VfZm9ybXVsYSA9IFwidGltZSB+IDEgKyBoaWdoX2RlYnRfdmVyc2lvbiArICgxIHwgYyB8IHNlc3Npb24pXCIsXG4gIGJhc2VfcHJpb3JzID0gYyhcbiAgICBwcmlvcihub3JtYWwoMCwgMC4xKSwgY2xhc3MgPSBcImJcIiksXG4gICAgcHJpb3Iobm9ybWFsKDAsIDEpLCBjbGFzcyA9IFwiSW50ZXJjZXB0XCIpLFxuICAgIHByaW9yKGV4cG9uZW50aWFsKDEpLCBjbGFzcyA9IFwic2RcIiksXG4gICAgcHJpb3IoZ2FtbWEoMC4wMSwgMC4wMSksIGNsYXNzID0gXCJzaGFwZVwiKVxuICApLFxuICBmYW1pbHkgPSBuZWdiaW5vbWlhbCgpLFxuICBkYXRhID0gZC5jb21wbGV0ZWRcbilcbmBgYCJ9 -->
-<pre class="r"><code>time0.with &lt;- extendable_model(
-  base_name = &quot;time0&quot;,
-  base_formula = &quot;time ~ 1 + high_debt_version + (1 | c | session)&quot;,
-  base_priors = c(
-    prior(normal(0, 0.1), class = &quot;b&quot;),
-    prior(normal(0, 1), class = &quot;Intercept&quot;),
-    prior(exponential(1), class = &quot;sd&quot;),
-    prior(gamma(0.01, 0.01), class = &quot;shape&quot;)
-  ),
-  family = negbinomial(),
-  data = d.completed
-)</code></pre>
-<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -323,43 +638,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.work_domain)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIHdvcmtfZG9tYWluIFxuICAgRGF0YTogYXMuZGF0YS5mcmFtZShkYXRhKSAoTnVtYmVyIG9mIG9ic2VydmF0aW9uczogNDkpIFxuU2FtcGxlczogNCBjaGFpbnMsIGVhY2ggd2l0aCBpdGVyID0gMjAwMDsgd2FybXVwID0gMTAwMDsgdGhpbiA9IDE7XG4gICAgICAgICB0b3RhbCBwb3N0LXdhcm11cCBzYW1wbGVzID0gNDAwMFxuXG5Hcm91cC1MZXZlbCBFZmZlY3RzOiBcbn5zZXNzaW9uIChOdW1iZXIgb2YgbGV2ZWxzOiAyNykgXG4gICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zZChJbnRlcmNlcHQpICAgICAwLjQ0ICAgICAgMC4xNCAgICAgMC4xNSAgICAgMC43MiAxLjAwICAgICAgODQxICAgICAgNjY2XG5cblBvcHVsYXRpb24tTGV2ZWwgRWZmZWN0czogXG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5JbnRlcmNlcHQgICAgICAgICAgICAgICAgICA3LjMyICAgICAgMC4xNCAgICAgNy4wNCAgICAgNy41OCAxLjAwICAgICAyMzM2ICAgICAyNTU1XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgIC0wLjA2ICAgICAgMC4wOCAgICAtMC4yMiAgICAgMC4xMCAxLjAwICAgICA3OTgwICAgICAyOTk1XG53b3JrX2RvbWFpbkF1dG9tb3RpdmUgICAgICAwLjAzICAgICAgMC4xMCAgICAtMC4xNiAgICAgMC4yMSAxLjAwICAgICA3MzU0ICAgICAyNzIwXG53b3JrX2RvbWFpbkRldm9wcyAgICAgICAgICAwLjAxICAgICAgMC4xMCAgICAtMC4xOCAgICAgMC4xOSAxLjAwICAgICA4MzE4ICAgICAzMTg5XG53b3JrX2RvbWFpbkVNQ29tbWVyY2UgICAgICAwLjAwICAgICAgMC4xMCAgICAtMC4yMCAgICAgMC4xOSAxLjAwICAgICA4NzY4ICAgICAyNjU4XG53b3JrX2RvbWFpbkVtYmVkZGVkICAgICAgICAwLjAwICAgICAgMC4xMCAgICAtMC4yMCAgICAgMC4yMCAxLjAwICAgIDEwMzQ2ICAgICAyOTU5XG53b3JrX2RvbWFpbkZpbmFuY2UgICAgICAgIC0wLjAxICAgICAgMC4xMCAgICAtMC4yMCAgICAgMC4xOCAxLjAwICAgICA4MjM1ICAgICAyODg5XG53b3JrX2RvbWFpbk1peGVkICAgICAgICAgICAwLjAwICAgICAgMC4xMCAgICAtMC4xOSAgICAgMC4yMCAxLjAwICAgICA4NDE5ICAgICAyODM1XG53b3JrX2RvbWFpbk11c2ljICAgICAgICAgIC0wLjAyICAgICAgMC4xMCAgICAtMC4yMSAgICAgMC4xNyAxLjAwICAgICA4MjMxICAgICAyNzcyXG53b3JrX2RvbWFpbk5vbmUgICAgICAgICAgIC0wLjAwICAgICAgMC4xMCAgICAtMC4xOSAgICAgMC4xOCAxLjAwICAgICA2NzIyICAgICAzMTUwXG53b3JrX2RvbWFpblJldGFpbCAgICAgICAgICAwLjA0ICAgICAgMC4xMCAgICAtMC4xNiAgICAgMC4yMyAxLjAwICAgICA4MzQyICAgICAzMDUwXG53b3JrX2RvbWFpblRlbGVjb20gICAgICAgIC0wLjAxICAgICAgMC4xMCAgICAtMC4yMCAgICAgMC4xOSAxLjAwICAgICA3NTY3ICAgICAzMDc4XG53b3JrX2RvbWFpbldlYiAgICAgICAgICAgIC0wLjAzICAgICAgMC4wOSAgICAtMC4yMSAgICAgMC4xNiAxLjAwICAgICA2ODQyICAgICAzMTcxXG5cbkZhbWlseSBTcGVjaWZpYyBQYXJhbWV0ZXJzOiBcbiAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgNC4wMyAgICAgIDEuMTEgICAgIDIuMTUgICAgIDYuNTAgMS4wMCAgICAgMTQ0NyAgICAgMTk4MFxuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + work_domain 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.44      0.14     0.15     0.72 1.00      841      666
-
-Population-Level Effects: 
-                       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                  7.32      0.14     7.04     7.58 1.00     2336     2555
-high_debt_versionfalse    -0.06      0.08    -0.22     0.10 1.00     7980     2995
-work_domainAutomotive      0.03      0.10    -0.16     0.21 1.00     7354     2720
-work_domainDevops          0.01      0.10    -0.18     0.19 1.00     8318     3189
-work_domainEMCommerce      0.00      0.10    -0.20     0.19 1.00     8768     2658
-work_domainEmbedded        0.00      0.10    -0.20     0.20 1.00    10346     2959
-work_domainFinance        -0.01      0.10    -0.20     0.18 1.00     8235     2889
-work_domainMixed           0.00      0.10    -0.19     0.20 1.00     8419     2835
-work_domainMusic          -0.02      0.10    -0.21     0.17 1.00     8231     2772
-work_domainNone           -0.00      0.10    -0.19     0.18 1.00     6722     3150
-work_domainRetail          0.04      0.10    -0.16     0.23 1.00     8342     3050
-work_domainTelecom        -0.01      0.10    -0.20     0.19 1.00     7567     3078
-work_domainWeb            -0.03      0.09    -0.21     0.16 1.00     6842     3171
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.03      1.11     2.15     6.50 1.00     1447     1980
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -369,33 +647,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.work_experience_programming)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIHdvcmtfZXhwZXJpZW5jZV9wcm9ncmFtbWluZy5zIFxuICAgRGF0YTogYXMuZGF0YS5mcmFtZShkYXRhKSAoTnVtYmVyIG9mIG9ic2VydmF0aW9uczogNDkpIFxuU2FtcGxlczogNCBjaGFpbnMsIGVhY2ggd2l0aCBpdGVyID0gMjAwMDsgd2FybXVwID0gMTAwMDsgdGhpbiA9IDE7XG4gICAgICAgICB0b3RhbCBwb3N0LXdhcm11cCBzYW1wbGVzID0gNDAwMFxuXG5Hcm91cC1MZXZlbCBFZmZlY3RzOiBcbn5zZXNzaW9uIChOdW1iZXIgb2YgbGV2ZWxzOiAyNykgXG4gICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zZChJbnRlcmNlcHQpICAgICAwLjQ2ICAgICAgMC4xMyAgICAgMC4xOCAgICAgMC43MiAxLjAwICAgICAgNzQ1ICAgICAxMDk1XG5cblBvcHVsYXRpb24tTGV2ZWwgRWZmZWN0czogXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0kgdS05NSUgQ0kgUmhhdCBCdWxrX0VTUyBUYWlsX0VTU1xuSW50ZXJjZXB0ICAgICAgICAgICAgICAgICAgICAgICAgIDcuMzIgICAgICAwLjEzICAgICA3LjA0ICAgICA3LjU4IDEuMDAgICAgIDEzNjggICAgIDE5MjBcbmhpZ2hfZGVidF92ZXJzaW9uZmFsc2UgICAgICAgICAgIC0wLjA2ICAgICAgMC4wOCAgICAtMC4yMiAgICAgMC4xMCAxLjAwICAgICA1MjM1ICAgICAzMTE1XG53b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcucyAgICAtMC4wMSAgICAgIDAuMDggICAgLTAuMTYgICAgIDAuMTQgMS4wMCAgICAgMjk0MiAgICAgMjg2M1xuXG5GYW1pbHkgU3BlY2lmaWMgUGFyYW1ldGVyczogXG4gICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0kgdS05NSUgQ0kgUmhhdCBCdWxrX0VTUyBUYWlsX0VTU1xuc2hhcGUgICAgIDQuMTAgICAgICAxLjE0ICAgICAyLjIxICAgICA2LjYyIDEuMDAgICAgIDEyODUgICAgIDIxMDBcblxuU2FtcGxlcyB3ZXJlIGRyYXduIHVzaW5nIHNhbXBsZShobWMpLiBGb3IgZWFjaCBwYXJhbWV0ZXIsIEJ1bGtfRVNTXG5hbmQgVGFpbF9FU1MgYXJlIGVmZmVjdGl2ZSBzYW1wbGUgc2l6ZSBtZWFzdXJlcywgYW5kIFJoYXQgaXMgdGhlIHBvdGVudGlhbFxuc2NhbGUgcmVkdWN0aW9uIGZhY3RvciBvbiBzcGxpdCBjaGFpbnMgKGF0IGNvbnZlcmdlbmNlLCBSaGF0ID0gMSkuXG4ifQ== -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + work_experience_programming.s 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.46      0.13     0.18     0.72 1.00      745     1095
-
-Population-Level Effects: 
-                              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                         7.32      0.13     7.04     7.58 1.00     1368     1920
-high_debt_versionfalse           -0.06      0.08    -0.22     0.10 1.00     5235     3115
-work_experience_programming.s    -0.01      0.08    -0.16     0.14 1.00     2942     2863
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.10      1.14     2.21     6.62 1.00     1285     2100
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -405,33 +656,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.work_experience_java)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIHdvcmtfZXhwZXJpZW5jZV9qYXZhLnMgXG4gICBEYXRhOiBhcy5kYXRhLmZyYW1lKGRhdGEpIChOdW1iZXIgb2Ygb2JzZXJ2YXRpb25zOiA0OSkgXG5TYW1wbGVzOiA0IGNoYWlucywgZWFjaCB3aXRoIGl0ZXIgPSAyMDAwOyB3YXJtdXAgPSAxMDAwOyB0aGluID0gMTtcbiAgICAgICAgIHRvdGFsIHBvc3Qtd2FybXVwIHNhbXBsZXMgPSA0MDAwXG5cbkdyb3VwLUxldmVsIEVmZmVjdHM6IFxufnNlc3Npb24gKE51bWJlciBvZiBsZXZlbHM6IDI3KSBcbiAgICAgICAgICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbnNkKEludGVyY2VwdCkgICAgIDAuNDUgICAgICAwLjEzICAgICAwLjE4ICAgICAwLjczIDEuMDAgICAgICA5ODMgICAgIDEwNDdcblxuUG9wdWxhdGlvbi1MZXZlbCBFZmZlY3RzOiBcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbkludGVyY2VwdCAgICAgICAgICAgICAgICAgIDcuMzMgICAgICAwLjEzICAgICA3LjA3ICAgICA3LjU4IDEuMDAgICAgIDE4MDYgICAgIDIxNjZcbmhpZ2hfZGVidF92ZXJzaW9uZmFsc2UgICAgLTAuMDYgICAgICAwLjA4ICAgIC0wLjIzICAgICAwLjExIDEuMDAgICAgIDQ5NzcgICAgIDMyMTBcbndvcmtfZXhwZXJpZW5jZV9qYXZhLnMgICAgLTAuMDIgICAgICAwLjA3ICAgIC0wLjE3ICAgICAwLjEyIDEuMDAgICAgIDMyMjUgICAgIDI2NjRcblxuRmFtaWx5IFNwZWNpZmljIFBhcmFtZXRlcnM6IFxuICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbnNoYXBlICAgICA0LjAyICAgICAgMS4xMyAgICAgMi4xNSAgICAgNi42MCAxLjAwICAgICAxMzEzICAgICAyMDYzXG5cblNhbXBsZXMgd2VyZSBkcmF3biB1c2luZyBzYW1wbGUoaG1jKS4gRm9yIGVhY2ggcGFyYW1ldGVyLCBCdWxrX0VTU1xuYW5kIFRhaWxfRVNTIGFyZSBlZmZlY3RpdmUgc2FtcGxlIHNpemUgbWVhc3VyZXMsIGFuZCBSaGF0IGlzIHRoZSBwb3RlbnRpYWxcbnNjYWxlIHJlZHVjdGlvbiBmYWN0b3Igb24gc3BsaXQgY2hhaW5zIChhdCBjb252ZXJnZW5jZSwgUmhhdCA9IDEpLlxuIn0= -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + work_experience_java.s 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.45      0.13     0.18     0.73 1.00      983     1047
-
-Population-Level Effects: 
-                       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                  7.33      0.13     7.07     7.58 1.00     1806     2166
-high_debt_versionfalse    -0.06      0.08    -0.23     0.11 1.00     4977     3210
-work_experience_java.s    -0.02      0.07    -0.17     0.12 1.00     3225     2664
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.02      1.13     2.15     6.60 1.00     1313     2063
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -441,36 +665,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.education_field)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIGVkdWNhdGlvbl9maWVsZCBcbiAgIERhdGE6IGFzLmRhdGEuZnJhbWUoZGF0YSkgKE51bWJlciBvZiBvYnNlcnZhdGlvbnM6IDQ5KSBcblNhbXBsZXM6IDQgY2hhaW5zLCBlYWNoIHdpdGggaXRlciA9IDIwMDA7IHdhcm11cCA9IDEwMDA7IHRoaW4gPSAxO1xuICAgICAgICAgdG90YWwgcG9zdC13YXJtdXAgc2FtcGxlcyA9IDQwMDBcblxuR3JvdXAtTGV2ZWwgRWZmZWN0czogXG5+c2Vzc2lvbiAoTnVtYmVyIG9mIGxldmVsczogMjcpIFxuICAgICAgICAgICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0kgdS05NSUgQ0kgUmhhdCBCdWxrX0VTUyBUYWlsX0VTU1xuc2QoSW50ZXJjZXB0KSAgICAgMC40NCAgICAgIDAuMTQgICAgIDAuMTYgICAgIDAuNzEgMS4wMCAgICAgIDg4NyAgICAgIDcxMFxuXG5Qb3B1bGF0aW9uLUxldmVsIEVmZmVjdHM6IFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5JbnRlcmNlcHQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDcuMzIgICAgICAwLjE0ICAgICA3LjAzICAgICA3LjYwIDEuMDAgICAgIDIyODQgICAgIDI2OTVcbmhpZ2hfZGVidF92ZXJzaW9uZmFsc2UgICAgICAgICAgICAgICAgICAtMC4wNiAgICAgIDAuMDggICAgLTAuMjEgICAgIDAuMTEgMS4wMCAgICAgNzA3NSAgICAgMzE3OVxuZWR1Y2F0aW9uX2ZpZWxkQ29tcHV0ZXJTY2llbmNlICAgICAgICAgIC0wLjAyICAgICAgMC4wOSAgICAtMC4xOSAgICAgMC4xNyAxLjAwICAgICA1NTQyICAgICAzMjA3XG5lZHVjYXRpb25fZmllbGRFbGVjdHJpY2FsRW5naW5lZXJpbmcgICAgLTAuMDIgICAgICAwLjEwICAgIC0wLjIyICAgICAwLjE4IDEuMDAgICAgIDY0NjUgICAgIDMwNTRcbmVkdWNhdGlvbl9maWVsZE5vbmUgICAgICAgICAgICAgICAgICAgICAgMC4wNCAgICAgIDAuMTAgICAgLTAuMTYgICAgIDAuMjMgMS4wMCAgICAgNjA0MSAgICAgMzA3OFxuZWR1Y2F0aW9uX2ZpZWxkU29mdHdhcmVFbmdpbmVlcmluZyAgICAgIC0wLjAwICAgICAgMC4wOSAgICAtMC4xOCAgICAgMC4xOCAxLjAwICAgICA1NTM5ICAgICAzMzE4XG5cbkZhbWlseSBTcGVjaWZpYyBQYXJhbWV0ZXJzOiBcbiAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgNC4wMiAgICAgIDEuMTMgICAgIDIuMjQgICAgIDYuNTkgMS4wMCAgICAgMTI0MSAgICAgMTcyNFxuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + education_field 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.44      0.14     0.16     0.71 1.00      887      710
-
-Population-Level Effects: 
-                                     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                                7.32      0.14     7.03     7.60 1.00     2284     2695
-high_debt_versionfalse                  -0.06      0.08    -0.21     0.11 1.00     7075     3179
-education_fieldComputerScience          -0.02      0.09    -0.19     0.17 1.00     5542     3207
-education_fieldElectricalEngineering    -0.02      0.10    -0.22     0.18 1.00     6465     3054
-education_fieldNone                      0.04      0.10    -0.16     0.23 1.00     6041     3078
-education_fieldSoftwareEngineering      -0.00      0.09    -0.18     0.18 1.00     5539     3318
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.02      1.13     2.24     6.59 1.00     1241     1724
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -485,40 +679,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.education_level)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIG1vKGVkdWNhdGlvbl9sZXZlbCkgXG4gICBEYXRhOiBhcy5kYXRhLmZyYW1lKGRhdGEpIChOdW1iZXIgb2Ygb2JzZXJ2YXRpb25zOiA0OSkgXG5TYW1wbGVzOiA0IGNoYWlucywgZWFjaCB3aXRoIGl0ZXIgPSAyMDAwOyB3YXJtdXAgPSAxMDAwOyB0aGluID0gMTtcbiAgICAgICAgIHRvdGFsIHBvc3Qtd2FybXVwIHNhbXBsZXMgPSA0MDAwXG5cbkdyb3VwLUxldmVsIEVmZmVjdHM6IFxufnNlc3Npb24gKE51bWJlciBvZiBsZXZlbHM6IDI3KSBcbiAgICAgICAgICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbnNkKEludGVyY2VwdCkgICAgIDAuNDUgICAgICAwLjE0ICAgICAwLjE0ICAgICAwLjczIDEuMDAgICAgICA4NjEgICAgIDEwMDRcblxuUG9wdWxhdGlvbi1MZXZlbCBFZmZlY3RzOiBcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbkludGVyY2VwdCAgICAgICAgICAgICAgICAgIDcuMzAgICAgICAwLjI0ICAgICA2Ljc5ICAgICA3LjczIDEuMDAgICAgIDExMDggICAgIDE1NzNcbmhpZ2hfZGVidF92ZXJzaW9uZmFsc2UgICAgLTAuMDYgICAgICAwLjA4ICAgIC0wLjIzICAgICAwLjExIDEuMDAgICAgIDUzMzEgICAgIDI5NTlcbm1vZWR1Y2F0aW9uX2xldmVsICAgICAgICAgIDAuMDAgICAgICAwLjA4ICAgIC0wLjE0ICAgICAwLjE2IDEuMDAgICAgIDE0MTAgICAgIDE5NDFcblxuU2ltcGxleCBQYXJhbWV0ZXJzOiBcbiAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0kgdS05NSUgQ0kgUmhhdCBCdWxrX0VTUyBUYWlsX0VTU1xubW9lZHVjYXRpb25fbGV2ZWwxWzFdICAgICAwLjI2ICAgICAgMC4xNSAgICAgMC4wNCAgICAgMC42MSAxLjAwICAgICAzNzIwICAgICAyMjY3XG5tb2VkdWNhdGlvbl9sZXZlbDFbMl0gICAgIDAuMjQgICAgICAwLjE0ICAgICAwLjAzICAgICAwLjU3IDEuMDAgICAgIDQ0MTMgICAgIDI3MTRcbm1vZWR1Y2F0aW9uX2xldmVsMVszXSAgICAgMC4yNCAgICAgIDAuMTQgICAgIDAuMDQgICAgIDAuNTcgMS4wMCAgICAgNDA2NyAgICAgMjg3NVxubW9lZHVjYXRpb25fbGV2ZWwxWzRdICAgICAwLjI2ICAgICAgMC4xNSAgICAgMC4wNCAgICAgMC42MCAxLjAwICAgICAzNDc3ICAgICAzMDIxXG5cbkZhbWlseSBTcGVjaWZpYyBQYXJhbWV0ZXJzOiBcbiAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgNC4wMSAgICAgIDEuMTQgICAgIDIuMTYgICAgIDYuNTcgMS4wMCAgICAgMTE1MSAgICAgMTg3NVxuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + mo(education_level) 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.45      0.14     0.14     0.73 1.00      861     1004
-
-Population-Level Effects: 
-                       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                  7.30      0.24     6.79     7.73 1.00     1108     1573
-high_debt_versionfalse    -0.06      0.08    -0.23     0.11 1.00     5331     2959
-moeducation_level          0.00      0.08    -0.14     0.16 1.00     1410     1941
-
-Simplex Parameters: 
-                      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-moeducation_level1[1]     0.26      0.15     0.04     0.61 1.00     3720     2267
-moeducation_level1[2]     0.24      0.14     0.03     0.57 1.00     4413     2714
-moeducation_level1[3]     0.24      0.14     0.04     0.57 1.00     4067     2875
-moeducation_level1[4]     0.26      0.15     0.04     0.60 1.00     3477     3021
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.01      1.14     2.16     6.57 1.00     1151     1875
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud29ya3BsYWNlX3BlZXJfcmV2aWV3IDwtIHRpbWUwLndpdGgoXCJ3b3JrcGxhY2VfcGVlcl9yZXZpZXdcIilcblxuc3VtbWFyeSh0aW1lMC53b3JrcGxhY2VfcGVlcl9yZXZpZXcpXG5gYGAifQ== -->
@@ -526,33 +686,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.workplace_peer_review)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIHdvcmtwbGFjZV9wZWVyX3JldmlldyBcbiAgIERhdGE6IGFzLmRhdGEuZnJhbWUoZGF0YSkgKE51bWJlciBvZiBvYnNlcnZhdGlvbnM6IDQ5KSBcblNhbXBsZXM6IDQgY2hhaW5zLCBlYWNoIHdpdGggaXRlciA9IDIwMDA7IHdhcm11cCA9IDEwMDA7IHRoaW4gPSAxO1xuICAgICAgICAgdG90YWwgcG9zdC13YXJtdXAgc2FtcGxlcyA9IDQwMDBcblxuR3JvdXAtTGV2ZWwgRWZmZWN0czogXG5+c2Vzc2lvbiAoTnVtYmVyIG9mIGxldmVsczogMjcpIFxuICAgICAgICAgICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0kgdS05NSUgQ0kgUmhhdCBCdWxrX0VTUyBUYWlsX0VTU1xuc2QoSW50ZXJjZXB0KSAgICAgMC40MyAgICAgIDAuMTQgICAgIDAuMTYgICAgIDAuNzAgMS4wMCAgICAgIDk0MCAgICAgMTEyMVxuXG5Qb3B1bGF0aW9uLUxldmVsIEVmZmVjdHM6IFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbkludGVyY2VwdCAgICAgICAgICAgICAgICAgICAgICA3LjMwICAgICAgMC4xMyAgICAgNy4wMyAgICAgNy41NiAxLjAwICAgICAyNDU5ICAgICAyNTI1XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgICAgICAtMC4wNiAgICAgIDAuMDggICAgLTAuMjIgICAgIDAuMTAgMS4wMCAgICAgNzIwOSAgICAgMzIwN1xud29ya3BsYWNlX3BlZXJfcmV2aWV3ZmFsc2UgICAgIDAuMDYgICAgICAwLjEwICAgIC0wLjEyICAgICAwLjI1IDEuMDAgICAgIDQ0MTAgICAgIDI5NThcblxuRmFtaWx5IFNwZWNpZmljIFBhcmFtZXRlcnM6IFxuICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbnNoYXBlICAgICA0LjAzICAgICAgMS4xMyAgICAgMi4xOCAgICAgNi41MyAxLjAwICAgICAxNDE4ICAgICAyMjkyXG5cblNhbXBsZXMgd2VyZSBkcmF3biB1c2luZyBzYW1wbGUoaG1jKS4gRm9yIGVhY2ggcGFyYW1ldGVyLCBCdWxrX0VTU1xuYW5kIFRhaWxfRVNTIGFyZSBlZmZlY3RpdmUgc2FtcGxlIHNpemUgbWVhc3VyZXMsIGFuZCBSaGF0IGlzIHRoZSBwb3RlbnRpYWxcbnNjYWxlIHJlZHVjdGlvbiBmYWN0b3Igb24gc3BsaXQgY2hhaW5zIChhdCBjb252ZXJnZW5jZSwgUmhhdCA9IDEpLlxuIn0= -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + workplace_peer_review 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.43      0.14     0.16     0.70 1.00      940     1121
-
-Population-Level Effects: 
-                           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                      7.30      0.13     7.03     7.56 1.00     2459     2525
-high_debt_versionfalse        -0.06      0.08    -0.22     0.10 1.00     7209     3207
-workplace_peer_reviewfalse     0.06      0.10    -0.12     0.25 1.00     4410     2958
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.03      1.13     2.18     6.53 1.00     1418     2292
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -562,33 +695,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.workplace_td_tracking)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIHdvcmtwbGFjZV90ZF90cmFja2luZyBcbiAgIERhdGE6IGFzLmRhdGEuZnJhbWUoZGF0YSkgKE51bWJlciBvZiBvYnNlcnZhdGlvbnM6IDQ5KSBcblNhbXBsZXM6IDQgY2hhaW5zLCBlYWNoIHdpdGggaXRlciA9IDIwMDA7IHdhcm11cCA9IDEwMDA7IHRoaW4gPSAxO1xuICAgICAgICAgdG90YWwgcG9zdC13YXJtdXAgc2FtcGxlcyA9IDQwMDBcblxuR3JvdXAtTGV2ZWwgRWZmZWN0czogXG5+c2Vzc2lvbiAoTnVtYmVyIG9mIGxldmVsczogMjcpIFxuICAgICAgICAgICAgICBFc3RpbWF0ZSBFc3QuRXJyb3IgbC05NSUgQ0kgdS05NSUgQ0kgUmhhdCBCdWxrX0VTUyBUYWlsX0VTU1xuc2QoSW50ZXJjZXB0KSAgICAgMC40NCAgICAgIDAuMTMgICAgIDAuMTUgICAgIDAuNzEgMS4wMCAgICAgIDYzNiAgICAgIDY0NVxuXG5Qb3B1bGF0aW9uLUxldmVsIEVmZmVjdHM6IFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbkludGVyY2VwdCAgICAgICAgICAgICAgICAgICAgICA3LjMxICAgICAgMC4xNSAgICAgNy4wMSAgICAgNy41OSAxLjAwICAgICAyMDcyICAgICAxODY3XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgICAgICAtMC4wNiAgICAgIDAuMDggICAgLTAuMjIgICAgIDAuMTAgMS4wMCAgICAgMzkyMyAgICAgMjY2M1xud29ya3BsYWNlX3RkX3RyYWNraW5nZmFsc2UgICAgIDAuMDEgICAgICAwLjA5ICAgIC0wLjE3ICAgICAwLjE4IDEuMDAgICAgIDQ2ODYgICAgIDMyMTZcblxuRmFtaWx5IFNwZWNpZmljIFBhcmFtZXRlcnM6IFxuICAgICAgRXN0aW1hdGUgRXN0LkVycm9yIGwtOTUlIENJIHUtOTUlIENJIFJoYXQgQnVsa19FU1MgVGFpbF9FU1NcbnNoYXBlICAgICA0LjAzICAgICAgMS4xMyAgICAgMi4xOCAgICAgNi41NCAxLjAwICAgICAxMDQyICAgICAxNzQ3XG5cblNhbXBsZXMgd2VyZSBkcmF3biB1c2luZyBzYW1wbGUoaG1jKS4gRm9yIGVhY2ggcGFyYW1ldGVyLCBCdWxrX0VTU1xuYW5kIFRhaWxfRVNTIGFyZSBlZmZlY3RpdmUgc2FtcGxlIHNpemUgbWVhc3VyZXMsIGFuZCBSaGF0IGlzIHRoZSBwb3RlbnRpYWxcbnNjYWxlIHJlZHVjdGlvbiBmYWN0b3Igb24gc3BsaXQgY2hhaW5zIChhdCBjb252ZXJnZW5jZSwgUmhhdCA9IDEpLlxuIn0= -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + workplace_td_tracking 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.44      0.13     0.15     0.71 1.00      636      645
-
-Population-Level Effects: 
-                           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                      7.31      0.15     7.01     7.59 1.00     2072     1867
-high_debt_versionfalse        -0.06      0.08    -0.22     0.10 1.00     3923     2663
-workplace_td_trackingfalse     0.01      0.09    -0.17     0.18 1.00     4686     3216
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.03      1.13     2.18     6.54 1.00     1042     1747
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -598,33 +704,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.workplace_pair_programming)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIHdvcmtwbGFjZV9wYWlyX3Byb2dyYW1taW5nIFxuICAgRGF0YTogYXMuZGF0YS5mcmFtZShkYXRhKSAoTnVtYmVyIG9mIG9ic2VydmF0aW9uczogNDkpIFxuU2FtcGxlczogNCBjaGFpbnMsIGVhY2ggd2l0aCBpdGVyID0gMjAwMDsgd2FybXVwID0gMTAwMDsgdGhpbiA9IDE7XG4gICAgICAgICB0b3RhbCBwb3N0LXdhcm11cCBzYW1wbGVzID0gNDAwMFxuXG5Hcm91cC1MZXZlbCBFZmZlY3RzOiBcbn5zZXNzaW9uIChOdW1iZXIgb2YgbGV2ZWxzOiAyNykgXG4gICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zZChJbnRlcmNlcHQpICAgICAwLjQ1ICAgICAgMC4xMyAgICAgMC4xOCAgICAgMC43MCAxLjAwICAgICAxMDg4ICAgICAgODQ2XG5cblBvcHVsYXRpb24tTGV2ZWwgRWZmZWN0czogXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5JbnRlcmNlcHQgICAgICAgICAgICAgICAgICAgICAgICAgICA3LjMxICAgICAgMC4xNCAgICAgNy4wMyAgICAgNy41OCAxLjAwICAgICAyMzU5ICAgICAyMzk0XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgICAgICAgICAgIC0wLjA2ICAgICAgMC4wOCAgICAtMC4yMiAgICAgMC4xMSAxLjAwICAgICA2MTE1ICAgICAzMDY2XG53b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZ2ZhbHNlICAgICAwLjAyICAgICAgMC4wOSAgICAtMC4xNiAgICAgMC4xOSAxLjAwICAgICA1NzM1ICAgICAzMTA3XG5cbkZhbWlseSBTcGVjaWZpYyBQYXJhbWV0ZXJzOiBcbiAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgNC4wNiAgICAgIDEuMTIgICAgIDIuMTkgICAgIDYuNTcgMS4wMCAgICAgMTU5MiAgICAgMjAyM1xuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + workplace_pair_programming 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.45      0.13     0.18     0.70 1.00     1088      846
-
-Population-Level Effects: 
-                                Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                           7.31      0.14     7.03     7.58 1.00     2359     2394
-high_debt_versionfalse             -0.06      0.08    -0.22     0.11 1.00     6115     3066
-workplace_pair_programmingfalse     0.02      0.09    -0.16     0.19 1.00     5735     3107
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.06      1.12     2.19     6.57 1.00     1592     2023
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -634,33 +713,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.workplace_coding_standards)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIHdvcmtwbGFjZV9jb2Rpbmdfc3RhbmRhcmRzIFxuICAgRGF0YTogYXMuZGF0YS5mcmFtZShkYXRhKSAoTnVtYmVyIG9mIG9ic2VydmF0aW9uczogNDkpIFxuU2FtcGxlczogNCBjaGFpbnMsIGVhY2ggd2l0aCBpdGVyID0gMjAwMDsgd2FybXVwID0gMTAwMDsgdGhpbiA9IDE7XG4gICAgICAgICB0b3RhbCBwb3N0LXdhcm11cCBzYW1wbGVzID0gNDAwMFxuXG5Hcm91cC1MZXZlbCBFZmZlY3RzOiBcbn5zZXNzaW9uIChOdW1iZXIgb2YgbGV2ZWxzOiAyNykgXG4gICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zZChJbnRlcmNlcHQpICAgICAwLjQ0ICAgICAgMC4xNCAgICAgMC4xNCAgICAgMC43MiAxLjAxICAgICAgNzg2ICAgICAgNzEwXG5cblBvcHVsYXRpb24tTGV2ZWwgRWZmZWN0czogXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5JbnRlcmNlcHQgICAgICAgICAgICAgICAgICAgICAgICAgICA3LjMxICAgICAgMC4xNCAgICAgNy4wNCAgICAgNy41NyAxLjAwICAgICAyMjMwICAgICAyNDY5XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgICAgICAgICAgIC0wLjA2ICAgICAgMC4wOCAgICAtMC4yMiAgICAgMC4xMSAxLjAwICAgICA3MDg3ICAgICAyNzU2XG53b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkc2ZhbHNlICAgICAwLjA0ICAgICAgMC4wOSAgICAtMC4xNCAgICAgMC4yMSAxLjAwICAgICA0ODc1ICAgICAzMDEwXG5cbkZhbWlseSBTcGVjaWZpYyBQYXJhbWV0ZXJzOiBcbiAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgNC4wMiAgICAgIDEuMTYgICAgIDIuMTIgICAgIDYuNjUgMS4wMCAgICAgMTI0NCAgICAgMjA5NFxuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + workplace_coding_standards 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.44      0.14     0.14     0.72 1.01      786      710
-
-Population-Level Effects: 
-                                Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                           7.31      0.14     7.04     7.57 1.00     2230     2469
-high_debt_versionfalse             -0.06      0.08    -0.22     0.11 1.00     7087     2756
-workplace_coding_standardsfalse     0.04      0.09    -0.14     0.21 1.00     4875     3010
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.02      1.16     2.12     6.65 1.00     1244     2094
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -670,33 +722,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.scenario)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIHNjZW5hcmlvIFxuICAgRGF0YTogYXMuZGF0YS5mcmFtZShkYXRhKSAoTnVtYmVyIG9mIG9ic2VydmF0aW9uczogNDkpIFxuU2FtcGxlczogNCBjaGFpbnMsIGVhY2ggd2l0aCBpdGVyID0gMjAwMDsgd2FybXVwID0gMTAwMDsgdGhpbiA9IDE7XG4gICAgICAgICB0b3RhbCBwb3N0LXdhcm11cCBzYW1wbGVzID0gNDAwMFxuXG5Hcm91cC1MZXZlbCBFZmZlY3RzOiBcbn5zZXNzaW9uIChOdW1iZXIgb2YgbGV2ZWxzOiAyNykgXG4gICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zZChJbnRlcmNlcHQpICAgICAwLjQ1ICAgICAgMC4xMyAgICAgMC4xNyAgICAgMC43MyAxLjAwICAgICAxMDA3ICAgICAxMDIwXG5cblBvcHVsYXRpb24tTGV2ZWwgRWZmZWN0czogXG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5JbnRlcmNlcHQgICAgICAgICAgICAgICAgICA3LjM3ICAgICAgMC4xMyAgICAgNy4xMCAgICAgNy42MyAxLjAwICAgICAyMjAzICAgICAyNjc5XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgIC0wLjA2ICAgICAgMC4wOCAgICAtMC4yMiAgICAgMC4xMSAxLjAwICAgICA1MzU5ICAgICAzMDc5XG5zY2VuYXJpb3RpY2tldHMgICAgICAgICAgIC0wLjA5ICAgICAgMC4wOCAgICAtMC4yNiAgICAgMC4wNyAxLjAwICAgICA2MDU0ICAgICAzMTY0XG5cbkZhbWlseSBTcGVjaWZpYyBQYXJhbWV0ZXJzOiBcbiAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgNC4zMCAgICAgIDEuMjQgICAgIDIuMjQgICAgIDcuMDQgMS4wMCAgICAgMTM3MyAgICAgMTkzNFxuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + scenario 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.45      0.13     0.17     0.73 1.00     1007     1020
-
-Population-Level Effects: 
-                       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                  7.37      0.13     7.10     7.63 1.00     2203     2679
-high_debt_versionfalse    -0.06      0.08    -0.22     0.11 1.00     5359     3079
-scenariotickets           -0.09      0.08    -0.26     0.07 1.00     6054     3164
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.30      1.24     2.24     7.04 1.00     1373     1934
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -706,37 +731,6 @@ scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 
 summary(time0.group)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIEZhbWlseTogbmVnYmlub21pYWwgXG4gIExpbmtzOiBtdSA9IGxvZzsgc2hhcGUgPSBpZGVudGl0eSBcbkZvcm11bGE6IHRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSArIGdyb3VwIFxuICAgRGF0YTogYXMuZGF0YS5mcmFtZShkYXRhKSAoTnVtYmVyIG9mIG9ic2VydmF0aW9uczogNDkpIFxuU2FtcGxlczogNCBjaGFpbnMsIGVhY2ggd2l0aCBpdGVyID0gMjAwMDsgd2FybXVwID0gMTAwMDsgdGhpbiA9IDE7XG4gICAgICAgICB0b3RhbCBwb3N0LXdhcm11cCBzYW1wbGVzID0gNDAwMFxuXG5Hcm91cC1MZXZlbCBFZmZlY3RzOiBcbn5zZXNzaW9uIChOdW1iZXIgb2YgbGV2ZWxzOiAyNykgXG4gICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zZChJbnRlcmNlcHQpICAgICAwLjQ1ICAgICAgMC4xMyAgICAgMC4xOSAgICAgMC43MSAxLjAwICAgICAxMDA4ICAgICAxMjk2XG5cblBvcHVsYXRpb24tTGV2ZWwgRWZmZWN0czogXG4gICAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5JbnRlcmNlcHQgICAgICAgICAgICAgICAgICAgICA3LjMxICAgICAgMC4xNCAgICAgNy4wNCAgICAgNy41OCAxLjAwICAgICAxOTgxICAgICAyMDk4XG5oaWdoX2RlYnRfdmVyc2lvbmZhbHNlICAgICAgIC0wLjA2ICAgICAgMC4wOCAgICAtMC4yMiAgICAgMC4xMSAxLjAwICAgICA2MDMzICAgICAyODM1XG5ncm91cGNvbnN1bHRhbnRzICAgICAgICAgICAgICAwLjAyICAgICAgMC4xMCAgICAtMC4xNiAgICAgMC4yMiAxLjAwICAgICA1MjIyICAgICAyOTM4XG5ncm91cGZyaWVuZHMgICAgICAgICAgICAgICAgIC0wLjAxICAgICAgMC4wOSAgICAtMC4xOSAgICAgMC4xOCAxLjAwICAgICA0OTg1ICAgICAyNjEwXG5ncm91cG9wZW4gICAgICAgICAgICAgICAgICAgIC0wLjAxICAgICAgMC4xMCAgICAtMC4yMCAgICAgMC4xOSAxLjAwICAgICA1NzYyICAgICAyOTI5XG5ncm91cHByb2Zlc3Npb25hbE1jb250YWN0ICAgIC0wLjAwICAgICAgMC4xMCAgICAtMC4yMCAgICAgMC4xOSAxLjAwICAgICA2MjYzICAgICAzMDU2XG5ncm91cHN0dWRlbnRzICAgICAgICAgICAgICAgICAwLjAyICAgICAgMC4wOSAgICAtMC4xNyAgICAgMC4yMCAxLjAwICAgICAzOTY2ICAgICAyNzIyXG5cbkZhbWlseSBTcGVjaWZpYyBQYXJhbWV0ZXJzOiBcbiAgICAgIEVzdGltYXRlIEVzdC5FcnJvciBsLTk1JSBDSSB1LTk1JSBDSSBSaGF0IEJ1bGtfRVNTIFRhaWxfRVNTXG5zaGFwZSAgICAgNC4wNyAgICAgIDEuMTIgICAgIDIuMTkgICAgIDYuNTMgMS4wMCAgICAgMTQyMyAgICAgMjAxNlxuXG5TYW1wbGVzIHdlcmUgZHJhd24gdXNpbmcgc2FtcGxlKGhtYykuIEZvciBlYWNoIHBhcmFtZXRlciwgQnVsa19FU1NcbmFuZCBUYWlsX0VTUyBhcmUgZWZmZWN0aXZlIHNhbXBsZSBzaXplIG1lYXN1cmVzLCBhbmQgUmhhdCBpcyB0aGUgcG90ZW50aWFsXG5zY2FsZSByZWR1Y3Rpb24gZmFjdG9yIG9uIHNwbGl0IGNoYWlucyAoYXQgY29udmVyZ2VuY2UsIFJoYXQgPSAxKS5cbiJ9 -->
-<pre><code> Family: negbinomial 
-  Links: mu = log; shape = identity 
-Formula: time ~ 1 + high_debt_version + (1 | c | session) + group 
-   Data: as.data.frame(data) (Number of observations: 49) 
-Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-         total post-warmup samples = 4000
-
-Group-Level Effects: 
-~session (Number of levels: 27) 
-              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sd(Intercept)     0.45      0.13     0.19     0.71 1.00     1008     1296
-
-Population-Level Effects: 
-                          Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept                     7.31      0.14     7.04     7.58 1.00     1981     2098
-high_debt_versionfalse       -0.06      0.08    -0.22     0.11 1.00     6033     2835
-groupconsultants              0.02      0.10    -0.16     0.22 1.00     5222     2938
-groupfriends                 -0.01      0.09    -0.19     0.18 1.00     4985     2610
-groupopen                    -0.01      0.10    -0.20     0.19 1.00     5762     2929
-groupprofessionalMcontact    -0.00      0.10    -0.20     0.19 1.00     6263     3056
-groupstudents                 0.02      0.09    -0.17     0.20 1.00     3966     2722
-
-Family Specific Parameters: 
-      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-shape     4.07      1.12     2.19     6.53 1.00     1423     2016
-
-Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
-and Tail_ESS are effective sample size measures, and Rhat is the potential
-scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -758,304 +752,9 @@ loo(
   time0.group
 )</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRm91bmQgNSBvYnNlcnZhdGlvbnMgd2l0aCBhIHBhcmV0b19rID4gMC43IGluIG1vZGVsICd0aW1lMCcuIEl0IGlzIHJlY29tbWVuZGVkIHRvIHNldCAnbW9tZW50X21hdGNoID0gVFJVRScgaW4gb3JkZXIgdG8gcGVyZm9ybSBtb21lbnQgbWF0Y2hpbmcgZm9yIHByb2JsZW1hdGljIG9ic2VydmF0aW9ucy4gRm91bmQgOCBvYnNlcnZhdGlvbnMgd2l0aCBhIHBhcmV0b19rID4gMC43IGluIG1vZGVsICd0aW1lMC53b3JrX2RvbWFpbicuIEl0IGlzIHJlY29tbWVuZGVkIHRvIHNldCAnbW9tZW50X21hdGNoID0gVFJVRScgaW4gb3JkZXIgdG8gcGVyZm9ybSBtb21lbnQgbWF0Y2hpbmcgZm9yIHByb2JsZW1hdGljIG9ic2VydmF0aW9ucy4gRm91bmQgNSBvYnNlcnZhdGlvbnMgd2l0aCBhIHBhcmV0b19rID4gMC43IGluIG1vZGVsICd0aW1lMC53b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcnLiBJdCBpcyByZWNvbW1lbmRlZCB0byBzZXQgJ21vbWVudF9tYXRjaCA9IFRSVUUnIGluIG9yZGVyIHRvIHBlcmZvcm0gbW9tZW50IG1hdGNoaW5nIGZvciBwcm9ibGVtYXRpYyBvYnNlcnZhdGlvbnMuIEZvdW5kIDcgb2JzZXJ2YXRpb25zIHdpdGggYSBwYXJldG9fayA+IDAuNyBpbiBtb2RlbCAndGltZTAud29ya19leHBlcmllbmNlX2phdmEnLiBJdCBpcyByZWNvbW1lbmRlZCB0byBzZXQgJ21vbWVudF9tYXRjaCA9IFRSVUUnIGluIG9yZGVyIHRvIHBlcmZvcm0gbW9tZW50IG1hdGNoaW5nIGZvciBwcm9ibGVtYXRpYyBvYnNlcnZhdGlvbnMuIEZvdW5kIDUgb2JzZXJ2YXRpb25zIHdpdGggYSBwYXJldG9fayA+IDAuNyBpbiBtb2RlbCAndGltZTAuZWR1Y2F0aW9uX2ZpZWxkJy4gSXQgaXMgcmVjb21tZW5kZWQgdG8gc2V0ICdtb21lbnRfbWF0Y2ggPSBUUlVFJyBpbiBvcmRlciB0byBwZXJmb3JtIG1vbWVudCBtYXRjaGluZyBmb3IgcHJvYmxlbWF0aWMgb2JzZXJ2YXRpb25zLiBGb3VuZCA1IG9ic2VydmF0aW9ucyB3aXRoIGEgcGFyZXRvX2sgPiAwLjcgaW4gbW9kZWwgJ3RpbWUwLmVkdWNhdGlvbl9sZXZlbCcuIEl0IGlzIHJlY29tbWVuZGVkIHRvIHNldCAnbW9tZW50X21hdGNoID0gVFJVRScgaW4gb3JkZXIgdG8gcGVyZm9ybSBtb21lbnQgbWF0Y2hpbmcgZm9yIHByb2JsZW1hdGljIG9ic2VydmF0aW9ucy4gRm91bmQgNSBvYnNlcnZhdGlvbnMgd2l0aCBhIHBhcmV0b19rID4gMC43IGluIG1vZGVsICd0aW1lMC53b3JrcGxhY2VfcGVlcl9yZXZpZXcnLiBJdCBpcyByZWNvbW1lbmRlZCB0byBzZXQgJ21vbWVudF9tYXRjaCA9IFRSVUUnIGluIG9yZGVyIHRvIHBlcmZvcm0gbW9tZW50IG1hdGNoaW5nIGZvciBwcm9ibGVtYXRpYyBvYnNlcnZhdGlvbnMuIEZvdW5kIDYgb2JzZXJ2YXRpb25zIHdpdGggYSBwYXJldG9fayA+IDAuNyBpbiBtb2RlbCAndGltZTAud29ya3BsYWNlX3RkX3RyYWNraW5nJy4gSXQgaXMgcmVjb21tZW5kZWQgdG8gc2V0ICdtb21lbnRfbWF0Y2ggPSBUUlVFJyBpbiBvcmRlciB0byBwZXJmb3JtIG1vbWVudCBtYXRjaGluZyBmb3IgcHJvYmxlbWF0aWMgb2JzZXJ2YXRpb25zLiBGb3VuZCA4IG9ic2VydmF0aW9ucyB3aXRoIGEgcGFyZXRvX2sgPiAwLjcgaW4gbW9kZWwgJ3RpbWUwLndvcmtwbGFjZV9wYWlyX3Byb2dyYW1taW5nJy4gSXQgaXMgcmVjb21tZW5kZWQgdG8gc2V0ICdtb21lbnRfbWF0Y2ggPSBUUlVFJyBpbiBvcmRlciB0byBwZXJmb3JtIG1vbWVudCBtYXRjaGluZyBmb3IgcHJvYmxlbWF0aWMgb2JzZXJ2YXRpb25zLiBGb3VuZCA2IG9ic2VydmF0aW9ucyB3aXRoIGEgcGFyZXRvX2sgPiAwLjcgaW4gbW9kZWwgJ3RpbWUwLndvcmtwbGFjZV9jb2Rpbmdfc3RhbmRhcmRzJy4gSXQgaXMgcmVjb21tZW5kZWQgdG8gc2V0ICdtb21lbnRfbWF0Y2ggPSBUUlVFJyBpbiBvcmRlciB0byBwZXJmb3JtIG1vbWVudCBtYXRjaGluZyBmb3IgcHJvYmxlbWF0aWMgb2JzZXJ2YXRpb25zLiBGb3VuZCA0IG9ic2VydmF0aW9ucyB3aXRoIGEgcGFyZXRvX2sgPiAwLjcgaW4gbW9kZWwgJ3RpbWUwLnNjZW5hcmlvJy4gSXQgaXMgcmVjb21tZW5kZWQgdG8gc2V0ICdtb21lbnRfbWF0Y2ggPSBUUlVFJyBpbiBvcmRlciB0byBwZXJmb3JtIG1vbWVudCBtYXRjaGluZyBmb3IgcHJvYmxlbWF0aWMgb2JzZXJ2YXRpb25zLiBGb3VuZCA2IG9ic2VydmF0aW9ucyB3aXRoIGEgcGFyZXRvX2sgPiAwLjcgaW4gbW9kZWwgJ3RpbWUwLmdyb3VwJy4gSXQgaXMgcmVjb21tZW5kZWQgdG8gc2V0ICdtb21lbnRfbWF0Y2ggPSBUUlVFJyBpbiBvcmRlciB0byBwZXJmb3JtIG1vbWVudCBtYXRjaGluZyBmb3IgcHJvYmxlbWF0aWMgb2JzZXJ2YXRpb25zLiBcbiJ9 -->
-<pre><code>Found 5 observations with a pareto_k &gt; 0.7 in model &#39;time0&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 8 observations with a pareto_k &gt; 0.7 in model &#39;time0.work_domain&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 5 observations with a pareto_k &gt; 0.7 in model &#39;time0.work_experience_programming&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 7 observations with a pareto_k &gt; 0.7 in model &#39;time0.work_experience_java&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 5 observations with a pareto_k &gt; 0.7 in model &#39;time0.education_field&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 5 observations with a pareto_k &gt; 0.7 in model &#39;time0.education_level&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 5 observations with a pareto_k &gt; 0.7 in model &#39;time0.workplace_peer_review&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 6 observations with a pareto_k &gt; 0.7 in model &#39;time0.workplace_td_tracking&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 8 observations with a pareto_k &gt; 0.7 in model &#39;time0.workplace_pair_programming&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 6 observations with a pareto_k &gt; 0.7 in model &#39;time0.workplace_coding_standards&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 4 observations with a pareto_k &gt; 0.7 in model &#39;time0.scenario&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. Found 6 observations with a pareto_k &gt; 0.7 in model &#39;time0.group&#39;. It is recommended to set &#39;moment_match = TRUE&#39; in order to perform moment matching for problematic observations. </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiT3V0cHV0IG9mIG1vZGVsICd0aW1lMCc6XG5cbkNvbXB1dGVkIGZyb20gMTAwMDAgYnkgNDkgbG9nLWxpa2VsaWhvb2QgbWF0cml4XG4ifQ== -->
-<pre><code>Output of model &#39;time0&#39;:
-
-Computed from 10000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSMFVyRE1CVE4wc1p0QmFYZ0QvUUhHdXc2WEY4RkovZzZGZlltc1kwYTdKTFNaT2pYVDIrNnBOU3lQWlNjYzVKN3pyMjNtL3R0SG0wamhGQ0FRa1JRUUFBaTh2TDhrQllJaFJqSUJDN205dnlCUjljQVFBeGlWMkV2THRMbHpTMWRlSllrMllxdWVsWmtDNXFQckVoWk02MEJ4QU14dk5PUFZqdU03TU9rb0ZtUGM3cjBPTE9oblRIK1BlLzFQMWl5SGZmQjJJbXp0VFppeHd4M0hEK3RSMlh6Vm4zVFlhbnZiY2JycG5xdGxmTCt6WkFBRk9XWkRxT0tHVWJmV3pBOTBlZFVOVVlvQ1hIWWJweU1paWZ0U0lqMzByWlhwZVhuWG42bGVXRVR1dnZqZCtuT1lJRHhNVFB3blJIL3k3ajhFSkwzUTdBM1hqdHlCWHZvMWtDYlZrampSd0ZWVTZNTTgrK2lVdFZlNllaRGh6KzMxaGpJYVFJQUFBPT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.2","2":"8.1","_rn_":"elpd_loo"},{"1":"17.7","2":"3.4","_rn_":"p_loo"},{"1":"812.3","2":"16.2","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMzIgICAgNjUuMyUgICAxNDQ1ICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTIgICAgMjQuNSUgICA0ODQgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDUgICAgMTAuMiUgICA0NCAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDAgICAgIDAuMCUgICA8TkE+ICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLndvcmtfZG9tYWluJzpcblxuQ29tcHV0ZWQgZnJvbSA0MDAwIGJ5IDQ5IGxvZy1saWtlbGlob29kIG1hdHJpeFxuIn0= -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     32    65.3%   1445      
- (0.5, 0.7]   (ok)       12    24.5%   484       
-   (0.7, 1]   (bad)       5    10.2%   44        
-   (1, Inf)   (very bad)  0     0.0%   &lt;NA&gt;      
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.work_domain&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFUrRE1CVHRDblViaVliRVA4QWZvQkdaaUk4bXpzUlhuY25lVElXcXhLNGwwRVYvL2ZRV1dvTEVQVFE5NTl6ZWN6LzZlTGROZzIyQUVQS1Fqd2p5Q0VCRW5qZjNjWTZRajRITUlMQTA5emM4T2djQW9oZmFEQk00aVZjWEdjMGNpNkxrbXQ0TUxFOVNta3lzU0NGWTJ3SUlSNkovMno0WTdUQ3g5Nk9jWGc0NHBWY09KeGxkOWNiNDU3algzOEtTN2JncmpLMjRXTGU2MmpITkxjZFA2MG5hc2xGZmRKenFlbHR3VVpjdlFpbm5YNDhKd0tvNDBtRlFNczNvV3dPbS8vUTVWN1d1bElSeTJHeWNUSkpuelVRSTk5SzBWOGJGeDE1K3htbHVLblR4L3B6YTJ4dGgzTmYwWEdmRWZSbVg3NVhrd3hEc2xRdEx6bUFQM1JwbzNWUlN1MUZBYmFsV21ybDNRYUdFVTdyaDBPRVhPSWc4NzJrQ0FBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.6","2":"8.2","_rn_":"elpd_loo"},{"1":"17.9","2":"3.5","_rn_":"p_loo"},{"1":"813.1","2":"16.4","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMjggICAgNTcuMSUgICA1NzEgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTMgICAgMjYuNSUgICA3MDMgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDcgICAgMTQuMyUgICA1NCAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDEgICAgIDIuMCUgICAyNiAgICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLndvcmtfZXhwZXJpZW5jZV9wcm9ncmFtbWluZyc6XG5cbkNvbXB1dGVkIGZyb20gNDAwMCBieSA0OSBsb2ctbGlrZWxpaG9vZCBtYXRyaXhcbiJ9 -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     28    57.1%   571       
- (0.5, 0.7]   (ok)       13    26.5%   703       
-   (0.7, 1]   (bad)       7    14.3%   54        
-   (1, Inf)   (very bad)  1     2.0%   26        
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.work_experience_programming&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFV2RE1CVE4wa2EzZ2xMd0QvUVBOQmc2WFY4RkovanFCK3hOWWhzMTJDV2x6ZEJmUDczcGtsS0RleWc1NXlUM25IdHZIMjQzUmJKSkVFSVJpaEZCRVFHSXlQUFRYVjRpRkdNZ003aFkyUE1iSGwwQUFERktYWVc5T01tWGwxZjAyck1zWXl1NkhGbkpHQzBDSzFJMXZPOEJwQk14dnVudnJiWVA3T05zUmNzUkY1UjV6R3pvWUl4L2pudjlEVlo4SzN3d2R1SjgzUnU1NVVZNGpoL1hRZG1pMDE5MFd1cDdtNHVtclY4YXJiMS9PeVVBWlhXa3c2VG1odE8zRGt6LzZmTlV0MFpxQlhIWWJwd0V4Yk11RU5LZHN1M1ZlZld4VTU5NVVkcUU0Zjd3bmJrem1tQjh5SXg4WjhUL01xSGVwUkxqRVB4Vk5JNmN3eDZHTmRDMms4cjRVVUR0cWRHRyszZEpwUnV2RE1PaC9TK1BLNWpZYVFJQUFBPT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-405.6","2":"7.8","_rn_":"elpd_loo"},{"1":"17.4","2":"3.1","_rn_":"p_loo"},{"1":"811.3","2":"15.6","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMzAgICAgNjEuMiUgICA4MTEgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTQgICAgMjguNiUgICA4NSAgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDUgICAgMTAuMiUgICA1OSAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDAgICAgIDAuMCUgICA8TkE+ICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLndvcmtfZXhwZXJpZW5jZV9qYXZhJzpcblxuQ29tcHV0ZWQgZnJvbSA0MDAwIGJ5IDQ5IGxvZy1saWtlbGlob29kIG1hdHJpeFxuIn0= -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     30    61.2%   811       
- (0.5, 0.7]   (ok)       14    28.6%   85        
-   (0.7, 1]   (bad)       5    10.2%   59        
-   (1, Inf)   (very bad)  0     0.0%   &lt;NA&gt;      
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.work_experience_java&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSeTA3RE1CQjA3UmphU0tCSS9FQitJQlpwb0ExSEpJckVsWWZVR3pLSkFZdlVqaEpYOFBXRmRXcEhhVVFQbG1kbXZidXo2OGU3ZFJhdVE0UVFRUUdpaUZDQWlMNDgzeWM1UWdFR01vSEF6TjQvOE9nQ0FJZ2tjaGsyY0pKY1hTNVk1bGtjcDB1MjZGbWV6b0VkbHFKRnhkc1dRRFFRZzl2MndXcTdVZmtnWHJLYkhtZHM3bkY2elp4SC9IdTgxbUZqeFRmQ044Wk9uSzVhSXpmY0NNZngwMnFVTm12ME54dW1lbTlUVWRYbGE2VzFyMThQQ1VCWkhIRVlsdHh3OXQ1QTBYOThudXJhU0syZ0hiWWJwNlBrU1RNU29xMnk5c3FrK055cXJ5VExiWWN1dmo5bjdpWURqUGM5aVhkRy9aY0o5U0dWNklmZ2I2Snk1QnoyMEsyQjFZMVV4bzhDYXN1TU50eS9Dd3RkZWFVYkR1MytBSk1kUGkxcEFnQUEifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.3","2":"7.9","_rn_":"elpd_loo"},{"1":"17.6","2":"3.2","_rn_":"p_loo"},{"1":"812.6","2":"15.8","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMjkgICAgNTkuMiUgICA5NTAgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTMgICAgMjYuNSUgICAyMDggICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDcgICAgMTQuMyUgICAzOSAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDAgICAgIDAuMCUgICA8TkE+ICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLmVkdWNhdGlvbl9maWVsZCc6XG5cbkNvbXB1dGVkIGZyb20gNDAwMCBieSA0OSBsb2ctbGlrZWxpaG9vZCBtYXRyaXhcbiJ9 -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     29    59.2%   950       
- (0.5, 0.7]   (ok)       13    26.5%   208       
-   (0.7, 1]   (bad)       7    14.3%   39        
-   (1, Inf)   (very bad)  0     0.0%   &lt;NA&gt;      
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.education_field&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFV2RE1CVE4wc1p0QmFYZ0grZ2ZhTEIyYlBWUmNJS3ZPbUZ2RXR1b3dTd3BiWWIrK3VsTmw1UmEzRVBJT2VmbW52dVJ4N3R0SG0wamhGQ0FRa1JRUUFBaThyeTVUd3VFUWd4a0FvRzV2Yi9oMFNVQUVJUFlaZGpBV2JxNFd0S0ZaMG1TcmVpcVowVjJUVzlHVnFTVXJHMEJ4QU14dkcwZnJIWVkyWWRKUWJNZTV6VDNPRnVDM2huam45TmVmd3NydHVPK01IYmliTjBhc1dPR080NmYxcU8wZWFPLzZERFY5emJqc3E1ZXBOYmV2eDRTZ0tJODBXRlVNY1BvV3dPbS8vUTUxYlVSV2tFNWJEZE9Sc21UWmlURWUyWGJxOUx5WTY4KzA3eXdGYnI0OFp5N094aGdmS3daK002SS96S3Uzb1hpL1JEc2xVdEhMbUFQM1JwbzNRaGwvQ2lndHRSb3cveTdxTlRTSzkxdzZQQUxZcmlNYTJrQ0FBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.4","2":"8.1","_rn_":"elpd_loo"},{"1":"17.7","2":"3.3","_rn_":"p_loo"},{"1":"812.9","2":"16.1","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMjQgICAgNDkuMCUgICA5NDEgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMjAgICAgNDAuOCUgICAzNDYgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDQgICAgIDguMiUgICA0MCAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDEgICAgIDIuMCUgICAyMSAgICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLmVkdWNhdGlvbl9sZXZlbCc6XG5cbkNvbXB1dGVkIGZyb20gNDAwMCBieSA0OSBsb2ctbGlrZWxpaG9vZCBtYXRyaXhcbiJ9 -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     24    49.0%   941       
- (0.5, 0.7]   (ok)       20    40.8%   346       
-   (0.7, 1]   (bad)       4     8.2%   40        
-   (1, Inf)   (very bad)  1     2.0%   21        
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.education_level&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFUrRE1CVHRDblViaVliRVA4QWZvQkZaa0ZjVForS3J1bVJ2cGtKVll0Y1M2S0svZm5vTDNBV0plMmg2enJtOTUzNzA4VzZiQnR1QUVPSVJuekRpTVlDRWJaN3Y0NXdRbndLWlFXRHA3bTk0ZEFrQVJDOGNNbHpnTEY1ZFpUeERGa1hKRGMrUExFOVNua3lzV0tGRTJ3SUlSNkovMno0NDdUQ3g5Nk1jREJDbmZJVTR5ZmgxYjB4L1RudjlMYXpGVG1KaE9vaUxkV3VybmJCeTRQUnBQVWxiTnVhTGoxT3h0NFZVZGZtaWpFSC9la3dBVnNXSkRvTlNXTUhmR2pEOXA4KzVxVzFsTkpTamJ1TnNranhySmtLNDE2NjlNaTQrOXZvelRuTlhvWXYzNTN5NHZSR21mVTBQTzJQNFpWSy9WMW9laHhDdlVnM2tBdmJRcllIWFRhVXRqZ0pxeTYyeEF0OEZoVkdvZE1PUnd5K3gvTzdKYVFJQUFBPT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.6","2":"8.1","_rn_":"elpd_loo"},{"1":"17.8","2":"3.4","_rn_":"p_loo"},{"1":"813.1","2":"16.2","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMjcgICAgNTUuMSUgICA0NDcgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTcgICAgMzQuNyUgICA0OTEgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDUgICAgMTAuMiUgICAxOCAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDAgICAgIDAuMCUgICA8TkE+ICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLndvcmtwbGFjZV9wZWVyX3Jldmlldyc6XG5cbkNvbXB1dGVkIGZyb20gNDAwMCBieSA0OSBsb2ctbGlrZWxpaG9vZCBtYXRyaXhcbiJ9 -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     27    55.1%   447       
- (0.5, 0.7]   (ok)       17    34.7%   491       
-   (0.7, 1]   (bad)       5    10.2%   18        
-   (1, Inf)   (very bad)  0     0.0%   &lt;NA&gt;      
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.workplace_peer_review&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFUrRE1CVHRXcW9iaVliRVA4QWZvQmxESFQ2YU9CTmYvVWoyWmlwVWJXUXRnUzc2NjZlM3JDV011QWZTYzg3dFBmZmM4bmkzenNKMWlCQWlLRUFVRVFvUTBaZm4reVJIS01CQUpsQ1kyZk1ITGwwQUFKRkVyc01XVHBMTCtUV2JleGJINlpJdGVwYW5DNmdkV3RHaTRtMExJQnFJd1czN1lMWGR5RDZJbCt5bXgxbHZIYVJYekdYRXY4ZTlEZ2NydmhGK01IYmlkTlVhdWVGR09JNmZWcU8yV2FPLzJiRFZaNXVLcWk1Zks2MjlmejBrQUdWeEpHRlljc1BaZXdPbS8rUTgxYldSV3NFNGJGK2NqcG9uelVpSXRzckdLNVBpYzZ1K2tpeTNFN3I2L2p0ekp4bGd2SjlKZkRMcWY1bFFIMUtKZmduK0ppcEh6dUVkdW1kZ2RTT1Y4YXVBMmpLakRmZjN3a0pYWHVtV1E3cy9vMG44bW1rQ0FBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.0","2":"7.9","_rn_":"elpd_loo"},{"1":"17.2","2":"3.2","_rn_":"p_loo"},{"1":"812.0","2":"15.8","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMjkgICAgNTkuMiUgICA5ODUgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTUgICAgMzAuNiUgICAyMzEgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDUgICAgMTAuMiUgICAzMyAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDAgICAgIDAuMCUgICA8TkE+ICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLndvcmtwbGFjZV90ZF90cmFja2luZyc6XG5cbkNvbXB1dGVkIGZyb20gNDAwMCBieSA0OSBsb2ctbGlrZWxpaG9vZCBtYXRyaXhcbiJ9 -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     29    59.2%   985       
- (0.5, 0.7]   (ok)       15    30.6%   231       
-   (0.7, 1]   (bad)       5    10.2%   33        
-   (1, Inf)   (very bad)  0     0.0%   &lt;NA&gt;      
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.workplace_td_tracking&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFV2RE1CVE5ra2EzZ2xMd0QvUVBORmc2YWw4RkovanFGUFkyc2pacXNVdEtrNkcvZm5yVEphVVc5eEJ5enJtNTUzN2srV0dUaFpzUUlVUlFnQ2dpRkNDaXJ5K1BTWUZRZ0lITUlMQ3c5emM4dWdFQUlvbGNoZzFjSk12Ym5OMTVGc2Rwd2RLQkZXbkdsaE1yV2paY2F3RFJTQXp1OVpQVmpoUDdJQzVZTnVDTTVSNm5PZURlR1ArYzkvcGJXUEs5OElXeEUrY3JiZW85TjhKeHZGNU4waGFkK21MalZOL2JYRFJ0dFcyVTh2N3RtQUNzeXpNZGhoVTNuTDExWVBwUG41ZXFOYldTVUE3YmpkTko4cXliQ05GQjJ2YXFwUHc0eU04a0syeUZQbjQ2Vis0bUk0eFBOWW52alBvdkUvSzlsbUlZZ3U5RTQ4ZzE3S0ZmQTJ1N1doby9DcWlhR1dXNGZ4ZVdxdkZLUHh3Ni9nSWczM1ZBYVFJQUFBPT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.7","2":"8.3","_rn_":"elpd_loo"},{"1":"18.1","2":"3.6","_rn_":"p_loo"},{"1":"813.4","2":"16.6","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMzQgICAgNjkuNCUgICA2MzEgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgIDkgICAgMTguNCUgICA0NzUgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDUgICAgMTAuMiUgICA1NiAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDEgICAgIDIuMCUgICAxNyAgICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLndvcmtwbGFjZV9wYWlyX3Byb2dyYW1taW5nJzpcblxuQ29tcHV0ZWQgZnJvbSA0MDAwIGJ5IDQ5IGxvZy1saWtlbGlob29kIG1hdHJpeFxuIn0= -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     34    69.4%   631       
- (0.5, 0.7]   (ok)        9    18.4%   475       
-   (0.7, 1]   (bad)       5    10.2%   56        
-   (1, Inf)   (very bad)  1     2.0%   17        
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.workplace_pair_programming&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFUrRE1CVHRTdXMyRWcySmY0QS9RRFBHVkh3MGNTYSs2a3oyWmlwVUpYWXRnUzc2NjZlM1FBa2o3cUhwT2VmMm52dlJwL3R0NG05OWhKQ0hDS0xJb3dBUmZkazhSQ2xDQkFPWlFHQnU3eDk0ZEFrQVJDL29NbXpnTEZvdHJ0bkNzVENNYjlpcVoybThoTml4RmMwa3Iyc0F3VUFrZC9XajFRNGpleEttdlRrSkU3WjBPTDVpdDYweC9qM3RkVnhZOFoxd2hYRW56dGExS1hiY2lJN2o1L1VvYlY3cGJ6Wk1kYjNOaEN6elY2bTE4eStIQkdDUm5lalF6N25oN0wwQzAzLzZuT3JTRkZwQk9XdzNUa2ZKazJva0JIdGwyOHVqN0hPdnZxSWt0UldhZUh2T3U5c2JZTnpXOUZ4bjFIMlpVQitGRXYwUS9FM0lqbHpBSHBvMXNMSXFsSEdqZ0Zvem93MTM3L3hNUzZjMHc2SERINmwvWHNwcEFnQUEifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.0","2":"8.0","_rn_":"elpd_loo"},{"1":"17.4","2":"3.2","_rn_":"p_loo"},{"1":"812.0","2":"15.9","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMzAgICAgNjEuMiUgICAxMTI0ICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTEgICAgMjIuNCUgICA1MDUgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDggICAgMTYuMyUgICAzNyAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDAgICAgIDAuMCUgICA8TkE+ICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLndvcmtwbGFjZV9jb2Rpbmdfc3RhbmRhcmRzJzpcblxuQ29tcHV0ZWQgZnJvbSA0MDAwIGJ5IDQ5IGxvZy1saWtlbGlob29kIG1hdHJpeFxuIn0= -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     30    61.2%   1124      
- (0.5, 0.7]   (ok)       11    22.4%   505       
-   (0.7, 1]   (bad)       8    16.3%   37        
-   (1, Inf)   (very bad)  0     0.0%   &lt;NA&gt;      
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.workplace_coding_standards&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFUrRE1CVHRDdFdOUkVQaUgrQVAwSWhzRGg5TjNCSmYvVWoyWmlwVUpYWXRnUzc2NjZlM2pFdVF1SWVtNTV6YmUrNUhIKzQyYWJBSkNDRWU4UWtqSGdOSTJQUFRPczRJOFNtUUNRUm03djZHUnhjQVFQVENMc01GVHVMNTVUV2ZJNHVpWk1rWFBjdVNLejYyWXJrU1RRTWdISWorYlhQdnRQM0kzbytXL0tiSEtVOFFKd3MwcGovSHZmNFcxbUlyc1REdHhPbXFzZVZXV05seCtyZ2FwYzFxODhXSHFkamJWS3FxZUZIR29IODFKQURML0VpSFFTR3M0RzgxbVA3VDU2bXBiR2swbEtOdTQyeVVQS2xIUXJqVHJyMGl6ajkyK2pOT00xZWhqUi9PV1hkN0Ewd1BOVDNzak9HWFNmMWVhdGtQSVY2bDZzZzU3S0ZkQTYvcVVsc2NCZFNHVzJNRnZndHlvMUJwaHlQN1h5TXB2QkJwQWdBQSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.4","2":"7.9","_rn_":"elpd_loo"},{"1":"17.5","2":"3.1","_rn_":"p_loo"},{"1":"812.8","2":"15.8","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMjcgICAgNTUuMSUgICA4MzAgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTYgICAgMzIuNyUgICAxMzggICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDUgICAgMTAuMiUgICA0NyAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDEgICAgIDIuMCUgICAxMjUgICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLnNjZW5hcmlvJzpcblxuQ29tcHV0ZWQgZnJvbSA0MDAwIGJ5IDQ5IGxvZy1saWtlbGlob29kIG1hdHJpeFxuIn0= -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     27    55.1%   830       
- (0.5, 0.7]   (ok)       16    32.7%   138       
-   (0.7, 1]   (bad)       5    10.2%   47        
-   (1, Inf)   (very bad)  1     2.0%   125       
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.scenario&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFV2RE1CVE4wa2EzZ2xMd0QvUVBOS3gwYVBjb09NSFhxYkEzaVczVVlKZVVKa04vL2ZTbVMwWU43aUhrbkhOenovM0krbTVUSnBzRUlSU2hHQkVVRVlDSVBEL2Q1eFZDTVFZeWdjRE0zdC93NkFvQWlGSHFNbXpnTEYvTUYzVHBXWllWTnlOV3paYzB0Q0oxeTdRR2tJN0UrRlkvV0cwZjJNZFpSWXNqTG1ucGNYRU4rbUNNZjA1Ny9TMHMyWmI3d3RpSjA1VTJZc3NNZHh3L3JvSzBXYSsrNkRqVjl6YmxiZGU4dEVwNS8yNU1BSXI2UklkSnd3eWpiejJZL3RQbnVlcU1VQkxLWWJ0eEVpUlAra0JJZDlLMjErVDF4MDUrNW1WbEt3enh3N2x3ZHpUQytGQXo4cDBSLzJWY3ZndkpqME93Vjk0NmNnbDdHTlpBdTE1STQwY0JWVk9qRFBQdmtscTFYaG1HUS90ZmhLTFF5R2tDQUFBPSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-404.9","2":"8.1","_rn_":"elpd_loo"},{"1":"17.9","2":"3.3","_rn_":"p_loo"},{"1":"809.8","2":"16.1","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMzIgICAgNjUuMyUgICA5NzAgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTMgICAgMjYuNSUgICA5MiAgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDQgICAgIDguMiUgICA0NyAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDAgICAgIDAuMCUgICA8TkE+ICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5PdXRwdXQgb2YgbW9kZWwgJ3RpbWUwLmdyb3VwJzpcblxuQ29tcHV0ZWQgZnJvbSA0MDAwIGJ5IDQ5IGxvZy1saWtlbGlob29kIG1hdHJpeFxuIn0= -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     32    65.3%   970       
- (0.5, 0.7]   (ok)       13    26.5%   92        
-   (0.7, 1]   (bad)       4     8.2%   47        
-   (1, Inf)   (very bad)  0     0.0%   &lt;NA&gt;      
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Output of model &#39;time0.group&#39;:
-
-Computed from 4000 by 49 log-likelihood matrix</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6Miwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZlssMl0gWzMgw5cgMl0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBM1ZSWFV2RE1CVE5ra2EzZ2xMd0QvUVBOTmgxMUx3S1R2QjFLdXhOWWh1MTJDV2x5ZEJmUDczcG1sS0xld2c1NTl6Y2N6K3l1ZHRtNFRaRUNCRVVJSW9JQllqbzg5Tjl3aEVLTUpBWkJCYnUvb1pIVndCQUpGR2Y0UUpueWVvNlo1bG5jWnplTUQ0d25pNVpQckdpUlMyTUFSQ054T0RXUERqdE1MRVBZczZXQTg3WXl1TTBCOXdaNDUvVFhuOExLN0dUdmpEdXhmbmEyR29uck93NWZseFAwaGF0L21MalZOL2JYTlpOK1ZKcjdmMmJNUUZZRlNjNkRFdGhCWHRyd2ZTZlBzOTFZeXV0b0J4Mkc2ZVQ1Rms3RWFLOWN1MlZTZkd4VjU5SnhsMkZMbjQ4Ri8xTlJoZ2ZheExmR2ZWZkp0VjdwZVF3aEhpVmRVOHVZUS9kR2xqVFZzcjZVVUExekdvci9MdXcwTFZYdXVIUTRSY0ZiRE1vYVFJQUFBPT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["S3: AsIs"],"align":["right"]},{"label":["SE"],"name":[2],"type":["S3: AsIs"],"align":["right"]}],"data":[{"1":"-406.3","2":"8.2","_rn_":"elpd_loo"},{"1":"17.8","2":"3.4","_rn_":"p_loo"},{"1":"812.6","2":"16.4","_rn_":"looic"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tLS0tXG5Nb250ZSBDYXJsbyBTRSBvZiBlbHBkX2xvbyBpcyBOQS5cblxuUGFyZXRvIGsgZGlhZ25vc3RpYyB2YWx1ZXM6XG4gICAgICAgICAgICAgICAgICAgICAgICAgQ291bnQgUGN0LiAgICBNaW4uIG5fZWZmXG4oLUluZiwgMC41XSAgIChnb29kKSAgICAgMjkgICAgNTkuMiUgICA3MzcgICAgICAgXG4gKDAuNSwgMC43XSAgIChvaykgICAgICAgMTQgICAgMjguNiUgICA1MTEgICAgICAgXG4gICAoMC43LCAxXSAgIChiYWQpICAgICAgIDYgICAgMTIuMiUgICAzOCAgICAgICAgXG4gICAoMSwgSW5mKSAgICh2ZXJ5IGJhZCkgIDAgICAgIDAuMCUgICA8TkE+ICAgICAgXG5TZWUgaGVscCgncGFyZXRvLWstZGlhZ25vc3RpYycpIGZvciBkZXRhaWxzLlxuXG5Nb2RlbCBjb21wYXJpc29uczpcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHBkX2RpZmYgc2VfZGlmZlxudGltZTAuc2NlbmFyaW8gICAgICAgICAgICAgICAgICAgICAwLjAgICAgICAgMC4wICAgXG50aW1lMC53b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcgLTAuOCAgICAgICAwLjkgICBcbnRpbWUwLndvcmtwbGFjZV9wZWVyX3JldmlldyAgICAgICAtMS4xICAgICAgIDAuNyAgIFxudGltZTAud29ya3BsYWNlX3BhaXJfcHJvZ3JhbW1pbmcgIC0xLjEgICAgICAgMC43ICAgXG50aW1lMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLTEuMyAgICAgICAwLjggICBcbnRpbWUwLndvcmtfZXhwZXJpZW5jZV9qYXZhICAgICAgICAtMS40ICAgICAgIDAuNyAgIFxudGltZTAuZ3JvdXAgICAgICAgICAgICAgICAgICAgICAgIC0xLjQgICAgICAgMC44ICAgXG50aW1lMC53b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcyAgLTEuNSAgICAgICAwLjkgICBcbnRpbWUwLmVkdWNhdGlvbl9maWVsZCAgICAgICAgICAgICAtMS42ICAgICAgIDAuOSAgIFxudGltZTAuZWR1Y2F0aW9uX2xldmVsICAgICAgICAgICAgIC0xLjcgICAgICAgMC43ICAgXG50aW1lMC53b3JrX2RvbWFpbiAgICAgICAgICAgICAgICAgLTEuNyAgICAgICAwLjggICBcbnRpbWUwLndvcmtwbGFjZV90ZF90cmFja2luZyAgICAgICAtMS44ICAgICAgIDEuMCAgIFxuIn0= -->
-<pre><code>------
-Monte Carlo SE of elpd_loo is NA.
-
-Pareto k diagnostic values:
-                         Count Pct.    Min. n_eff
-(-Inf, 0.5]   (good)     29    59.2%   737       
- (0.5, 0.7]   (ok)       14    28.6%   511       
-   (0.7, 1]   (bad)       6    12.2%   38        
-   (1, Inf)   (very bad)  0     0.0%   &lt;NA&gt;      
-See help(&#39;pareto-k-diagnostic&#39;) for details.
-
-Model comparisons:
-                                  elpd_diff se_diff
-time0.scenario                     0.0       0.0   
-time0.work_experience_programming -0.8       0.9   
-time0.workplace_peer_review       -1.1       0.7   
-time0.workplace_pair_programming  -1.1       0.7   
-time0                             -1.3       0.8   
-time0.work_experience_java        -1.4       0.7   
-time0.group                       -1.4       0.8   
-time0.workplace_coding_standards  -1.5       0.9   
-time0.education_field             -1.6       0.9   
-time0.education_level             -1.7       0.7   
-time0.work_domain                 -1.7       0.8   
-time0.workplace_td_tracking       -1.8       1.0   </code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiVGltZSIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmQuY29tcGxldGVkICU+JQogIGdncGxvdChhZXMoeD10aW1lLCBmaWxsPWhpZ2hfZGVidF92ZXJzaW9uKSkgKyAKICBnZW9tX2JveHBsb3QoKQoKbWVhbihkLmNvbXBsZXRlZCR0aW1lKQp2YXIoZC5jb21wbGV0ZWQkdGltZSkKYGBgCgoKdmFyID4gbWVhbiA9PiBuZWcgYmlub21pYWwKCmBgYHtyfQp0aW1lMCA8LSBicm0oCiAgdGltZSB+IDEgCiAgKyBoaWdoX2RlYnRfdmVyc2lvbgogICsgKDEgfCBjIHwgc2Vzc2lvbiksCiAgZmFtaWx5ID0gbmVnYmlub21pYWwoKSwKICBkYXRhID0gYXMuZGF0YS5mcmFtZShkLmNvbXBsZXRlZCksCiAgcHJpb3IgPSBjKAogICAgcHJpb3Iobm9ybWFsKDAsIDAuMSksIGNsYXNzID0gImIiKSwKICAgIHByaW9yKG5vcm1hbCgwLCAxKSwgY2xhc3MgPSAiSW50ZXJjZXB0IiksCiAgICBwcmlvcihleHBvbmVudGlhbCgxKSwgY2xhc3MgPSAic2QiKSwKICAgIHByaW9yKGdhbW1hKDAuMDEsIDAuMDEpLCBjbGFzcyA9ICJzaGFwZSIpCiAgKSwKICBiYWNrZW5kID0gImNtZHN0YW5yIiwKICBjaGFpbnMgPSA0LAogIGNvcmVzID0gNCwKICBpdGVyID0gNWUzLAogICMgZW1wdHkgPSBUUlVFCiAgIyBzYW1wbGVfcHJpb3IgPSAib25seSIsCiAgZmlsZSA9ICJmaXRzL3RpbWUwIiwKICBmaWxlX3JlZml0ID0gIm9uX2NoYW5nZSIKKQoKIyBwcF9jaGVjayh0aW1lMCwgbnNhbXBsZXMgPSAyMDApCgpzdW1tYXJ5KHRpbWUwKQpgYGAKCgpgYGB7cn0KdGltZTAud2l0aCA8LSBleHRlbmRhYmxlX21vZGVsKAogIGJhc2VfbmFtZSA9ICJ0aW1lMCIsCiAgYmFzZV9mb3JtdWxhID0gInRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSIsCiAgYmFzZV9wcmlvcnMgPSBjKAogICAgcHJpb3Iobm9ybWFsKDAsIDAuMSksIGNsYXNzID0gImIiKSwKICAgIHByaW9yKG5vcm1hbCgwLCAxKSwgY2xhc3MgPSAiSW50ZXJjZXB0IiksCiAgICBwcmlvcihleHBvbmVudGlhbCgxKSwgY2xhc3MgPSAic2QiKSwKICAgIHByaW9yKGdhbW1hKDAuMDEsIDAuMDEpLCBjbGFzcyA9ICJzaGFwZSIpCiAgKSwKICBmYW1pbHkgPSBuZWdiaW5vbWlhbCgpLAogIGRhdGEgPSBkLmNvbXBsZXRlZAopCmBgYAoKCgpgYGB7cn0KdGltZTAud29ya19kb21haW4gPC0gdGltZTAud2l0aCgid29ya19kb21haW4iKQoKc3VtbWFyeSh0aW1lMC53b3JrX2RvbWFpbikKYGBgCgpgYGB7cn0KdGltZTAud29ya19leHBlcmllbmNlX3Byb2dyYW1taW5nIDwtIHRpbWUwLndpdGgoIndvcmtfZXhwZXJpZW5jZV9wcm9ncmFtbWluZy5zIikKCnN1bW1hcnkodGltZTAud29ya19leHBlcmllbmNlX3Byb2dyYW1taW5nKQpgYGAKCgpgYGB7cn0KdGltZTAud29ya19leHBlcmllbmNlX2phdmEgPC0gdGltZTAud2l0aCgid29ya19leHBlcmllbmNlX2phdmEucyIpCgpzdW1tYXJ5KHRpbWUwLndvcmtfZXhwZXJpZW5jZV9qYXZhKQpgYGAKCmBgYHtyfQp0aW1lMC5lZHVjYXRpb25fZmllbGQgPC0gdGltZTAud2l0aCgiZWR1Y2F0aW9uX2ZpZWxkIikKCnN1bW1hcnkodGltZTAuZWR1Y2F0aW9uX2ZpZWxkKQpgYGAKCmBgYHtyfQp0aW1lMC5lZHVjYXRpb25fbGV2ZWwgPC0gdGltZTAud2l0aCgKICAibW8oZWR1Y2F0aW9uX2xldmVsKSIsIAogIGMoCiAgICBwcmlvcihkaXJpY2hsZXQoMiksIGNsYXNzID0gInNpbW8iLCBjb2VmID0gIm1vZWR1Y2F0aW9uX2xldmVsMSIpCiAgKQopCgpzdW1tYXJ5KHRpbWUwLmVkdWNhdGlvbl9sZXZlbCkKYGBgCmBgYHtyfQp0aW1lMC53b3JrcGxhY2VfcGVlcl9yZXZpZXcgPC0gdGltZTAud2l0aCgid29ya3BsYWNlX3BlZXJfcmV2aWV3IikKCnN1bW1hcnkodGltZTAud29ya3BsYWNlX3BlZXJfcmV2aWV3KQpgYGAKCmBgYHtyfQp0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcgPC0gdGltZTAud2l0aCgid29ya3BsYWNlX3RkX3RyYWNraW5nIikKCnN1bW1hcnkodGltZTAud29ya3BsYWNlX3RkX3RyYWNraW5nKQpgYGAKCmBgYHtyfQp0aW1lMC53b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZyA8LSB0aW1lMC53aXRoKCJ3b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZyIpCgpzdW1tYXJ5KHRpbWUwLndvcmtwbGFjZV9wYWlyX3Byb2dyYW1taW5nKQpgYGAKCmBgYHtyfQp0aW1lMC53b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcyA8LSB0aW1lMC53aXRoKCJ3b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcyIpCgpzdW1tYXJ5KHRpbWUwLndvcmtwbGFjZV9jb2Rpbmdfc3RhbmRhcmRzKQpgYGAKCmBgYHtyfQp0aW1lMC5zY2VuYXJpbyA8LSB0aW1lMC53aXRoKCJzY2VuYXJpbyIpCgpzdW1tYXJ5KHRpbWUwLnNjZW5hcmlvKQpgYGAKCmBgYHtyfQp0aW1lMC5ncm91cCA8LSB0aW1lMC53aXRoKCJncm91cCIpCgpzdW1tYXJ5KHRpbWUwLmdyb3VwKQpgYGAKCmBgYHtyfQoKbG9vKAogIHRpbWUwLAogIHRpbWUwLndvcmtfZG9tYWluLAogIHRpbWUwLndvcmtfZXhwZXJpZW5jZV9wcm9ncmFtbWluZywKICB0aW1lMC53b3JrX2V4cGVyaWVuY2VfamF2YSwKICB0aW1lMC5lZHVjYXRpb25fZmllbGQsCiAgdGltZTAuZWR1Y2F0aW9uX2xldmVsLAogIHRpbWUwLndvcmtwbGFjZV9wZWVyX3JldmlldywKICB0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcsCiAgdGltZTAud29ya3BsYWNlX3BhaXJfcHJvZ3JhbW1pbmcsCiAgdGltZTAud29ya3BsYWNlX2NvZGluZ19zdGFuZGFyZHMsCiAgdGltZTAuc2NlbmFyaW8sCiAgdGltZTAuZ3JvdXAKKQpgYGAK</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlRpbWUiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmQuY29tcGxldGVkICU+JQ0KICBnZ3Bsb3QoYWVzKHg9dGltZSwgZmlsbD1oaWdoX2RlYnRfdmVyc2lvbikpICsgDQogIGdlb21fYm94cGxvdCgpDQoNCm1lYW4oZC5jb21wbGV0ZWQkdGltZSkNCnZhcihkLmNvbXBsZXRlZCR0aW1lKQ0KYGBgDQoNCg0KdmFyID4gbWVhbiA9PiBuZWcgYmlub21pYWwNCg0KYGBge3J9DQp0aW1lMCA8LSBicm0oDQogIHRpbWUgfiAxIA0KICArIGhpZ2hfZGVidF92ZXJzaW9uDQogICsgKDEgfCBjIHwgc2Vzc2lvbiksDQogIGZhbWlseSA9IG5lZ2Jpbm9taWFsKCksDQogIGRhdGEgPSBhcy5kYXRhLmZyYW1lKGQuY29tcGxldGVkKSwNCiAgcHJpb3IgPSBjKA0KICAgIHByaW9yKG5vcm1hbCgwLCAwLjEpLCBjbGFzcyA9ICJiIiksDQogICAgcHJpb3Iobm9ybWFsKDAsIDEpLCBjbGFzcyA9ICJJbnRlcmNlcHQiKSwNCiAgICBwcmlvcihleHBvbmVudGlhbCgxKSwgY2xhc3MgPSAic2QiKSwNCiAgICBwcmlvcihnYW1tYSgwLjAxLCAwLjAxKSwgY2xhc3MgPSAic2hhcGUiKQ0KICApLA0KICBiYWNrZW5kID0gImNtZHN0YW5yIiwNCiAgY2hhaW5zID0gNCwNCiAgY29yZXMgPSA0LA0KICBpdGVyID0gNWUzLA0KICAjIGVtcHR5ID0gVFJVRQ0KICAjIHNhbXBsZV9wcmlvciA9ICJvbmx5IiwNCiAgZmlsZSA9ICJmaXRzL3RpbWUwIiwNCiAgZmlsZV9yZWZpdCA9ICJvbl9jaGFuZ2UiDQopDQoNCiMgcHBfY2hlY2sodGltZTAsIG5zYW1wbGVzID0gMjAwKQ0KDQpzdW1tYXJ5KHRpbWUwKQ0KYGBgDQoNCg0KYGBge3J9DQp0aW1lMC53aXRoIDwtIGV4dGVuZGFibGVfbW9kZWwoDQogIGJhc2VfbmFtZSA9ICJ0aW1lMCIsDQogIGJhc2VfZm9ybXVsYSA9ICJ0aW1lIH4gMSArIGhpZ2hfZGVidF92ZXJzaW9uICsgKDEgfCBjIHwgc2Vzc2lvbikiLA0KICBiYXNlX3ByaW9ycyA9IGMoDQogICAgcHJpb3Iobm9ybWFsKDAsIDAuMSksIGNsYXNzID0gImIiKSwNCiAgICBwcmlvcihub3JtYWwoMCwgMSksIGNsYXNzID0gIkludGVyY2VwdCIpLA0KICAgIHByaW9yKGV4cG9uZW50aWFsKDEpLCBjbGFzcyA9ICJzZCIpLA0KICAgIHByaW9yKGdhbW1hKDAuMDEsIDAuMDEpLCBjbGFzcyA9ICJzaGFwZSIpDQogICksDQogIGZhbWlseSA9IG5lZ2Jpbm9taWFsKCksDQogIGRhdGEgPSBkLmNvbXBsZXRlZA0KKQ0KYGBgDQoNCg0KDQpgYGB7cn0NCnRpbWUwLndvcmtfZG9tYWluIDwtIHRpbWUwLndpdGgoIndvcmtfZG9tYWluIikNCg0Kc3VtbWFyeSh0aW1lMC53b3JrX2RvbWFpbikNCmBgYA0KDQpgYGB7cn0NCnRpbWUwLndvcmtfZXhwZXJpZW5jZV9wcm9ncmFtbWluZyA8LSB0aW1lMC53aXRoKCJ3b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcucyIpDQoNCnN1bW1hcnkodGltZTAud29ya19leHBlcmllbmNlX3Byb2dyYW1taW5nKQ0KYGBgDQoNCg0KYGBge3J9DQp0aW1lMC53b3JrX2V4cGVyaWVuY2VfamF2YSA8LSB0aW1lMC53aXRoKCJ3b3JrX2V4cGVyaWVuY2VfamF2YS5zIikNCg0Kc3VtbWFyeSh0aW1lMC53b3JrX2V4cGVyaWVuY2VfamF2YSkNCmBgYA0KDQpgYGB7cn0NCnRpbWUwLmVkdWNhdGlvbl9maWVsZCA8LSB0aW1lMC53aXRoKCJlZHVjYXRpb25fZmllbGQiKQ0KDQpzdW1tYXJ5KHRpbWUwLmVkdWNhdGlvbl9maWVsZCkNCmBgYA0KDQpgYGB7cn0NCnRpbWUwLmVkdWNhdGlvbl9sZXZlbCA8LSB0aW1lMC53aXRoKA0KICAibW8oZWR1Y2F0aW9uX2xldmVsKSIsIA0KICBjKA0KICAgIHByaW9yKGRpcmljaGxldCgyKSwgY2xhc3MgPSAic2ltbyIsIGNvZWYgPSAibW9lZHVjYXRpb25fbGV2ZWwxIikNCiAgKQ0KKQ0KDQpzdW1tYXJ5KHRpbWUwLmVkdWNhdGlvbl9sZXZlbCkNCmBgYA0KYGBge3J9DQp0aW1lMC53b3JrcGxhY2VfcGVlcl9yZXZpZXcgPC0gdGltZTAud2l0aCgid29ya3BsYWNlX3BlZXJfcmV2aWV3IikNCg0Kc3VtbWFyeSh0aW1lMC53b3JrcGxhY2VfcGVlcl9yZXZpZXcpDQpgYGANCg0KYGBge3J9DQp0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcgPC0gdGltZTAud2l0aCgid29ya3BsYWNlX3RkX3RyYWNraW5nIikNCg0Kc3VtbWFyeSh0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcpDQpgYGANCg0KYGBge3J9DQp0aW1lMC53b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZyA8LSB0aW1lMC53aXRoKCJ3b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZyIpDQoNCnN1bW1hcnkodGltZTAud29ya3BsYWNlX3BhaXJfcHJvZ3JhbW1pbmcpDQpgYGANCg0KYGBge3J9DQp0aW1lMC53b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcyA8LSB0aW1lMC53aXRoKCJ3b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcyIpDQoNCnN1bW1hcnkodGltZTAud29ya3BsYWNlX2NvZGluZ19zdGFuZGFyZHMpDQpgYGANCg0KYGBge3J9DQp0aW1lMC5zY2VuYXJpbyA8LSB0aW1lMC53aXRoKCJzY2VuYXJpbyIpDQoNCnN1bW1hcnkodGltZTAuc2NlbmFyaW8pDQpgYGANCg0KYGBge3J9DQp0aW1lMC5ncm91cCA8LSB0aW1lMC53aXRoKCJncm91cCIpDQoNCnN1bW1hcnkodGltZTAuZ3JvdXApDQpgYGANCg0KYGBge3J9DQoNCmxvbygNCiAgdGltZTAsDQogIHRpbWUwLndvcmtfZG9tYWluLA0KICB0aW1lMC53b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcsDQogIHRpbWUwLndvcmtfZXhwZXJpZW5jZV9qYXZhLA0KICB0aW1lMC5lZHVjYXRpb25fZmllbGQsDQogIHRpbWUwLmVkdWNhdGlvbl9sZXZlbCwNCiAgdGltZTAud29ya3BsYWNlX3BlZXJfcmV2aWV3LA0KICB0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcsDQogIHRpbWUwLndvcmtwbGFjZV9wYWlyX3Byb2dyYW1taW5nLA0KICB0aW1lMC53b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcywNCiAgdGltZTAuc2NlbmFyaW8sDQogIHRpbWUwLmdyb3VwDQopDQpgYGANCg==</div>
 
 
 
