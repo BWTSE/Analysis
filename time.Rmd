@@ -3,149 +3,303 @@ title: "Time"
 output: html_notebook
 ---
 
+## Looking at the data
+We plot the data and can see that there is no obvious large difference between the debt versions
 ```{r}
-d.completed %>%
-  ggplot(aes(x=time, fill=high_debt_version)) + 
-  geom_boxplot()
+d.both_completed %>%
+  ggplot(aes(x=time/60, fill=high_debt_version)) + 
+  geom_boxplot() +
+  labs(
+    title = "Distribution of time measurements for the different debt levels",
+    subtitle = "Notice! Log10 x-scale",
+    x ="Time (min)"
+  ) +
+  scale_y_continuous(breaks = NULL) +
+  scale_x_log10() +
+  scale_fill_discrete(name = "Debt Level", labels = c("High Debt", "Low Debt"), guide = guide_legend(reverse = TRUE)) +
+  theme_minimal()
+```
 
-mean(d.completed$time)
-var(d.completed$time)
+## Descriptive Statistics
+For the whole dataset:
+```{r}
+d.both_completed %>%
+  pull(time) %>% 
+  summary()
+
+variance <- d.both_completed %>%
+  pull(time) %>%
+  var()
+sprintf("Variance: %.0f", variance)
 ```
 
 
-var > mean => neg binomial
+## Initial model
+As the variance is much greater than the mean we will use a negative binomial family that allows us to model the variance separately.
 
+We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
+
+### Selecting Priors
+We iterate over the model until we have sane priors
 ```{r}
-time0 <- brm(
-  time ~ 1 
-  + high_debt_version
-  + (1 | c | session),
-  family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 0.1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd"),
-    prior(gamma(0.01, 0.01), class = "shape")
-  ),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  # empty = TRUE
-  # sample_prior = "only",
-  file = "fits/time0",
-  file_refit = "on_change"
-)
 
-# pp_check(time0, nsamples = 200)
-
-summary(time0)
-```
-
-
-```{r}
 time0.with <- extendable_model(
   base_name = "time0",
-  base_formula = "time ~ 1 + high_debt_version + (1 | c | session)",
+  base_formula = "time ~ 1 + high_debt_version + (1 | session)",
   base_priors = c(
-    prior(normal(0, 0.1), class = "b"),
-    prior(normal(0, 1), class = "Intercept"),
+    prior(normal(0, 1), class = "b"),
+    prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
   ),
   family = negbinomial(),
-  data = d.completed
-)
-```
-
-
-
-```{r}
-time0.work_domain <- time0.with("work_domain")
-
-summary(time0.work_domain)
-```
-
-```{r}
-time0.work_experience_programming <- time0.with("work_experience_programming.s")
-
-summary(time0.work_experience_programming)
-```
-
-
-```{r}
-time0.work_experience_java <- time0.with("work_experience_java.s")
-
-summary(time0.work_experience_java)
-```
-
-```{r}
-time0.education_field <- time0.with("education_field")
-
-summary(time0.education_field)
-```
-
-```{r}
-time0.education_level <- time0.with(
-  "mo(education_level)", 
-  c(
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
-  )
+  data = d.both_completed,
+  base_control = list(adapt_delta = 0.95)
 )
 
-summary(time0.education_level)
+# Default priors:
+prior_summary(time0.with(only_priors= TRUE))
+
+# Our priors:
+prior_summary(time0.with(sample_prior = "only"))
+
+# Prior predictive check
+pp_check(time0.with(sample_prior = "only"), nsamples = 200) + 
+  scale_x_log10()
 ```
+### Model fit
+We check the posterior distribution and can see that the model seems to have been able to fit the data well
 ```{r}
-time0.workplace_peer_review <- time0.with("workplace_peer_review")
+# Posterior predictive check
+pp_check(time0.with(), nsamples = 100) +
+  scale_x_log10()
 
-summary(time0.workplace_peer_review)
-```
-
-```{r}
-time0.workplace_td_tracking <- time0.with("workplace_td_tracking")
-
-summary(time0.workplace_td_tracking)
-```
-
-```{r}
-time0.workplace_pair_programming <- time0.with("workplace_pair_programming")
-
-summary(time0.workplace_pair_programming)
-```
-
-```{r}
-time0.workplace_coding_standards <- time0.with("workplace_coding_standards")
-
-summary(time0.workplace_coding_standards)
+summary(time0.with())
 ```
 
-```{r}
-time0.scenario <- time0.with("scenario")
+## Model extenstions
 
-summary(time0.scenario)
-```
+We use loo to check some possible extensions on the model.
 
 ```{r}
-time0.group <- time0.with("group")
 
-summary(time0.group)
-```
-
-```{r}
+edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
 
 loo(
-  time0,
-  time0.work_domain,
-  time0.work_experience_programming,
-  time0.work_experience_java,
-  time0.education_field,
-  time0.education_level,
-  time0.workplace_peer_review,
-  time0.workplace_td_tracking,
-  time0.workplace_pair_programming,
-  time0.workplace_coding_standards,
-  time0.scenario,
-  time0.group
+  time0.with(),
+  time0.with("work_domain"),
+  time0.with("work_experience_programming.s"),
+  time0.with("work_experience_java.s"),
+  time0.with("education_field"),
+  time0.with("mo(education_level)", edlvl_prior),
+  time0.with("workplace_peer_review"),
+  time0.with("workplace_td_tracking"),
+  time0.with("workplace_pair_programming"),
+  time0.with("workplace_coding_standards"),
+  time0.with("scenario"),
+  time0.with("group")
 )
 ```
+
+
+Some variables seem to stand out as better than other. We try combining those to see if we can further improve our model.
+
+```{r}
+loo(
+  time0.with(),
+  time0.with("scenario"),
+  time0.with("education_field"),
+  time0.with("workplace_peer_review"),
+  time0.with("mo(education_level)", edlvl_prior),
+  time0.with(c("scenario", "education_field")),
+  time0.with(c("scenario", "mo(education_level)"), edlvl_prior),
+  time0.with(c("scenario", "workplace_peer_review")),
+  time0.with(c("education_field", "mo(education_level)"), edlvl_prior),
+  time0.with(c("education_field", "workplace_peer_review")),
+  time0.with(c("mo(education_level)", "workplace_peer_review"), edlvl_prior)
+)
+```
+None one of the new models stand out as particularly better than the old models, We try combining the so far most prominent features in one model.
+
+```{r}
+loo(
+  time0.with(),
+  time0.with("scenario"),
+  time0.with(c("scenario", "education_field")),
+  time0.with(c("scenario", "mo(education_level)"), edlvl_prior),
+  time0.with(c("scenario", "mo(education_level)", "education_field"), edlvl_prior)
+)
+```
+
+## Candidate models
+We inspect some of our top performing models. 
+
+All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end simila estimated for the high_debt_version beta parameter
+
+
+```{r}
+time0 <- time0.with()
+summary(time0)
+ranef(time0)
+plot(time0, ask = FALSE)
+
+pp_check(time0, nsamples = 150) + scale_x_log10()
+
+```
+
+```{r}
+time1 <- time0.with("scenario")
+summary(time1)
+ranef(time1)
+plot(time1, ask = FALSE)
+
+pp_check(time1, nsamples = 150) + scale_x_log10()
+```
+
+```{r}
+time2 <- time0.with(c("scenario", "education_field"))
+summary(time2)
+ranef(time2)
+plot(time2, ask = FALSE)
+
+pp_check(time2, nsamples = 150) + scale_x_log10()
+```
+
+```{r}
+time3 <- time0.with(c("scenario", "mo(education_level)"), edlvl_prior)
+summary(time2)
+ranef(time2)
+plot(time2, ask = FALSE)
+
+pp_check(time2, nsamples = 150) + scale_x_log10()
+```
+
+### Final model
+All models look nice, none is significantly better than the others, we go for the simplest model. time0
+
+### Trying to add covariance
+
+```{r}
+time0_with_c <- brm(
+  "time ~ 1 + high_debt_version + (1 | c | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(9, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape")
+  ),
+  family = negbinomial(),
+  data = as.data.frame(d.both_completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/time0_with_c",
+  file_refit = "on_change"
+)
+```
+
+```{r}
+loo(
+  time0,
+  time0_with_c
+)
+```
+Adding the covariance parameter did not improve the model and we will therefore continue to use the simple model time0.
+
+### Model with with incomplete data points
+
+Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r}
+time0.all <- brm(
+  "time ~ 1 + high_debt_version + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(9, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape")
+  ),
+  family = negbinomial(),
+  data = as.data.frame(d.completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/time0_with_all_submissions",
+  file_refit = "on_change"
+)
+summary(time0.all)
+ranef(time0.all)
+plot(time0.all, ask = FALSE)
+
+pp_check(time0.all, nsamples = 150) + scale_x_log10()
+```
+
+Training the model on all data points reduces the uncertainty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
+
+## Interpreting the model
+
+Extract posterior samples:
+```{r}
+
+post <- posterior_predict(time0.all, newdata = data.frame(high_debt_version = c("false", "true"), session = NA))
+post.low <-  post[,1]
+post.high <- post[,2]
+post.diff <- post.high - post.low
+post.diff.scaled <- post.diff / mean(post)
+
+```
+
+
+When we look at the distribution of the data between the high and low debt version we can see a difference, they are however quite similar.
+```{r}
+summary(data.frame("Low Debt"=post.low, "High Debt"=post.high))
+
+ggplot(data.frame(time = post.high)) +
+  geom_density(data = data.frame(time = post.low), aes(x=time/60, colour = "blue")) +
+  geom_density(data = data.frame(time = post.high),  aes(x=time/60, colour = "red" )) +
+  scale_x_log10() +
+  labs(
+    title = "Posterior density of time for high and low debt versions",
+    subtitle = "Notice! x-axis is log10 scaled.",
+    x ="Time (min)",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL) +
+  scale_colour_manual(name="Version",labels=c("Low Debt", "High Debt"), values=c("blue", "red"))
+
+```
+
+We can also plot the difference between time for the high debt version and the low debt version. In those graphs we see that the difference is centered around zero with slightly more weight on the positive (indicating slightly longer times for the high debt version)
+```{r}
+
+ggplot(data.frame(x = post.diff/60)) + geom_density(aes(x=x)) +
+  labs(
+    title = "Posterior density of time difference low and high debt versions ",
+    subtitle = "Difference = High Debt time - Low Debt time",
+    x ="Time Difference (min)",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL)
+
+
+data.frame(x = post.diff.scaled) %>%
+  ggplot() +
+  geom_density(aes(x=x)) +
+  labs(
+    title = "Posterior density of time difference low and high debt versions ",
+    subtitle = "Difference = High Debt time - Low Debt time",
+    x ="Time Difference (prortion of mean time)",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL)
+
+```
+
+
+We can also check the probability of the high debt effect being less than as well as grather then zero.
+```{r}
+sprintf("high debt effect < 0: %.2f%%", sum(sign(post.diff) == -1)/length(post.diff) * 100)
+sprintf("high debt effect > 0: %.2f%%", sum(sign(post.diff) == 1)/length(post.diff) * 100)
+```
+
+We can see no "significant" relation between the abount of technical debt in the codebase and time spent on the task.
+
