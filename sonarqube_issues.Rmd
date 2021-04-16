@@ -16,408 +16,232 @@ mean(d.both_completed$sonarqube_issues)
 var(d.both_completed$sonarqube_issues)
 ```
 
-```{r}
-sonarqube_issues1.formula <- sonarqube_issues ~ 1 + (1 | c | session)
-sonarqube_issues0.priors <- c(
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd"),
-    prior(gamma(0.01,0.01), class = "shape")
-  )
-
-sonarqube_issues1.priors <- c(
-  sonarqube_issues0.priors,
-    prior(normal(0, 1), class = "b")
-  )
-
-sonarqube_issues2.priors <- c(
-  sonarqube_issues0.priors
-  )
-
-
-pp_check(sonarqube_issues1, nsamples = 200, resp = "reusedlogicconstructor")
-pp_check(sonarqube_issues1, nsamples = 200, resp = "reusedlogicconstructor", type="bars")
-```
-
-
-Basic Model with negative binomial distribution:
+Super basic:
 
 ```{r}
 sonarqube_issues0 <- brm(
-  sonarqube_issues ~ 1 
-  + (1 | session),
+  sonarqube_issues ~ 1 + (1 |c| session),
   family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues0.priors,
-  control = list(adapt_delta = 0.95),
-  #empty = TRUE
-  #sample_prior = "only",
-  file = "fits/sonarqube_issues1",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues0)
-```
-
-
-```{r}
-sonarqube_issues0.poisson <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + (1 | session),
-  family = poisson(),
-  data = as.data.frame(d.completed),
-      prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(2.2, 1), class = "Intercept"),
-    prior(exponential(0.5), class = "sd")
-  ),
-  control = list(adapt_delta = 0.95),
-  #sample_prior = "only",
-  #empty = TRUE
-  file = "fits/sonarqube_issues0.poisson",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues1.poisson)
-```
-
-```{r}
-loo(sonarqube_issues1, sonarqube_issues1.poisson)
-```
-
-negbin.. seems better but poisson give a better conficence interval for predictor, how to interpret that?
-
-```{r}
-sonarqube_issues2_exp <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + work_experience_programming.s
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors,
-  control = list(adapt_delta = 0.95),
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_exp",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_exp)
-```
-
-```{r}
-sonarqube_issues2_java <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + work_experience_java.s
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors,
-  control = list(adapt_delta = 0.95),
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_java",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_java)
-```
-```{r}
-sonarqube_issues2_education_field <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + education_field
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors,
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_education_field",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_education_field)
-```
-
-```{r}
-sonarqube_issues2_education_level <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + mo(education_level)
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_education_level",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_education_level)
-```
-
-```{r}
-sonarqube_issues2_practice_peer_reviews <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + workplace_peer_review
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_practice_peer_reviews",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_practice_peer_reviews)
-```
-
-```{r}
-sonarqube_issues2_practice_td_tracking <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + workplace_td_tracking
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_practice_td_tracking",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_practice_td_tracking)
-```
-
-```{r}
-sonarqube_issues2_practice_pair_programming <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + workplace_pair_programming
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_practice_pair_programming",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_practice_pair_programming)
-```
-
-```{r}
-sonarqube_issues2_practice_coding_standards <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + workplace_coding_standards
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_practice_coding_standards",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_practice_coding_standards)
-```
-
-```{r}
-sonarqube_issues2_work_domain <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + work_domain
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_work_domain",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_work_domain)
-```
-
-```{r}
-sonarqube_issues2_group <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + group
-  + (1 | session),
-  family = negbinomial(),
-data = as.data.frame(d.both_completed),
-  prior = sonarqube_issues1.priors
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_group",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_group)
-```
-
-```{r}
-sonarqube_issues2_scenario <- brm(
-  sonarqube_issues ~ 1 
-  + high_debt_version
-  + scenario
-  + (1 | session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-      prior = sonarqube_issues1.priors
-    prior(normal(0, 1), class = "b"),
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(exponential(0.6), class = "sd"),
-    prior(gamma(2000,0.002), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  #empty = TRUE
-  file = "fits/sonarqube_issues2_scenario",
-  file_refit = "on_change"
-)
-
-summary(sonarqube_issues2_scenario)
-```
-
-```{r}
-loo(
-  sonarqube_issues1,
-  sonarqube_issues2_exp,
-  sonarqube_issues2_java,
-  sonarqube_issues2_education_field,
-  sonarqube_issues2_education_level,
-  sonarqube_issues2_practice_peer_reviews,
-  sonarqube_issues2_practice_td_tracking,
-  sonarqube_issues2_practice_pair_programming,
-  sonarqube_issues2_practice_coding_standards,
-  sonarqube_issues2_scenario,
-  sonarqube_issues2_group,
-  sonarqube_issues2_work_domain
-)
-```
-
-```{r}
-sonarqube_issues2_scenario.poisson <- brm(
-  sonarqube_issues ~ 1
-  + high_debt_version
-  + work_experience_programming.s
-  + work_experience_java.s
-  + education_field
-  #+ mo(education_level)
-  + workplace_peer_review
-  + workplace_td_tracking
-  + workplace_pair_programming
-  + workplace_coding_standards
-  + work_domain
-  + group
-  + scenario
-  + (1 | session),
-  family = poisson(),
   data = as.data.frame(d.both_completed),
   prior = c(
-    prior(normal(0, 1), class = "b"),
-    prior(normal(2.2, 1), class = "Intercept")
-    #prior(exponential(0.5), class = "sd")
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(gamma(0.01,0.01), class = "shape")
   ),
   control = list(adapt_delta = 0.95),
-  backend = "cmdstanr",
-  #sample_prior = "only",
   #empty = TRUE
-  file = "fits/sonarqube_issues1.poisson",
+  file = "fits/sonarqube_issues0",
   file_refit = "on_change"
 )
 
-summary(sonarqube_issues2_scenario.poisson)
+```
+
+Adding debt level as predictor:
+
+```{r}
+sonarqube_issues1.with <- extendable_model(
+  base_name = "sonarqube_issues1",
+  base_formula = "sonarqube_issues ~ 1 + high_debt_version + (1 | c | session)",
+  base_priors = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape")
+  ),
+  family = negbinomial(),
+  data = d.both_completed,
+  base_control = list(adapt_delta = 0.95)
+)
+
+
+sonarqube_issues1 <- sonarqube_issues1.with()
+summary(sonarqube_issues1)
+```
+
+Compare
+
+```{r}
+loo(sonarqube_issues0, sonarqube_issues1.with())
+
+```
+
+
+```{r}
+summary(sonarqube_issues1.with("work_domain"))
+```
+
+```{r}
+summary(sonarqube_issues1.with("work_experience_programming.s"))
+```
+
+
+```{r}
+summary(sonarqube_issues1.with("work_experience_java.s"))
+```
+
+```{r}
+summary(sonarqube_issues1.with("education_field"))
+```
+
+```{r}
+summary(sonarqube_issues1.with(
+  "mo(education_level)", 
+  c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+  )
+))
+```
+
+```{r}
+summary(sonarqube_issues1.with("workplace_peer_review"))
+```
+
+```{r}
+summary(sonarqube_issues1.with("workplace_td_tracking"))
+```
+
+```{r}
+summary(sonarqube_issues1.with("workplace_pair_programming"))
+```
+
+```{r}
+summary(sonarqube_issues1.with("workplace_coding_standards"))
+```
+
+```{r}
+summary(sonarqube_issues1.with("scenario"))
+```
+
+```{r}
+summary(sonarqube_issues1.with("group"))
+```
+```{r}
+summary(
+  sonarqube_issues1.with(
+  c("work_domain", 
+    "work_experience_programming.s",
+    "work_experience_java.s",
+    "education_field",
+    "mo(education_level)",
+    "workplace_peer_review",
+    "workplace_td_tracking",
+    "workplace_pair_programming",
+    "workplace_coding_standards",
+    "scenario",
+    "group"
+    ),
+  c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+    )
+  )
+)
+
+pp_check(
+  sonarqube_issues1.with(
+  c("work_domain", 
+    "work_experience_programming.s",
+    "work_experience_java.s",
+    "education_field",
+    "mo(education_level)",
+    "workplace_peer_review",
+    "workplace_td_tracking",
+    "workplace_pair_programming",
+    "workplace_coding_standards",
+    "scenario",
+    "group"
+    ),
+  c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+    )
+  ),
+  type = "bars",
+  nsamples = "100"
+)
+
+```
+
+```{r}
+
+loo(
+  sonarqube_issues1.with(),
+  sonarqube_issues1.with("work_domain"),
+  sonarqube_issues1.with("work_experience_programming.s"),
+  sonarqube_issues1.with("work_experience_java.s"),
+  sonarqube_issues1.with("education_field"),
+  sonarqube_issues1.with(
+  "mo(education_level)", 
+  c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+  )
+  ),
+  sonarqube_issues1.with("workplace_peer_review"),
+  sonarqube_issues1.with("workplace_td_tracking"),
+  sonarqube_issues1.with("workplace_pair_programming"),
+  sonarqube_issues1.with("workplace_coding_standards"),
+  sonarqube_issues1.with("scenario"),
+  sonarqube_issues1.with("group"),
+  sonarqube_issues1.with(c("scenario","group")),
+  sonarqube_issues1.with(
+  c("work_domain", 
+    "work_experience_programming.s",
+    "work_experience_java.s",
+    "education_field",
+    "mo(education_level)",
+    "workplace_peer_review",
+    "workplace_td_tracking",
+    "workplace_pair_programming",
+    "workplace_coding_standards",
+    "scenario",
+    "group"
+    ),
+  c(
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+    )
+)
+)
 ```
 
 
 
+Candidate models:
 ```{r}
-loo(
-  sonarqube_issues1,
-  sonarqube_issues2_scenario,
-  sonarqube_issues1.poisson,
-  sonarqube_issues2_scenario.poisson
-)
+sonarqube_issues_cand1 <- sonarqube_issues1.with()
+summary(sonarqube_issues_cand1)
+ranef(sonarqube_issues_cand1)
+plot(sonarqube_issues_cand1)
+pp_check(sonarqube_issues_cand1, type = "bars", nsamples = 100)
+
+```
+
+```{r}
+
+sonarqube_issues_cand2 <- sonarqube_issues1.with("scenario")
+summary(sonarqube_issues_cand2)
+ranef(sonarqube_issues_cand2)
+plot(sonarqube_issues_cand2)
+pp_check(sonarqube_issues_cand2, type = "bars", nsamples = 100)
+
+```
+
+```{r}
+sonarqube_issues_cand3 <- sonarqube_issues1.with("group")
+summary(sonarqube_issues_cand3)
+ranef(sonarqube_issues_cand3)
+plot(sonarqube_issues_cand3)
+pp_check(sonarqube_issues_cand3, type = "bars", nsamples = 100)
+
+```
+
+```{r}
+
+sonarqube_issues_cand4 <- sonarqube_issues1.with(c("group","scenario"))
+summary(sonarqube_issues_cand4)
+ranef(sonarqube_issues_cand4)
+plot(sonarqube_issues_cand4)
+pp_check(sonarqube_issues_cand4, type = "bars", nsamples = 100)
+
+```
+
+```{r}
+loo(sonarqube_issues_cand1,sonarqube_issues_cand2,sonarqube_issues_cand3,sonarqube_issues_cand4)
+
 ```
