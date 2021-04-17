@@ -301,5 +301,5 @@ sprintf("high debt effect < 0: %.2f%%", sum(sign(post.diff) == -1)/length(post.d
 sprintf("high debt effect > 0: %.2f%%", sum(sign(post.diff) == 1)/length(post.diff) * 100)
 ```
 
-We can see no "significant" relation between the abount of technical debt in the codebase and time spent on the task.
+We can see no "significant" relation between the amount of technical debt in the given codebase and time spent on the task.
 
