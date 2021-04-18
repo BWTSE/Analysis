@@ -1,0 +1,232 @@
+---
+title: "dropouts"
+output: html_notebook
+---
+
+## Looking at the data
+We plot the data and can see that there is no obvious large difference between the debt versions. We do however see a defference when it comes to which scenario the droput was on.
+```{r}
+d.sessions %>%
+  ggplot(aes(task_completion)) +
+  geom_bar() +
+  labs(title = "Task completion per session") +
+  xlab("Least completed task per session") +
+  ylab("Number of sessions")
+
+d %>%
+  filter(task_completion == "Not submitted") %>%
+  group_by(high_debt_version) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(x=high_debt_version, y=n)) +
+  geom_bar(stat = "identity") +
+  # geom_text(aes(label=n), vjust=1.7, size=5, color = "white") +
+  labs(title = "Dropputs per debt level") +
+  xlab("Version") +
+  ylab("Number of dropouts")
+
+
+d %>%
+  filter(task_completion == "Not submitted") %>%
+  ggplot(aes(scenario)) +
+  geom_bar() +
+  labs(title = "Dropputs per scenraio") +
+  ylab("Number of dropouts") +
+  xlab("Scenario")
+
+d.sessions %>%
+  ggplot(aes(group, fill=task_completion)) +
+  geom_bar() +
+  labs(title = "Dropputs per signup group") +
+  ylab("Number of dropouts") +
+  xlab("Signup Group")
+```
+
+## Initial model
+The type of the outcome is adjacent categories and is modeled as a cumulative family.
+
+We include `high_debt_verison` in our initial model.
+
+
+### Selecting Priors
+We iterate over the model until we have sane priors
+```{r}
+
+dropouts0.with <- extendable_model(
+  base_name = "dropouts0",
+  base_formula = "task_completion ~ 1 + high_debt_version",
+  base_priors = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(-2, 1), class = "Intercept")
+  ),
+  family = sratio(),
+  data = d,
+  # base_control = list(adapt_delta = 0.95)
+)
+
+# Default priors:
+prior_summary(dropouts0.with(only_priors= TRUE))
+
+# Our priors:
+prior_summary(dropouts0.with(sample_prior = "only"))
+
+# Prior predictive check
+pp_check(dropouts0.with(sample_prior = "only"), nsamples = 200, type = "bars")
+```
+
+### Model fit
+We check the posterior distribution and can see that the model seems to have been able to fit the data well
+```{r}
+# Posterior predictive check
+pp_check(dropouts0.with(), nsamples = 100, type = "bars")
+
+summary(dropouts0.with())
+```
+
+## Model extenstions
+
+We use loo to check some possible extensions on the model.
+
+```{r}
+
+edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+
+loo(
+  dropouts0.with(),
+  dropouts0.with("work_domain"),
+  dropouts0.with("work_experience_programming.s"),
+  dropouts0.with("work_experience_java.s"),
+  dropouts0.with("education_field"),
+  dropouts0.with("mo(education_level)", edlvl_prior),
+  dropouts0.with("workplace_peer_review"),
+  dropouts0.with("workplace_td_tracking"),
+  dropouts0.with("workplace_pair_programming"),
+  dropouts0.with("workplace_coding_standards"),
+  dropouts0.with("scenario"),
+  dropouts0.with("group"),
+  dropouts0.with("order")
+)
+```
+
+We try combining some of the most prominent features
+
+```{r}
+
+loo(
+  dropouts0.with(),
+  dropouts0.with("group"),
+  dropouts0.with("education_field"),
+  dropouts0.with("work_experience_programming.s"),
+  dropouts0.with("work_experience_java.s"),
+  dropouts0.with("workplace_pair_programming"),
+  dropouts0.with("scenario"),
+  
+  dropouts0.with(c("group", "education_field")),
+  dropouts0.with(c("group", "work_experience_programming.s")),
+  dropouts0.with(c("group", "work_experience_java.s")),
+  dropouts0.with(c("group", "workplace_pair_programming")),
+  dropouts0.with(c("group", "scenario")),
+  
+  dropouts0.with(c("education_field", "work_experience_programming.s")),
+  dropouts0.with(c("education_field", "work_experience_java.s")),
+  dropouts0.with(c("education_field", "workplace_pair_programming")),
+  dropouts0.with(c("education_field", "scenario")),
+  
+  dropouts0.with(c("work_experience_programming.s", "work_experience_java.s")),
+  dropouts0.with(c("work_experience_programming.s", "workplace_pair_programming")),
+  dropouts0.with(c("work_experience_programming.s", "scenario")),
+  
+  dropouts0.with(c("work_experience_java.s", "workplace_pair_programming")),
+  dropouts0.with(c("work_experience_java.s", "scenario")),
+  
+  dropouts0.with(c("workplace_pair_programming", "scenario"))
+)
+```
+We pick out some interesting models and try combining them
+```{r}
+
+loo(
+  dropouts0.with(),
+  
+  dropouts0.with("group"),
+  dropouts0.with("scenario"),
+  
+  dropouts0.with(c("group", "education_field")),
+  dropouts0.with(c("education_field", "workplace_pair_programming")),
+  dropouts0.with(c("group", "scenario")),
+  
+  dropouts0.with(c("group", "education_field", "scenario")),
+  dropouts0.with(c("group", "education_field", "workplace_pair_programming")),
+  dropouts0.with(c("group", "workplace_pair_programming", "scenario")),
+  dropouts0.with(c("education_field", "workplace_pair_programming", "scenario")),
+  
+  
+  dropouts0.with(c("group", "education_field", "workplace_pair_programming", "scenario"))
+
+)
+```
+
+## Candidate models
+We inspect some of our top performing models. 
+
+All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end similar estimates for the high_debt_version beta parameter. 
+
+```{r}
+dropouts0 <- dropouts0.with()
+summary(dropouts0)
+plot(dropouts0, ask = FALSE)
+
+pp_check(dropouts0, nsamples = 150, type = "bars")
+```
+
+```{r}
+dropouts1 <- dropouts0.with("group")
+summary(dropouts1)
+plot(dropouts1, ask = FALSE)
+
+pp_check(dropouts1, nsamples = 150, type = "bars")
+```
+
+```{r}
+dropouts2 <- dropouts0.with(c("group", "education_field"))
+summary(dropouts2)
+plot(dropouts2, ask = FALSE)
+
+pp_check(dropouts2, nsamples = 150, type = "bars")
+```
+
+```{r}
+dropouts3 <- dropouts0.with(c("group", "education_field", "scenario"))
+summary(dropouts3)
+plot(dropouts3, ask = FALSE)
+
+pp_check(dropouts3, nsamples = 150, type = "bars")
+```
+
+```{r}
+dropouts4 <- dropouts0.with(c("group", "education_field", "scenario", "workplace_pair_programming"))
+summary(dropouts4)
+plot(dropouts4, ask = FALSE)
+
+pp_check(dropouts4, nsamples = 150, type = "bars")
+```
+
+### Final model
+All models look nice. According to loo some of the more complex models perform better than the simpler ones. We can also see that the estimate for `high_debt_versionfalse` becomes slightly more uncertain with the more complex models. `dropouts2` has a good estimate and is not significantly worse than the best performing model according to loo. 
+
+## Interpreting the model
+
+Extract posterior samples:
+```{r}
+
+post <- posterior_predict(dropouts2, newdata = data.frame(high_debt_version = c("false", "true"), group = NA, education_field = NA))
+post.low <-  post[,1]
+post.high <- post[,2]
+post.diff <- post.high - post.low
+
+```
+
+
+
+
+
+

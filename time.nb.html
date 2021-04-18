@@ -215,8 +215,12 @@ pre code {
 
 
 <!-- rnb-text-begin -->
+<div id="looking-at-the-data" class="section level2">
+<h2>Looking at the data</h2>
+<p>We plot the data and can see that there is no obvious large difference between the debt versions</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<<<<<<< HEAD
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZC5jb21wbGV0ZWQgJT4lXG4gIGdncGxvdChhZXMoeD10aW1lLCBmaWxsPWhpZ2hfZGVidF92ZXJzaW9uKSkgKyBcbiAgZ2VvbV9ib3hwbG90KClcblxubWVhbihkLmNvbXBsZXRlZCR0aW1lKVxudmFyKGQuY29tcGxldGVkJHRpbWUpXG5gYGAifQ== -->
 <pre class="r"><code>d.completed %&gt;%
   ggplot(aes(x=time, fill=high_debt_version)) + 
@@ -224,39 +228,41 @@ pre code {
 
 mean(d.completed$time)
 var(d.completed$time)</code></pre>
+=======
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZC5ib3RoX2NvbXBsZXRlZCAlPiVcbiAgZ2dwbG90KGFlcyh4PXRpbWUvNjAsIGZpbGw9aGlnaF9kZWJ0X3ZlcnNpb24pKSArIFxuICBnZW9tX2JveHBsb3QoKSArXG4gIGxhYnMoXG4gICAgdGl0bGUgPSBcIkRpc3RyaWJ1dGlvbiBvZiB0aW1lIG1lYXN1cmVtZW50cyBmb3IgdGhlIGRpZmZlcmVudCBkZWJ0IGxldmVsc1wiLFxuICAgIHN1YnRpdGxlID0gXCJOb3RpY2UhIExvZzEwIHgtc2NhbGVcIixcbiAgICB4ID1cIlRpbWUgKG1pbilcIlxuICApICtcbiAgc2NhbGVfeV9jb250aW51b3VzKGJyZWFrcyA9IE5VTEwpICtcbiAgc2NhbGVfeF9sb2cxMCgpICtcbiAgc2NhbGVfZmlsbF9kaXNjcmV0ZShuYW1lID0gXCJEZWJ0IExldmVsXCIsIGxhYmVscyA9IGMoXCJIaWdoIERlYnRcIiwgXCJMb3cgRGVidFwiKSwgZ3VpZGUgPSBndWlkZV9sZWdlbmQocmV2ZXJzZSA9IFRSVUUpKSArXG4gIHRoZW1lX21pbmltYWwoKVxuYGBgIn0= -->
+<pre class="r"><code>d.both_completed %&gt;%
+  ggplot(aes(x=time/60, fill=high_debt_version)) + 
+  geom_boxplot() +
+  labs(
+    title = &quot;Distribution of time measurements for the different debt levels&quot;,
+    subtitle = &quot;Notice! Log10 x-scale&quot;,
+    x =&quot;Time (min)&quot;
+  ) +
+  scale_y_continuous(breaks = NULL) +
+  scale_x_log10() +
+  scale_fill_discrete(name = &quot;Debt Level&quot;, labels = c(&quot;High Debt&quot;, &quot;Low Debt&quot;), guide = guide_legend(reverse = TRUE)) +
+  theme_minimal()</code></pre>
+>>>>>>> 56d8b00744a277b267ed800e6ecf48c598a3fc88
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>var &gt; mean =&gt; neg binomial</p>
+</div>
+<div id="descriptive-statistics" class="section level2">
+<h2>Descriptive Statistics</h2>
+<p>For the whole dataset:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAgPC0gYnJtKFxuICB0aW1lIH4gMSBcbiAgKyBoaWdoX2RlYnRfdmVyc2lvblxuICArICgxIHwgYyB8IHNlc3Npb24pLFxuICBmYW1pbHkgPSBuZWdiaW5vbWlhbCgpLFxuICBkYXRhID0gYXMuZGF0YS5mcmFtZShkLmNvbXBsZXRlZCksXG4gIHByaW9yID0gYyhcbiAgICBwcmlvcihub3JtYWwoMCwgMC4xKSwgY2xhc3MgPSBcImJcIiksXG4gICAgcHJpb3Iobm9ybWFsKDAsIDEpLCBjbGFzcyA9IFwiSW50ZXJjZXB0XCIpLFxuICAgIHByaW9yKGV4cG9uZW50aWFsKDEpLCBjbGFzcyA9IFwic2RcIiksXG4gICAgcHJpb3IoZ2FtbWEoMC4wMSwgMC4wMSksIGNsYXNzID0gXCJzaGFwZVwiKVxuICApLFxuICBiYWNrZW5kID0gXCJjbWRzdGFuclwiLFxuICBjaGFpbnMgPSA0LFxuICBjb3JlcyA9IDQsXG4gIGl0ZXIgPSA1ZTMsXG4gICMgZW1wdHkgPSBUUlVFXG4gICMgc2FtcGxlX3ByaW9yID0gXCJvbmx5XCIsXG4gIGZpbGUgPSBcImZpdHMvdGltZTBcIixcbiAgZmlsZV9yZWZpdCA9IFwib25fY2hhbmdlXCJcbilcblxuIyBwcF9jaGVjayh0aW1lMCwgbnNhbXBsZXMgPSAyMDApXG5cbnN1bW1hcnkodGltZTApXG5gYGAifQ== -->
-<pre class="r"><code>time0 &lt;- brm(
-  time ~ 1 
-  + high_debt_version
-  + (1 | c | session),
-  family = negbinomial(),
-  data = as.data.frame(d.completed),
-  prior = c(
-    prior(normal(0, 0.1), class = &quot;b&quot;),
-    prior(normal(0, 1), class = &quot;Intercept&quot;),
-    prior(exponential(1), class = &quot;sd&quot;),
-    prior(gamma(0.01, 0.01), class = &quot;shape&quot;)
-  ),
-  backend = &quot;cmdstanr&quot;,
-  chains = 4,
-  cores = 4,
-  iter = 5e3,
-  # empty = TRUE
-  # sample_prior = &quot;only&quot;,
-  file = &quot;fits/time0&quot;,
-  file_refit = &quot;on_change&quot;
-)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZC5ib3RoX2NvbXBsZXRlZCAlPiVcbiAgcHVsbCh0aW1lKSAlPiUgXG4gIHN1bW1hcnkoKVxuXG52YXJpYW5jZSA8LSBkLmJvdGhfY29tcGxldGVkICU+JVxuICBwdWxsKHRpbWUpICU+JVxuICB2YXIoKVxuc3ByaW50ZihcIlZhcmlhbmNlOiAlLjBmXCIsIHZhcmlhbmNlKVxuYGBgIn0= -->
+<pre class="r"><code>d.both_completed %&gt;%
+  pull(time) %&gt;% 
+  summary()
 
-# pp_check(time0, nsamples = 200)
-
-summary(time0)</code></pre>
+variance &lt;- d.both_completed %&gt;%
+  pull(time) %&gt;%
+  var()
+sprintf(&quot;Variance: %.0f&quot;, variance)</code></pre>
 <!-- rnb-source-end -->
+<<<<<<< HEAD
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -629,132 +635,341 @@ Samples were drawn using sample(hmc). For each parameter, Bulk_ESS
 and Tail_ESS are effective sample size measures, and Rhat is the potential
 scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <!-- rnb-output-end -->
+=======
+>>>>>>> 56d8b00744a277b267ed800e6ecf48c598a3fc88
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="initial-model" class="section level2">
+<h2>Initial model</h2>
+<p>As the variance is much greater than the mean we will use a negative binomial family that allows us to model the variance separately.</p>
+<p>We include <code>high_debt_verison</code> as well as a varying intercept for each individual in our initial model.</p>
+<div id="selecting-priors" class="section level3">
+<h3>Selecting Priors</h3>
+<p>We iterate over the model until we have sane priors</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<<<<<<< HEAD
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud29ya19kb21haW4gPC0gdGltZTAud2l0aChcIndvcmtfZG9tYWluXCIpXG5cbnN1bW1hcnkodGltZTAud29ya19kb21haW4pXG5gYGAifQ== -->
 <pre class="r"><code>time0.work_domain &lt;- time0.with(&quot;work_domain&quot;)
-
-summary(time0.work_domain)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud29ya19leHBlcmllbmNlX3Byb2dyYW1taW5nIDwtIHRpbWUwLndpdGgoXCJ3b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcuc1wiKVxuXG5zdW1tYXJ5KHRpbWUwLndvcmtfZXhwZXJpZW5jZV9wcm9ncmFtbWluZylcbmBgYCJ9 -->
-<pre class="r"><code>time0.work_experience_programming &lt;- time0.with(&quot;work_experience_programming.s&quot;)
-
-summary(time0.work_experience_programming)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud29ya19leHBlcmllbmNlX2phdmEgPC0gdGltZTAud2l0aChcIndvcmtfZXhwZXJpZW5jZV9qYXZhLnNcIilcblxuc3VtbWFyeSh0aW1lMC53b3JrX2V4cGVyaWVuY2VfamF2YSlcbmBgYCJ9 -->
-<pre class="r"><code>time0.work_experience_java &lt;- time0.with(&quot;work_experience_java.s&quot;)
-
-summary(time0.work_experience_java)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAuZWR1Y2F0aW9uX2ZpZWxkIDwtIHRpbWUwLndpdGgoXCJlZHVjYXRpb25fZmllbGRcIilcblxuc3VtbWFyeSh0aW1lMC5lZHVjYXRpb25fZmllbGQpXG5gYGAifQ== -->
-<pre class="r"><code>time0.education_field &lt;- time0.with(&quot;education_field&quot;)
-
-summary(time0.education_field)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAuZWR1Y2F0aW9uX2xldmVsIDwtIHRpbWUwLndpdGgoXG4gIFwibW8oZWR1Y2F0aW9uX2xldmVsKVwiLCBcbiAgYyhcbiAgICBwcmlvcihkaXJpY2hsZXQoMiksIGNsYXNzID0gXCJzaW1vXCIsIGNvZWYgPSBcIm1vZWR1Y2F0aW9uX2xldmVsMVwiKVxuICApXG4pXG5cbnN1bW1hcnkodGltZTAuZWR1Y2F0aW9uX2xldmVsKVxuYGBgIn0= -->
-<pre class="r"><code>time0.education_level &lt;- time0.with(
-  &quot;mo(education_level)&quot;, 
-  c(
-    prior(dirichlet(2), class = &quot;simo&quot;, coef = &quot;moeducation_level1&quot;)
-  )
+=======
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG50aW1lMC53aXRoIDwtIGV4dGVuZGFibGVfbW9kZWwoXG4gIGJhc2VfbmFtZSA9IFwidGltZTBcIixcbiAgYmFzZV9mb3JtdWxhID0gXCJ0aW1lIH4gMSArIGhpZ2hfZGVidF92ZXJzaW9uICsgKDEgfCBzZXNzaW9uKVwiLFxuICBiYXNlX3ByaW9ycyA9IGMoXG4gICAgcHJpb3Iobm9ybWFsKDAsIDEpLCBjbGFzcyA9IFwiYlwiKSxcbiAgICBwcmlvcihub3JtYWwoNy41LCAxKSwgY2xhc3MgPSBcIkludGVyY2VwdFwiKSxcbiAgICBwcmlvcihleHBvbmVudGlhbCgxKSwgY2xhc3MgPSBcInNkXCIpLFxuICAgIHByaW9yKGdhbW1hKDAuMDEsIDAuMDEpLCBjbGFzcyA9IFwic2hhcGVcIilcbiAgKSxcbiAgZmFtaWx5ID0gbmVnYmlub21pYWwoKSxcbiAgZGF0YSA9IGQuYm90aF9jb21wbGV0ZWQsXG4gIGJhc2VfY29udHJvbCA9IGxpc3QoYWRhcHRfZGVsdGEgPSAwLjk1KVxuKVxuXG4jIERlZmF1bHQgcHJpb3JzOlxucHJpb3Jfc3VtbWFyeSh0aW1lMC53aXRoKG9ubHlfcHJpb3JzPSBUUlVFKSlcblxuIyBPdXIgcHJpb3JzOlxucHJpb3Jfc3VtbWFyeSh0aW1lMC53aXRoKHNhbXBsZV9wcmlvciA9IFwib25seVwiKSlcblxuIyBQcmlvciBwcmVkaWN0aXZlIGNoZWNrXG5wcF9jaGVjayh0aW1lMC53aXRoKHNhbXBsZV9wcmlvciA9IFwib25seVwiKSwgbnNhbXBsZXMgPSAyMDApICsgXG4gIHNjYWxlX3hfbG9nMTAoKVxuYGBgIn0= -->
+<pre class="r"><code>
+time0.with &lt;- extendable_model(
+  base_name = &quot;time0&quot;,
+  base_formula = &quot;time ~ 1 + high_debt_version + (1 | session)&quot;,
+  base_priors = c(
+    prior(normal(0, 1), class = &quot;b&quot;),
+    prior(normal(7.5, 1), class = &quot;Intercept&quot;),
+    prior(exponential(1), class = &quot;sd&quot;),
+    prior(gamma(0.01, 0.01), class = &quot;shape&quot;)
+  ),
+  family = negbinomial(),
+  data = d.both_completed,
+  base_control = list(adapt_delta = 0.95)
 )
 
-summary(time0.education_level)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud29ya3BsYWNlX3BlZXJfcmV2aWV3IDwtIHRpbWUwLndpdGgoXCJ3b3JrcGxhY2VfcGVlcl9yZXZpZXdcIilcblxuc3VtbWFyeSh0aW1lMC53b3JrcGxhY2VfcGVlcl9yZXZpZXcpXG5gYGAifQ== -->
-<pre class="r"><code>time0.workplace_peer_review &lt;- time0.with(&quot;workplace_peer_review&quot;)
+# Default priors:
+prior_summary(time0.with(only_priors= TRUE))
 
-summary(time0.workplace_peer_review)</code></pre>
+# Our priors:
+prior_summary(time0.with(sample_prior = &quot;only&quot;))
+
+# Prior predictive check
+pp_check(time0.with(sample_prior = &quot;only&quot;), nsamples = 200) + 
+  scale_x_log10()</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="model-fit" class="section level3">
+<h3>Model fit</h3>
+<p>We check the posterior distribution and can see that the model seems to have been able to fit the data well</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud29ya3BsYWNlX3RkX3RyYWNraW5nIDwtIHRpbWUwLndpdGgoXCJ3b3JrcGxhY2VfdGRfdHJhY2tpbmdcIilcblxuc3VtbWFyeSh0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcpXG5gYGAifQ== -->
-<pre class="r"><code>time0.workplace_td_tracking &lt;- time0.with(&quot;workplace_td_tracking&quot;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBQb3N0ZXJpb3IgcHJlZGljdGl2ZSBjaGVja1xucHBfY2hlY2sodGltZTAud2l0aCgpLCBuc2FtcGxlcyA9IDEwMCkgK1xuICBzY2FsZV94X2xvZzEwKClcblxuc3VtbWFyeSh0aW1lMC53aXRoKCkpXG5gYGAifQ== -->
+<pre class="r"><code># Posterior predictive check
+pp_check(time0.with(), nsamples = 100) +
+  scale_x_log10()
+>>>>>>> 56d8b00744a277b267ed800e6ecf48c598a3fc88
 
-summary(time0.workplace_td_tracking)</code></pre>
+summary(time0.with())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+</div>
+<div id="model-extenstions" class="section level2">
+<h2>Model extenstions</h2>
+<p>We use loo to check some possible extensions on the model.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud29ya3BsYWNlX3BhaXJfcHJvZ3JhbW1pbmcgPC0gdGltZTAud2l0aChcIndvcmtwbGFjZV9wYWlyX3Byb2dyYW1taW5nXCIpXG5cbnN1bW1hcnkodGltZTAud29ya3BsYWNlX3BhaXJfcHJvZ3JhbW1pbmcpXG5gYGAifQ== -->
-<pre class="r"><code>time0.workplace_pair_programming &lt;- time0.with(&quot;workplace_pair_programming&quot;)
-
-summary(time0.workplace_pair_programming)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAud29ya3BsYWNlX2NvZGluZ19zdGFuZGFyZHMgPC0gdGltZTAud2l0aChcIndvcmtwbGFjZV9jb2Rpbmdfc3RhbmRhcmRzXCIpXG5cbnN1bW1hcnkodGltZTAud29ya3BsYWNlX2NvZGluZ19zdGFuZGFyZHMpXG5gYGAifQ== -->
-<pre class="r"><code>time0.workplace_coding_standards &lt;- time0.with(&quot;workplace_coding_standards&quot;)
-
-summary(time0.workplace_coding_standards)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAuc2NlbmFyaW8gPC0gdGltZTAud2l0aChcInNjZW5hcmlvXCIpXG5cbnN1bW1hcnkodGltZTAuc2NlbmFyaW8pXG5gYGAifQ== -->
-<pre class="r"><code>time0.scenario &lt;- time0.with(&quot;scenario&quot;)
-
-summary(time0.scenario)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAuZ3JvdXAgPC0gdGltZTAud2l0aChcImdyb3VwXCIpXG5cbnN1bW1hcnkodGltZTAuZ3JvdXApXG5gYGAifQ== -->
-<pre class="r"><code>time0.group &lt;- time0.with(&quot;group&quot;)
-
-summary(time0.group)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5sb28oXG4gIHRpbWUwLFxuICB0aW1lMC53b3JrX2RvbWFpbixcbiAgdGltZTAud29ya19leHBlcmllbmNlX3Byb2dyYW1taW5nLFxuICB0aW1lMC53b3JrX2V4cGVyaWVuY2VfamF2YSxcbiAgdGltZTAuZWR1Y2F0aW9uX2ZpZWxkLFxuICB0aW1lMC5lZHVjYXRpb25fbGV2ZWwsXG4gIHRpbWUwLndvcmtwbGFjZV9wZWVyX3JldmlldyxcbiAgdGltZTAud29ya3BsYWNlX3RkX3RyYWNraW5nLFxuICB0aW1lMC53b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZyxcbiAgdGltZTAud29ya3BsYWNlX2NvZGluZ19zdGFuZGFyZHMsXG4gIHRpbWUwLnNjZW5hcmlvLFxuICB0aW1lMC5ncm91cFxuKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5lZGx2bF9wcmlvciA8LSBwcmlvcihkaXJpY2hsZXQoMiksIGNsYXNzID0gXCJzaW1vXCIsIGNvZWYgPSBcIm1vZWR1Y2F0aW9uX2xldmVsMVwiKVxuXG5sb28oXG4gIHRpbWUwLndpdGgoKSxcbiAgdGltZTAud2l0aChcIndvcmtfZG9tYWluXCIpLFxuICB0aW1lMC53aXRoKFwid29ya19leHBlcmllbmNlX3Byb2dyYW1taW5nLnNcIiksXG4gIHRpbWUwLndpdGgoXCJ3b3JrX2V4cGVyaWVuY2VfamF2YS5zXCIpLFxuICB0aW1lMC53aXRoKFwiZWR1Y2F0aW9uX2ZpZWxkXCIpLFxuICB0aW1lMC53aXRoKFwibW8oZWR1Y2F0aW9uX2xldmVsKVwiLCBlZGx2bF9wcmlvciksXG4gIHRpbWUwLndpdGgoXCJ3b3JrcGxhY2VfcGVlcl9yZXZpZXdcIiksXG4gIHRpbWUwLndpdGgoXCJ3b3JrcGxhY2VfdGRfdHJhY2tpbmdcIiksXG4gIHRpbWUwLndpdGgoXCJ3b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZ1wiKSxcbiAgdGltZTAud2l0aChcIndvcmtwbGFjZV9jb2Rpbmdfc3RhbmRhcmRzXCIpLFxuICB0aW1lMC53aXRoKFwic2NlbmFyaW9cIiksXG4gIHRpbWUwLndpdGgoXCJncm91cFwiKVxuKVxuYGBgIn0= -->
 <pre class="r"><code>
+edlvl_prior &lt;- prior(dirichlet(2), class = &quot;simo&quot;, coef = &quot;moeducation_level1&quot;)
+
 loo(
-  time0,
-  time0.work_domain,
-  time0.work_experience_programming,
-  time0.work_experience_java,
-  time0.education_field,
-  time0.education_level,
-  time0.workplace_peer_review,
-  time0.workplace_td_tracking,
-  time0.workplace_pair_programming,
-  time0.workplace_coding_standards,
-  time0.scenario,
-  time0.group
+  time0.with(),
+  time0.with(&quot;work_domain&quot;),
+  time0.with(&quot;work_experience_programming.s&quot;),
+  time0.with(&quot;work_experience_java.s&quot;),
+  time0.with(&quot;education_field&quot;),
+  time0.with(&quot;mo(education_level)&quot;, edlvl_prior),
+  time0.with(&quot;workplace_peer_review&quot;),
+  time0.with(&quot;workplace_td_tracking&quot;),
+  time0.with(&quot;workplace_pair_programming&quot;),
+  time0.with(&quot;workplace_coding_standards&quot;),
+  time0.with(&quot;scenario&quot;),
+  time0.with(&quot;group&quot;)
 )</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Some variables seem to stand out as better than other. We try combining those to see if we can further improve our model.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubG9vKFxuICB0aW1lMC53aXRoKCksXG4gIHRpbWUwLndpdGgoXCJzY2VuYXJpb1wiKSxcbiAgdGltZTAud2l0aChcImVkdWNhdGlvbl9maWVsZFwiKSxcbiAgdGltZTAud2l0aChcIndvcmtwbGFjZV9wZWVyX3Jldmlld1wiKSxcbiAgdGltZTAud2l0aChcIm1vKGVkdWNhdGlvbl9sZXZlbClcIiwgZWRsdmxfcHJpb3IpLFxuICB0aW1lMC53aXRoKGMoXCJzY2VuYXJpb1wiLCBcImVkdWNhdGlvbl9maWVsZFwiKSksXG4gIHRpbWUwLndpdGgoYyhcInNjZW5hcmlvXCIsIFwibW8oZWR1Y2F0aW9uX2xldmVsKVwiKSwgZWRsdmxfcHJpb3IpLFxuICB0aW1lMC53aXRoKGMoXCJzY2VuYXJpb1wiLCBcIndvcmtwbGFjZV9wZWVyX3Jldmlld1wiKSksXG4gIHRpbWUwLndpdGgoYyhcImVkdWNhdGlvbl9maWVsZFwiLCBcIm1vKGVkdWNhdGlvbl9sZXZlbClcIiksIGVkbHZsX3ByaW9yKSxcbiAgdGltZTAud2l0aChjKFwiZWR1Y2F0aW9uX2ZpZWxkXCIsIFwid29ya3BsYWNlX3BlZXJfcmV2aWV3XCIpKSxcbiAgdGltZTAud2l0aChjKFwibW8oZWR1Y2F0aW9uX2xldmVsKVwiLCBcIndvcmtwbGFjZV9wZWVyX3Jldmlld1wiKSwgZWRsdmxfcHJpb3IpXG4pXG5gYGAifQ== -->
+<pre class="r"><code>loo(
+  time0.with(),
+  time0.with(&quot;scenario&quot;),
+  time0.with(&quot;education_field&quot;),
+  time0.with(&quot;workplace_peer_review&quot;),
+  time0.with(&quot;mo(education_level)&quot;, edlvl_prior),
+  time0.with(c(&quot;scenario&quot;, &quot;education_field&quot;)),
+  time0.with(c(&quot;scenario&quot;, &quot;mo(education_level)&quot;), edlvl_prior),
+  time0.with(c(&quot;scenario&quot;, &quot;workplace_peer_review&quot;)),
+  time0.with(c(&quot;education_field&quot;, &quot;mo(education_level)&quot;), edlvl_prior),
+  time0.with(c(&quot;education_field&quot;, &quot;workplace_peer_review&quot;)),
+  time0.with(c(&quot;mo(education_level)&quot;, &quot;workplace_peer_review&quot;), edlvl_prior)
+)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>None one of the new models stand out as particularly better than the old models, We try combining the so far most prominent features in one model.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubG9vKFxuICB0aW1lMC53aXRoKCksXG4gIHRpbWUwLndpdGgoXCJzY2VuYXJpb1wiKSxcbiAgdGltZTAud2l0aChjKFwic2NlbmFyaW9cIiwgXCJlZHVjYXRpb25fZmllbGRcIikpLFxuICB0aW1lMC53aXRoKGMoXCJzY2VuYXJpb1wiLCBcIm1vKGVkdWNhdGlvbl9sZXZlbClcIiksIGVkbHZsX3ByaW9yKSxcbiAgdGltZTAud2l0aChjKFwic2NlbmFyaW9cIiwgXCJtbyhlZHVjYXRpb25fbGV2ZWwpXCIsIFwiZWR1Y2F0aW9uX2ZpZWxkXCIpLCBlZGx2bF9wcmlvcilcbilcbmBgYCJ9 -->
+<pre class="r"><code>loo(
+  time0.with(),
+  time0.with(&quot;scenario&quot;),
+  time0.with(c(&quot;scenario&quot;, &quot;education_field&quot;)),
+  time0.with(c(&quot;scenario&quot;, &quot;mo(education_level)&quot;), edlvl_prior),
+  time0.with(c(&quot;scenario&quot;, &quot;mo(education_level)&quot;, &quot;education_field&quot;), edlvl_prior)
+)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="candidate-models" class="section level2">
+<h2>Candidate models</h2>
+<p>We inspect some of our top performing models.</p>
+<p>All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end simila estimated for the high_debt_version beta parameter</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAgPC0gdGltZTAud2l0aCgpXG5zdW1tYXJ5KHRpbWUwKVxucmFuZWYodGltZTApXG5wbG90KHRpbWUwLCBhc2sgPSBGQUxTRSlcblxucHBfY2hlY2sodGltZTAsIG5zYW1wbGVzID0gMTUwKSArIHNjYWxlX3hfbG9nMTAoKVxuXG5gYGAifQ== -->
+<pre class="r"><code>time0 &lt;- time0.with()
+summary(time0)
+ranef(time0)
+plot(time0, ask = FALSE)
 
+pp_check(time0, nsamples = 150) + scale_x_log10()
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTEgPC0gdGltZTAud2l0aChcInNjZW5hcmlvXCIpXG5zdW1tYXJ5KHRpbWUxKVxucmFuZWYodGltZTEpXG5wbG90KHRpbWUxLCBhc2sgPSBGQUxTRSlcblxucHBfY2hlY2sodGltZTEsIG5zYW1wbGVzID0gMTUwKSArIHNjYWxlX3hfbG9nMTAoKVxuYGBgIn0= -->
+<pre class="r"><code>time1 &lt;- time0.with(&quot;scenario&quot;)
+summary(time1)
+ranef(time1)
+plot(time1, ask = FALSE)
+
+pp_check(time1, nsamples = 150) + scale_x_log10()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTIgPC0gdGltZTAud2l0aChjKFwic2NlbmFyaW9cIiwgXCJlZHVjYXRpb25fZmllbGRcIikpXG5zdW1tYXJ5KHRpbWUyKVxucmFuZWYodGltZTIpXG5wbG90KHRpbWUyLCBhc2sgPSBGQUxTRSlcblxucHBfY2hlY2sodGltZTIsIG5zYW1wbGVzID0gMTUwKSArIHNjYWxlX3hfbG9nMTAoKVxuYGBgIn0= -->
+<pre class="r"><code>time2 &lt;- time0.with(c(&quot;scenario&quot;, &quot;education_field&quot;))
+summary(time2)
+ranef(time2)
+plot(time2, ask = FALSE)
+
+pp_check(time2, nsamples = 150) + scale_x_log10()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTMgPC0gdGltZTAud2l0aChjKFwic2NlbmFyaW9cIiwgXCJtbyhlZHVjYXRpb25fbGV2ZWwpXCIpLCBlZGx2bF9wcmlvcilcbnN1bW1hcnkodGltZTIpXG5yYW5lZih0aW1lMilcbnBsb3QodGltZTIsIGFzayA9IEZBTFNFKVxuXG5wcF9jaGVjayh0aW1lMiwgbnNhbXBsZXMgPSAxNTApICsgc2NhbGVfeF9sb2cxMCgpXG5gYGAifQ== -->
+<pre class="r"><code>time3 &lt;- time0.with(c(&quot;scenario&quot;, &quot;mo(education_level)&quot;), edlvl_prior)
+summary(time2)
+ranef(time2)
+plot(time2, ask = FALSE)
+
+pp_check(time2, nsamples = 150) + scale_x_log10()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<div id="final-model" class="section level3">
+<h3>Final model</h3>
+<p>All models look nice, none is significantly better than the others, we go for the simplest model. time0</p>
+</div>
+<div id="trying-to-add-covariance" class="section level3">
+<h3>Trying to add covariance</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTBfd2l0aF9jIDwtIGJybShcbiAgXCJ0aW1lIH4gMSArIGhpZ2hfZGVidF92ZXJzaW9uICsgKDEgfCBjIHwgc2Vzc2lvbilcIixcbiAgcHJpb3IgPSBjKFxuICAgIHByaW9yKG5vcm1hbCgwLCAxKSwgY2xhc3MgPSBcImJcIiksXG4gICAgcHJpb3Iobm9ybWFsKDksIDEpLCBjbGFzcyA9IFwiSW50ZXJjZXB0XCIpLFxuICAgIHByaW9yKGV4cG9uZW50aWFsKDEpLCBjbGFzcyA9IFwic2RcIiksXG4gICAgcHJpb3IoZ2FtbWEoMC4wMSwgMC4wMSksIGNsYXNzID0gXCJzaGFwZVwiKVxuICApLFxuICBmYW1pbHkgPSBuZWdiaW5vbWlhbCgpLFxuICBkYXRhID0gYXMuZGF0YS5mcmFtZShkLmJvdGhfY29tcGxldGVkKSxcbiAgY29udHJvbCA9IGxpc3QoYWRhcHRfZGVsdGEgPSAwLjk1KSxcbiAgZmlsZSA9IFwiZml0cy90aW1lMF93aXRoX2NcIixcbiAgZmlsZV9yZWZpdCA9IFwib25fY2hhbmdlXCJcbilcbmBgYCJ9 -->
+<pre class="r"><code>time0_with_c &lt;- brm(
+  &quot;time ~ 1 + high_debt_version + (1 | c | session)&quot;,
+  prior = c(
+    prior(normal(0, 1), class = &quot;b&quot;),
+    prior(normal(9, 1), class = &quot;Intercept&quot;),
+    prior(exponential(1), class = &quot;sd&quot;),
+    prior(gamma(0.01, 0.01), class = &quot;shape&quot;)
+  ),
+  family = negbinomial(),
+  data = as.data.frame(d.both_completed),
+  control = list(adapt_delta = 0.95),
+  file = &quot;fits/time0_with_c&quot;,
+  file_refit = &quot;on_change&quot;
+)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubG9vKFxuICB0aW1lMCxcbiAgdGltZTBfd2l0aF9jXG4pXG5gYGAifQ== -->
+<pre class="r"><code>loo(
+  time0,
+  time0_with_c
+)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Adding the covariance parameter did not improve the model and we will therefore continue to use the simple model time0.</p>
+</div>
+<div id="model-with-with-incomplete-data-points" class="section level3">
+<h3>Model with with incomplete data points</h3>
+<p>Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZTAuYWxsIDwtIGJybShcbiAgXCJ0aW1lIH4gMSArIGhpZ2hfZGVidF92ZXJzaW9uICsgKDEgfCBzZXNzaW9uKVwiLFxuICBwcmlvciA9IGMoXG4gICAgcHJpb3Iobm9ybWFsKDAsIDEpLCBjbGFzcyA9IFwiYlwiKSxcbiAgICBwcmlvcihub3JtYWwoOSwgMSksIGNsYXNzID0gXCJJbnRlcmNlcHRcIiksXG4gICAgcHJpb3IoZXhwb25lbnRpYWwoMSksIGNsYXNzID0gXCJzZFwiKSxcbiAgICBwcmlvcihnYW1tYSgwLjAxLCAwLjAxKSwgY2xhc3MgPSBcInNoYXBlXCIpXG4gICksXG4gIGZhbWlseSA9IG5lZ2Jpbm9taWFsKCksXG4gIGRhdGEgPSBhcy5kYXRhLmZyYW1lKGQuY29tcGxldGVkKSxcbiAgY29udHJvbCA9IGxpc3QoYWRhcHRfZGVsdGEgPSAwLjk1KSxcbiAgZmlsZSA9IFwiZml0cy90aW1lMF93aXRoX2FsbF9zdWJtaXNzaW9uc1wiLFxuICBmaWxlX3JlZml0ID0gXCJvbl9jaGFuZ2VcIlxuKVxuc3VtbWFyeSh0aW1lMC5hbGwpXG5yYW5lZih0aW1lMC5hbGwpXG5wbG90KHRpbWUwLmFsbCwgYXNrID0gRkFMU0UpXG5cbnBwX2NoZWNrKHRpbWUwLmFsbCwgbnNhbXBsZXMgPSAxNTApICsgc2NhbGVfeF9sb2cxMCgpXG5gYGAifQ== -->
+<pre class="r"><code>time0.all &lt;- brm(
+  &quot;time ~ 1 + high_debt_version + (1 | session)&quot;,
+  prior = c(
+    prior(normal(0, 1), class = &quot;b&quot;),
+    prior(normal(9, 1), class = &quot;Intercept&quot;),
+    prior(exponential(1), class = &quot;sd&quot;),
+    prior(gamma(0.01, 0.01), class = &quot;shape&quot;)
+  ),
+  family = negbinomial(),
+  data = as.data.frame(d.completed),
+  control = list(adapt_delta = 0.95),
+  file = &quot;fits/time0_with_all_submissions&quot;,
+  file_refit = &quot;on_change&quot;
+)
+summary(time0.all)
+ranef(time0.all)
+plot(time0.all, ask = FALSE)
+
+pp_check(time0.all, nsamples = 150) + scale_x_log10()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Training the model on all data points reduces the uncertainty and did not result in any sampling problems. We will proceed with the model fitted to all the data.</p>
+</div>
+</div>
+<div id="interpreting-the-model" class="section level2">
+<h2>Interpreting the model</h2>
+<p>Extract posterior samples:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wb3N0IDwtIHBvc3Rlcmlvcl9wcmVkaWN0KHRpbWUwLmFsbCwgbmV3ZGF0YSA9IGRhdGEuZnJhbWUoaGlnaF9kZWJ0X3ZlcnNpb24gPSBjKFwiZmFsc2VcIiwgXCJ0cnVlXCIpLCBzZXNzaW9uID0gTkEpKVxucG9zdC5sb3cgPC0gIHBvc3RbLDFdXG5wb3N0LmhpZ2ggPC0gcG9zdFssMl1cbnBvc3QuZGlmZiA8LSBwb3N0LmhpZ2ggLSBwb3N0Lmxvd1xucG9zdC5kaWZmLnNjYWxlZCA8LSBwb3N0LmRpZmYgLyBtZWFuKHBvc3QpXG5cbmBgYCJ9 -->
+<pre class="r"><code>
+post &lt;- posterior_predict(time0.all, newdata = data.frame(high_debt_version = c(&quot;false&quot;, &quot;true&quot;), session = NA))
+post.low &lt;-  post[,1]
+post.high &lt;- post[,2]
+post.diff &lt;- post.high - post.low
+post.diff.scaled &lt;- post.diff / mean(post)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>When we look at the distribution of the data between the high and low debt version we can see a difference, they are however quite similar.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShkYXRhLmZyYW1lKFwiTG93IERlYnRcIj1wb3N0LmxvdywgXCJIaWdoIERlYnRcIj1wb3N0LmhpZ2gpKVxuXG5nZ3Bsb3QoZGF0YS5mcmFtZSh0aW1lID0gcG9zdC5oaWdoKSkgK1xuICBnZW9tX2RlbnNpdHkoZGF0YSA9IGRhdGEuZnJhbWUodGltZSA9IHBvc3QubG93KSwgYWVzKHg9dGltZS82MCwgY29sb3VyID0gXCJibHVlXCIpKSArXG4gIGdlb21fZGVuc2l0eShkYXRhID0gZGF0YS5mcmFtZSh0aW1lID0gcG9zdC5oaWdoKSwgIGFlcyh4PXRpbWUvNjAsIGNvbG91ciA9IFwicmVkXCIgKSkgK1xuICBzY2FsZV94X2xvZzEwKCkgK1xuICBsYWJzKFxuICAgIHRpdGxlID0gXCJQb3N0ZXJpb3IgZGVuc2l0eSBvZiB0aW1lIGZvciBoaWdoIGFuZCBsb3cgZGVidCB2ZXJzaW9uc1wiLFxuICAgIHN1YnRpdGxlID0gXCJOb3RpY2UhIHgtYXhpcyBpcyBsb2cxMCBzY2FsZWQuXCIsXG4gICAgeCA9XCJUaW1lIChtaW4pXCIsXG4gICAgeSA9IFwiRGVuc2l0eVwiXG4gICkgK1xuICB0aGVtZV9taW5pbWFsKCkgK1xuICBzY2FsZV95X2NvbnRpbnVvdXMoYnJlYWtzID0gTlVMTCkgK1xuICBzY2FsZV9jb2xvdXJfbWFudWFsKG5hbWU9XCJWZXJzaW9uXCIsbGFiZWxzPWMoXCJMb3cgRGVidFwiLCBcIkhpZ2ggRGVidFwiKSwgdmFsdWVzPWMoXCJibHVlXCIsIFwicmVkXCIpKVxuXG5gYGAifQ== -->
+<pre class="r"><code>summary(data.frame(&quot;Low Debt&quot;=post.low, &quot;High Debt&quot;=post.high))
+
+ggplot(data.frame(time = post.high)) +
+  geom_density(data = data.frame(time = post.low), aes(x=time/60, colour = &quot;blue&quot;)) +
+  geom_density(data = data.frame(time = post.high),  aes(x=time/60, colour = &quot;red&quot; )) +
+  scale_x_log10() +
+  labs(
+    title = &quot;Posterior density of time for high and low debt versions&quot;,
+    subtitle = &quot;Notice! x-axis is log10 scaled.&quot;,
+    x =&quot;Time (min)&quot;,
+    y = &quot;Density&quot;
+  ) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL) +
+  scale_colour_manual(name=&quot;Version&quot;,labels=c(&quot;Low Debt&quot;, &quot;High Debt&quot;), values=c(&quot;blue&quot;, &quot;red&quot;))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We can also plot the difference between time for the high debt version and the low debt version. In those graphs we see that the difference is centered around zero with slightly more weight on the positive (indicating slightly longer times for the high debt version)</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5nZ3Bsb3QoZGF0YS5mcmFtZSh4ID0gcG9zdC5kaWZmLzYwKSkgKyBnZW9tX2RlbnNpdHkoYWVzKHg9eCkpICtcbiAgbGFicyhcbiAgICB0aXRsZSA9IFwiUG9zdGVyaW9yIGRlbnNpdHkgb2YgdGltZSBkaWZmZXJlbmNlIGxvdyBhbmQgaGlnaCBkZWJ0IHZlcnNpb25zIFwiLFxuICAgIHN1YnRpdGxlID0gXCJEaWZmZXJlbmNlID0gSGlnaCBEZWJ0IHRpbWUgLSBMb3cgRGVidCB0aW1lXCIsXG4gICAgeCA9XCJUaW1lIERpZmZlcmVuY2UgKG1pbilcIixcbiAgICB5ID0gXCJEZW5zaXR5XCJcbiAgKSArXG4gIHRoZW1lX21pbmltYWwoKSArXG4gIHNjYWxlX3lfY29udGludW91cyhicmVha3MgPSBOVUxMKVxuXG5cbmRhdGEuZnJhbWUoeCA9IHBvc3QuZGlmZi5zY2FsZWQpICU+JVxuICBnZ3Bsb3QoKSArXG4gIGdlb21fZGVuc2l0eShhZXMoeD14KSkgK1xuICBsYWJzKFxuICAgIHRpdGxlID0gXCJQb3N0ZXJpb3IgZGVuc2l0eSBvZiB0aW1lIGRpZmZlcmVuY2UgbG93IGFuZCBoaWdoIGRlYnQgdmVyc2lvbnMgXCIsXG4gICAgc3VidGl0bGUgPSBcIkRpZmZlcmVuY2UgPSBIaWdoIERlYnQgdGltZSAtIExvdyBEZWJ0IHRpbWVcIixcbiAgICB4ID1cIlRpbWUgRGlmZmVyZW5jZSAocHJvcnRpb24gb2YgbWVhbiB0aW1lKVwiLFxuICAgIHkgPSBcIkRlbnNpdHlcIlxuICApICtcbiAgdGhlbWVfbWluaW1hbCgpICtcbiAgc2NhbGVfeV9jb250aW51b3VzKGJyZWFrcyA9IE5VTEwpXG5cbmBgYCJ9 -->
+<pre class="r"><code>
+ggplot(data.frame(x = post.diff/60)) + geom_density(aes(x=x)) +
+  labs(
+    title = &quot;Posterior density of time difference low and high debt versions &quot;,
+    subtitle = &quot;Difference = High Debt time - Low Debt time&quot;,
+    x =&quot;Time Difference (min)&quot;,
+    y = &quot;Density&quot;
+  ) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL)
+
+
+data.frame(x = post.diff.scaled) %&gt;%
+  ggplot() +
+  geom_density(aes(x=x)) +
+  labs(
+    title = &quot;Posterior density of time difference low and high debt versions &quot;,
+    subtitle = &quot;Difference = High Debt time - Low Debt time&quot;,
+    x =&quot;Time Difference (prortion of mean time)&quot;,
+    y = &quot;Density&quot;
+  ) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We can also check the probability of the high debt effect being less than as well as grather then zero.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3ByaW50ZihcImhpZ2ggZGVidCBlZmZlY3QgPCAwOiAlLjJmJSVcIiwgc3VtKHNpZ24ocG9zdC5kaWZmKSA9PSAtMSkvbGVuZ3RoKHBvc3QuZGlmZikgKiAxMDApXG5zcHJpbnRmKFwiaGlnaCBkZWJ0IGVmZmVjdCA+IDA6ICUuMmYlJVwiLCBzdW0oc2lnbihwb3N0LmRpZmYpID09IDEpL2xlbmd0aChwb3N0LmRpZmYpICogMTAwKVxuYGBgIn0= -->
+<pre class="r"><code>sprintf(&quot;high debt effect &lt; 0: %.2f%%&quot;, sum(sign(post.diff) == -1)/length(post.diff) * 100)
+sprintf(&quot;high debt effect &gt; 0: %.2f%%&quot;, sum(sign(post.diff) == 1)/length(post.diff) * 100)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We can see no “significant” relation between the amount of technical debt in the given codebase and time spent on the task.</p>
+<!-- rnb-text-end -->
+</div>
+
+<<<<<<< HEAD
 <div id="rmd-source-code">LS0tDQp0aXRsZTogIlRpbWUiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmQuY29tcGxldGVkICU+JQ0KICBnZ3Bsb3QoYWVzKHg9dGltZSwgZmlsbD1oaWdoX2RlYnRfdmVyc2lvbikpICsgDQogIGdlb21fYm94cGxvdCgpDQoNCm1lYW4oZC5jb21wbGV0ZWQkdGltZSkNCnZhcihkLmNvbXBsZXRlZCR0aW1lKQ0KYGBgDQoNCg0KdmFyID4gbWVhbiA9PiBuZWcgYmlub21pYWwNCg0KYGBge3J9DQp0aW1lMCA8LSBicm0oDQogIHRpbWUgfiAxIA0KICArIGhpZ2hfZGVidF92ZXJzaW9uDQogICsgKDEgfCBjIHwgc2Vzc2lvbiksDQogIGZhbWlseSA9IG5lZ2Jpbm9taWFsKCksDQogIGRhdGEgPSBhcy5kYXRhLmZyYW1lKGQuY29tcGxldGVkKSwNCiAgcHJpb3IgPSBjKA0KICAgIHByaW9yKG5vcm1hbCgwLCAwLjEpLCBjbGFzcyA9ICJiIiksDQogICAgcHJpb3Iobm9ybWFsKDAsIDEpLCBjbGFzcyA9ICJJbnRlcmNlcHQiKSwNCiAgICBwcmlvcihleHBvbmVudGlhbCgxKSwgY2xhc3MgPSAic2QiKSwNCiAgICBwcmlvcihnYW1tYSgwLjAxLCAwLjAxKSwgY2xhc3MgPSAic2hhcGUiKQ0KICApLA0KICBiYWNrZW5kID0gImNtZHN0YW5yIiwNCiAgY2hhaW5zID0gNCwNCiAgY29yZXMgPSA0LA0KICBpdGVyID0gNWUzLA0KICAjIGVtcHR5ID0gVFJVRQ0KICAjIHNhbXBsZV9wcmlvciA9ICJvbmx5IiwNCiAgZmlsZSA9ICJmaXRzL3RpbWUwIiwNCiAgZmlsZV9yZWZpdCA9ICJvbl9jaGFuZ2UiDQopDQoNCiMgcHBfY2hlY2sodGltZTAsIG5zYW1wbGVzID0gMjAwKQ0KDQpzdW1tYXJ5KHRpbWUwKQ0KYGBgDQoNCg0KYGBge3J9DQp0aW1lMC53aXRoIDwtIGV4dGVuZGFibGVfbW9kZWwoDQogIGJhc2VfbmFtZSA9ICJ0aW1lMCIsDQogIGJhc2VfZm9ybXVsYSA9ICJ0aW1lIH4gMSArIGhpZ2hfZGVidF92ZXJzaW9uICsgKDEgfCBjIHwgc2Vzc2lvbikiLA0KICBiYXNlX3ByaW9ycyA9IGMoDQogICAgcHJpb3Iobm9ybWFsKDAsIDAuMSksIGNsYXNzID0gImIiKSwNCiAgICBwcmlvcihub3JtYWwoMCwgMSksIGNsYXNzID0gIkludGVyY2VwdCIpLA0KICAgIHByaW9yKGV4cG9uZW50aWFsKDEpLCBjbGFzcyA9ICJzZCIpLA0KICAgIHByaW9yKGdhbW1hKDAuMDEsIDAuMDEpLCBjbGFzcyA9ICJzaGFwZSIpDQogICksDQogIGZhbWlseSA9IG5lZ2Jpbm9taWFsKCksDQogIGRhdGEgPSBkLmNvbXBsZXRlZA0KKQ0KYGBgDQoNCg0KDQpgYGB7cn0NCnRpbWUwLndvcmtfZG9tYWluIDwtIHRpbWUwLndpdGgoIndvcmtfZG9tYWluIikNCg0Kc3VtbWFyeSh0aW1lMC53b3JrX2RvbWFpbikNCmBgYA0KDQpgYGB7cn0NCnRpbWUwLndvcmtfZXhwZXJpZW5jZV9wcm9ncmFtbWluZyA8LSB0aW1lMC53aXRoKCJ3b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcucyIpDQoNCnN1bW1hcnkodGltZTAud29ya19leHBlcmllbmNlX3Byb2dyYW1taW5nKQ0KYGBgDQoNCg0KYGBge3J9DQp0aW1lMC53b3JrX2V4cGVyaWVuY2VfamF2YSA8LSB0aW1lMC53aXRoKCJ3b3JrX2V4cGVyaWVuY2VfamF2YS5zIikNCg0Kc3VtbWFyeSh0aW1lMC53b3JrX2V4cGVyaWVuY2VfamF2YSkNCmBgYA0KDQpgYGB7cn0NCnRpbWUwLmVkdWNhdGlvbl9maWVsZCA8LSB0aW1lMC53aXRoKCJlZHVjYXRpb25fZmllbGQiKQ0KDQpzdW1tYXJ5KHRpbWUwLmVkdWNhdGlvbl9maWVsZCkNCmBgYA0KDQpgYGB7cn0NCnRpbWUwLmVkdWNhdGlvbl9sZXZlbCA8LSB0aW1lMC53aXRoKA0KICAibW8oZWR1Y2F0aW9uX2xldmVsKSIsIA0KICBjKA0KICAgIHByaW9yKGRpcmljaGxldCgyKSwgY2xhc3MgPSAic2ltbyIsIGNvZWYgPSAibW9lZHVjYXRpb25fbGV2ZWwxIikNCiAgKQ0KKQ0KDQpzdW1tYXJ5KHRpbWUwLmVkdWNhdGlvbl9sZXZlbCkNCmBgYA0KYGBge3J9DQp0aW1lMC53b3JrcGxhY2VfcGVlcl9yZXZpZXcgPC0gdGltZTAud2l0aCgid29ya3BsYWNlX3BlZXJfcmV2aWV3IikNCg0Kc3VtbWFyeSh0aW1lMC53b3JrcGxhY2VfcGVlcl9yZXZpZXcpDQpgYGANCg0KYGBge3J9DQp0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcgPC0gdGltZTAud2l0aCgid29ya3BsYWNlX3RkX3RyYWNraW5nIikNCg0Kc3VtbWFyeSh0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcpDQpgYGANCg0KYGBge3J9DQp0aW1lMC53b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZyA8LSB0aW1lMC53aXRoKCJ3b3JrcGxhY2VfcGFpcl9wcm9ncmFtbWluZyIpDQoNCnN1bW1hcnkodGltZTAud29ya3BsYWNlX3BhaXJfcHJvZ3JhbW1pbmcpDQpgYGANCg0KYGBge3J9DQp0aW1lMC53b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcyA8LSB0aW1lMC53aXRoKCJ3b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcyIpDQoNCnN1bW1hcnkodGltZTAud29ya3BsYWNlX2NvZGluZ19zdGFuZGFyZHMpDQpgYGANCg0KYGBge3J9DQp0aW1lMC5zY2VuYXJpbyA8LSB0aW1lMC53aXRoKCJzY2VuYXJpbyIpDQoNCnN1bW1hcnkodGltZTAuc2NlbmFyaW8pDQpgYGANCg0KYGBge3J9DQp0aW1lMC5ncm91cCA8LSB0aW1lMC53aXRoKCJncm91cCIpDQoNCnN1bW1hcnkodGltZTAuZ3JvdXApDQpgYGANCg0KYGBge3J9DQoNCmxvbygNCiAgdGltZTAsDQogIHRpbWUwLndvcmtfZG9tYWluLA0KICB0aW1lMC53b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcsDQogIHRpbWUwLndvcmtfZXhwZXJpZW5jZV9qYXZhLA0KICB0aW1lMC5lZHVjYXRpb25fZmllbGQsDQogIHRpbWUwLmVkdWNhdGlvbl9sZXZlbCwNCiAgdGltZTAud29ya3BsYWNlX3BlZXJfcmV2aWV3LA0KICB0aW1lMC53b3JrcGxhY2VfdGRfdHJhY2tpbmcsDQogIHRpbWUwLndvcmtwbGFjZV9wYWlyX3Byb2dyYW1taW5nLA0KICB0aW1lMC53b3JrcGxhY2VfY29kaW5nX3N0YW5kYXJkcywNCiAgdGltZTAuc2NlbmFyaW8sDQogIHRpbWUwLmdyb3VwDQopDQpgYGANCg==</div>
+=======
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiVGltZSIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyMgTG9va2luZyBhdCB0aGUgZGF0YQpXZSBwbG90IHRoZSBkYXRhIGFuZCBjYW4gc2VlIHRoYXQgdGhlcmUgaXMgbm8gb2J2aW91cyBsYXJnZSBkaWZmZXJlbmNlIGJldHdlZW4gdGhlIGRlYnQgdmVyc2lvbnMKYGBge3J9CmQuYm90aF9jb21wbGV0ZWQgJT4lCiAgZ2dwbG90KGFlcyh4PXRpbWUvNjAsIGZpbGw9aGlnaF9kZWJ0X3ZlcnNpb24pKSArIAogIGdlb21fYm94cGxvdCgpICsKICBsYWJzKAogICAgdGl0bGUgPSAiRGlzdHJpYnV0aW9uIG9mIHRpbWUgbWVhc3VyZW1lbnRzIGZvciB0aGUgZGlmZmVyZW50IGRlYnQgbGV2ZWxzIiwKICAgIHN1YnRpdGxlID0gIk5vdGljZSEgTG9nMTAgeC1zY2FsZSIsCiAgICB4ID0iVGltZSAobWluKSIKICApICsKICBzY2FsZV95X2NvbnRpbnVvdXMoYnJlYWtzID0gTlVMTCkgKwogIHNjYWxlX3hfbG9nMTAoKSArCiAgc2NhbGVfZmlsbF9kaXNjcmV0ZShuYW1lID0gIkRlYnQgTGV2ZWwiLCBsYWJlbHMgPSBjKCJIaWdoIERlYnQiLCAiTG93IERlYnQiKSwgZ3VpZGUgPSBndWlkZV9sZWdlbmQocmV2ZXJzZSA9IFRSVUUpKSArCiAgdGhlbWVfbWluaW1hbCgpCmBgYAoKIyMgRGVzY3JpcHRpdmUgU3RhdGlzdGljcwpGb3IgdGhlIHdob2xlIGRhdGFzZXQ6CmBgYHtyfQpkLmJvdGhfY29tcGxldGVkICU+JQogIHB1bGwodGltZSkgJT4lIAogIHN1bW1hcnkoKQoKdmFyaWFuY2UgPC0gZC5ib3RoX2NvbXBsZXRlZCAlPiUKICBwdWxsKHRpbWUpICU+JQogIHZhcigpCnNwcmludGYoIlZhcmlhbmNlOiAlLjBmIiwgdmFyaWFuY2UpCmBgYAoKCiMjIEluaXRpYWwgbW9kZWwKQXMgdGhlIHZhcmlhbmNlIGlzIG11Y2ggZ3JlYXRlciB0aGFuIHRoZSBtZWFuIHdlIHdpbGwgdXNlIGEgbmVnYXRpdmUgYmlub21pYWwgZmFtaWx5IHRoYXQgYWxsb3dzIHVzIHRvIG1vZGVsIHRoZSB2YXJpYW5jZSBzZXBhcmF0ZWx5LgoKV2UgaW5jbHVkZSBgaGlnaF9kZWJ0X3Zlcmlzb25gIGFzIHdlbGwgYXMgYSB2YXJ5aW5nIGludGVyY2VwdCBmb3IgZWFjaCBpbmRpdmlkdWFsIGluIG91ciBpbml0aWFsIG1vZGVsLgoKIyMjIFNlbGVjdGluZyBQcmlvcnMKV2UgaXRlcmF0ZSBvdmVyIHRoZSBtb2RlbCB1bnRpbCB3ZSBoYXZlIHNhbmUgcHJpb3JzCmBgYHtyfQoKdGltZTAud2l0aCA8LSBleHRlbmRhYmxlX21vZGVsKAogIGJhc2VfbmFtZSA9ICJ0aW1lMCIsCiAgYmFzZV9mb3JtdWxhID0gInRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IHNlc3Npb24pIiwKICBiYXNlX3ByaW9ycyA9IGMoCiAgICBwcmlvcihub3JtYWwoMCwgMSksIGNsYXNzID0gImIiKSwKICAgIHByaW9yKG5vcm1hbCg3LjUsIDEpLCBjbGFzcyA9ICJJbnRlcmNlcHQiKSwKICAgIHByaW9yKGV4cG9uZW50aWFsKDEpLCBjbGFzcyA9ICJzZCIpLAogICAgcHJpb3IoZ2FtbWEoMC4wMSwgMC4wMSksIGNsYXNzID0gInNoYXBlIikKICApLAogIGZhbWlseSA9IG5lZ2Jpbm9taWFsKCksCiAgZGF0YSA9IGQuYm90aF9jb21wbGV0ZWQsCiAgYmFzZV9jb250cm9sID0gbGlzdChhZGFwdF9kZWx0YSA9IDAuOTUpCikKCiMgRGVmYXVsdCBwcmlvcnM6CnByaW9yX3N1bW1hcnkodGltZTAud2l0aChvbmx5X3ByaW9ycz0gVFJVRSkpCgojIE91ciBwcmlvcnM6CnByaW9yX3N1bW1hcnkodGltZTAud2l0aChzYW1wbGVfcHJpb3IgPSAib25seSIpKQoKIyBQcmlvciBwcmVkaWN0aXZlIGNoZWNrCnBwX2NoZWNrKHRpbWUwLndpdGgoc2FtcGxlX3ByaW9yID0gIm9ubHkiKSwgbnNhbXBsZXMgPSAyMDApICsgCiAgc2NhbGVfeF9sb2cxMCgpCmBgYAojIyMgTW9kZWwgZml0CldlIGNoZWNrIHRoZSBwb3N0ZXJpb3IgZGlzdHJpYnV0aW9uIGFuZCBjYW4gc2VlIHRoYXQgdGhlIG1vZGVsIHNlZW1zIHRvIGhhdmUgYmVlbiBhYmxlIHRvIGZpdCB0aGUgZGF0YSB3ZWxsCmBgYHtyfQojIFBvc3RlcmlvciBwcmVkaWN0aXZlIGNoZWNrCnBwX2NoZWNrKHRpbWUwLndpdGgoKSwgbnNhbXBsZXMgPSAxMDApICsKICBzY2FsZV94X2xvZzEwKCkKCnN1bW1hcnkodGltZTAud2l0aCgpKQpgYGAKCiMjIE1vZGVsIGV4dGVuc3Rpb25zCgpXZSB1c2UgbG9vIHRvIGNoZWNrIHNvbWUgcG9zc2libGUgZXh0ZW5zaW9ucyBvbiB0aGUgbW9kZWwuCgpgYGB7cn0KCmVkbHZsX3ByaW9yIDwtIHByaW9yKGRpcmljaGxldCgyKSwgY2xhc3MgPSAic2ltbyIsIGNvZWYgPSAibW9lZHVjYXRpb25fbGV2ZWwxIikKCmxvbygKICB0aW1lMC53aXRoKCksCiAgdGltZTAud2l0aCgid29ya19kb21haW4iKSwKICB0aW1lMC53aXRoKCJ3b3JrX2V4cGVyaWVuY2VfcHJvZ3JhbW1pbmcucyIpLAogIHRpbWUwLndpdGgoIndvcmtfZXhwZXJpZW5jZV9qYXZhLnMiKSwKICB0aW1lMC53aXRoKCJlZHVjYXRpb25fZmllbGQiKSwKICB0aW1lMC53aXRoKCJtbyhlZHVjYXRpb25fbGV2ZWwpIiwgZWRsdmxfcHJpb3IpLAogIHRpbWUwLndpdGgoIndvcmtwbGFjZV9wZWVyX3JldmlldyIpLAogIHRpbWUwLndpdGgoIndvcmtwbGFjZV90ZF90cmFja2luZyIpLAogIHRpbWUwLndpdGgoIndvcmtwbGFjZV9wYWlyX3Byb2dyYW1taW5nIiksCiAgdGltZTAud2l0aCgid29ya3BsYWNlX2NvZGluZ19zdGFuZGFyZHMiKSwKICB0aW1lMC53aXRoKCJzY2VuYXJpbyIpLAogIHRpbWUwLndpdGgoImdyb3VwIikKKQpgYGAKCgpTb21lIHZhcmlhYmxlcyBzZWVtIHRvIHN0YW5kIG91dCBhcyBiZXR0ZXIgdGhhbiBvdGhlci4gV2UgdHJ5IGNvbWJpbmluZyB0aG9zZSB0byBzZWUgaWYgd2UgY2FuIGZ1cnRoZXIgaW1wcm92ZSBvdXIgbW9kZWwuCgpgYGB7cn0KbG9vKAogIHRpbWUwLndpdGgoKSwKICB0aW1lMC53aXRoKCJzY2VuYXJpbyIpLAogIHRpbWUwLndpdGgoImVkdWNhdGlvbl9maWVsZCIpLAogIHRpbWUwLndpdGgoIndvcmtwbGFjZV9wZWVyX3JldmlldyIpLAogIHRpbWUwLndpdGgoIm1vKGVkdWNhdGlvbl9sZXZlbCkiLCBlZGx2bF9wcmlvciksCiAgdGltZTAud2l0aChjKCJzY2VuYXJpbyIsICJlZHVjYXRpb25fZmllbGQiKSksCiAgdGltZTAud2l0aChjKCJzY2VuYXJpbyIsICJtbyhlZHVjYXRpb25fbGV2ZWwpIiksIGVkbHZsX3ByaW9yKSwKICB0aW1lMC53aXRoKGMoInNjZW5hcmlvIiwgIndvcmtwbGFjZV9wZWVyX3JldmlldyIpKSwKICB0aW1lMC53aXRoKGMoImVkdWNhdGlvbl9maWVsZCIsICJtbyhlZHVjYXRpb25fbGV2ZWwpIiksIGVkbHZsX3ByaW9yKSwKICB0aW1lMC53aXRoKGMoImVkdWNhdGlvbl9maWVsZCIsICJ3b3JrcGxhY2VfcGVlcl9yZXZpZXciKSksCiAgdGltZTAud2l0aChjKCJtbyhlZHVjYXRpb25fbGV2ZWwpIiwgIndvcmtwbGFjZV9wZWVyX3JldmlldyIpLCBlZGx2bF9wcmlvcikKKQpgYGAKTm9uZSBvbmUgb2YgdGhlIG5ldyBtb2RlbHMgc3RhbmQgb3V0IGFzIHBhcnRpY3VsYXJseSBiZXR0ZXIgdGhhbiB0aGUgb2xkIG1vZGVscywgV2UgdHJ5IGNvbWJpbmluZyB0aGUgc28gZmFyIG1vc3QgcHJvbWluZW50IGZlYXR1cmVzIGluIG9uZSBtb2RlbC4KCmBgYHtyfQpsb28oCiAgdGltZTAud2l0aCgpLAogIHRpbWUwLndpdGgoInNjZW5hcmlvIiksCiAgdGltZTAud2l0aChjKCJzY2VuYXJpbyIsICJlZHVjYXRpb25fZmllbGQiKSksCiAgdGltZTAud2l0aChjKCJzY2VuYXJpbyIsICJtbyhlZHVjYXRpb25fbGV2ZWwpIiksIGVkbHZsX3ByaW9yKSwKICB0aW1lMC53aXRoKGMoInNjZW5hcmlvIiwgIm1vKGVkdWNhdGlvbl9sZXZlbCkiLCAiZWR1Y2F0aW9uX2ZpZWxkIiksIGVkbHZsX3ByaW9yKQopCmBgYAoKIyMgQ2FuZGlkYXRlIG1vZGVscwpXZSBpbnNwZWN0IHNvbWUgb2Ygb3VyIHRvcCBwZXJmb3JtaW5nIG1vZGVscy4gCgpBbGwgbW9kZWxzIHNlZW1zIHRvIGhhdmUgc2FtcGxlZCBuaWNlbHkgKHJoYXQgPSAxIGFuZCBmbHVmZnkgcGxvdHMpIHRoZXkgYWxzbyBoYXZlIGFib3V0IHRoZSBzYW1lIGZpdCB0byB0aGUgZGF0YSBlbmQgc2ltaWxhIGVzdGltYXRlZCBmb3IgdGhlIGhpZ2hfZGVidF92ZXJzaW9uIGJldGEgcGFyYW1ldGVyCgoKYGBge3J9CnRpbWUwIDwtIHRpbWUwLndpdGgoKQpzdW1tYXJ5KHRpbWUwKQpyYW5lZih0aW1lMCkKcGxvdCh0aW1lMCwgYXNrID0gRkFMU0UpCgpwcF9jaGVjayh0aW1lMCwgbnNhbXBsZXMgPSAxNTApICsgc2NhbGVfeF9sb2cxMCgpCgpgYGAKCmBgYHtyfQp0aW1lMSA8LSB0aW1lMC53aXRoKCJzY2VuYXJpbyIpCnN1bW1hcnkodGltZTEpCnJhbmVmKHRpbWUxKQpwbG90KHRpbWUxLCBhc2sgPSBGQUxTRSkKCnBwX2NoZWNrKHRpbWUxLCBuc2FtcGxlcyA9IDE1MCkgKyBzY2FsZV94X2xvZzEwKCkKYGBgCgpgYGB7cn0KdGltZTIgPC0gdGltZTAud2l0aChjKCJzY2VuYXJpbyIsICJlZHVjYXRpb25fZmllbGQiKSkKc3VtbWFyeSh0aW1lMikKcmFuZWYodGltZTIpCnBsb3QodGltZTIsIGFzayA9IEZBTFNFKQoKcHBfY2hlY2sodGltZTIsIG5zYW1wbGVzID0gMTUwKSArIHNjYWxlX3hfbG9nMTAoKQpgYGAKCmBgYHtyfQp0aW1lMyA8LSB0aW1lMC53aXRoKGMoInNjZW5hcmlvIiwgIm1vKGVkdWNhdGlvbl9sZXZlbCkiKSwgZWRsdmxfcHJpb3IpCnN1bW1hcnkodGltZTIpCnJhbmVmKHRpbWUyKQpwbG90KHRpbWUyLCBhc2sgPSBGQUxTRSkKCnBwX2NoZWNrKHRpbWUyLCBuc2FtcGxlcyA9IDE1MCkgKyBzY2FsZV94X2xvZzEwKCkKYGBgCgojIyMgRmluYWwgbW9kZWwKQWxsIG1vZGVscyBsb29rIG5pY2UsIG5vbmUgaXMgc2lnbmlmaWNhbnRseSBiZXR0ZXIgdGhhbiB0aGUgb3RoZXJzLCB3ZSBnbyBmb3IgdGhlIHNpbXBsZXN0IG1vZGVsLiB0aW1lMAoKIyMjIFRyeWluZyB0byBhZGQgY292YXJpYW5jZQoKYGBge3J9CnRpbWUwX3dpdGhfYyA8LSBicm0oCiAgInRpbWUgfiAxICsgaGlnaF9kZWJ0X3ZlcnNpb24gKyAoMSB8IGMgfCBzZXNzaW9uKSIsCiAgcHJpb3IgPSBjKAogICAgcHJpb3Iobm9ybWFsKDAsIDEpLCBjbGFzcyA9ICJiIiksCiAgICBwcmlvcihub3JtYWwoOSwgMSksIGNsYXNzID0gIkludGVyY2VwdCIpLAogICAgcHJpb3IoZXhwb25lbnRpYWwoMSksIGNsYXNzID0gInNkIiksCiAgICBwcmlvcihnYW1tYSgwLjAxLCAwLjAxKSwgY2xhc3MgPSAic2hhcGUiKQogICksCiAgZmFtaWx5ID0gbmVnYmlub21pYWwoKSwKICBkYXRhID0gYXMuZGF0YS5mcmFtZShkLmJvdGhfY29tcGxldGVkKSwKICBjb250cm9sID0gbGlzdChhZGFwdF9kZWx0YSA9IDAuOTUpLAogIGZpbGUgPSAiZml0cy90aW1lMF93aXRoX2MiLAogIGZpbGVfcmVmaXQgPSAib25fY2hhbmdlIgopCmBgYAoKYGBge3J9CmxvbygKICB0aW1lMCwKICB0aW1lMF93aXRoX2MKKQpgYGAKQWRkaW5nIHRoZSBjb3ZhcmlhbmNlIHBhcmFtZXRlciBkaWQgbm90IGltcHJvdmUgdGhlIG1vZGVsIGFuZCB3ZSB3aWxsIHRoZXJlZm9yZSBjb250aW51ZSB0byB1c2UgdGhlIHNpbXBsZSBtb2RlbCB0aW1lMC4KCiMjIyBNb2RlbCB3aXRoIHdpdGggaW5jb21wbGV0ZSBkYXRhIHBvaW50cwoKU29tZSBwYXJ0aWNpcGFudHMgZGlkIG9ubHkgY29tcGxldGUgb25lIHNjZW5hcmlvLiBUaG9zZSBoYXMgYmVlbiBleGNsdWRlZCBmcm9tIHRoZSBpbml0aWFsIGRhdGFzZXQgdG8gaW1wcm92ZSBzYW1wbGluZyBvZiB0aGUgbW9kZWxzLiBXZSBkbyBob3dldmVyIHdhbnQgdG8gdXNlIGFsbCBkYXRhIHdlIGNhbiBhbmQgd2lsbCB0aGVyZWZvcmUgdHJ5IHRvIGZpdCB0aGUgbW9kZWwgd2l0aCB0aGUgY29tcGxldGUgZGF0YXNldC4KCmBgYHtyfQp0aW1lMC5hbGwgPC0gYnJtKAogICJ0aW1lIH4gMSArIGhpZ2hfZGVidF92ZXJzaW9uICsgKDEgfCBzZXNzaW9uKSIsCiAgcHJpb3IgPSBjKAogICAgcHJpb3Iobm9ybWFsKDAsIDEpLCBjbGFzcyA9ICJiIiksCiAgICBwcmlvcihub3JtYWwoOSwgMSksIGNsYXNzID0gIkludGVyY2VwdCIpLAogICAgcHJpb3IoZXhwb25lbnRpYWwoMSksIGNsYXNzID0gInNkIiksCiAgICBwcmlvcihnYW1tYSgwLjAxLCAwLjAxKSwgY2xhc3MgPSAic2hhcGUiKQogICksCiAgZmFtaWx5ID0gbmVnYmlub21pYWwoKSwKICBkYXRhID0gYXMuZGF0YS5mcmFtZShkLmNvbXBsZXRlZCksCiAgY29udHJvbCA9IGxpc3QoYWRhcHRfZGVsdGEgPSAwLjk1KSwKICBmaWxlID0gImZpdHMvdGltZTBfd2l0aF9hbGxfc3VibWlzc2lvbnMiLAogIGZpbGVfcmVmaXQgPSAib25fY2hhbmdlIgopCnN1bW1hcnkodGltZTAuYWxsKQpyYW5lZih0aW1lMC5hbGwpCnBsb3QodGltZTAuYWxsLCBhc2sgPSBGQUxTRSkKCnBwX2NoZWNrKHRpbWUwLmFsbCwgbnNhbXBsZXMgPSAxNTApICsgc2NhbGVfeF9sb2cxMCgpCmBgYAoKVHJhaW5pbmcgdGhlIG1vZGVsIG9uIGFsbCBkYXRhIHBvaW50cyByZWR1Y2VzIHRoZSB1bmNlcnRhaW50eSBhbmQgZGlkIG5vdCByZXN1bHQgaW4gYW55IHNhbXBsaW5nIHByb2JsZW1zLiBXZSB3aWxsIHByb2NlZWQgd2l0aCB0aGUgbW9kZWwgZml0dGVkIHRvIGFsbCB0aGUgZGF0YS4KCiMjIEludGVycHJldGluZyB0aGUgbW9kZWwKCkV4dHJhY3QgcG9zdGVyaW9yIHNhbXBsZXM6CmBgYHtyfQoKcG9zdCA8LSBwb3N0ZXJpb3JfcHJlZGljdCh0aW1lMC5hbGwsIG5ld2RhdGEgPSBkYXRhLmZyYW1lKGhpZ2hfZGVidF92ZXJzaW9uID0gYygiZmFsc2UiLCAidHJ1ZSIpLCBzZXNzaW9uID0gTkEpKQpwb3N0LmxvdyA8LSAgcG9zdFssMV0KcG9zdC5oaWdoIDwtIHBvc3RbLDJdCnBvc3QuZGlmZiA8LSBwb3N0LmhpZ2ggLSBwb3N0Lmxvdwpwb3N0LmRpZmYuc2NhbGVkIDwtIHBvc3QuZGlmZiAvIG1lYW4ocG9zdCkKCmBgYAoKCldoZW4gd2UgbG9vayBhdCB0aGUgZGlzdHJpYnV0aW9uIG9mIHRoZSBkYXRhIGJldHdlZW4gdGhlIGhpZ2ggYW5kIGxvdyBkZWJ0IHZlcnNpb24gd2UgY2FuIHNlZSBhIGRpZmZlcmVuY2UsIHRoZXkgYXJlIGhvd2V2ZXIgcXVpdGUgc2ltaWxhci4KYGBge3J9CnN1bW1hcnkoZGF0YS5mcmFtZSgiTG93IERlYnQiPXBvc3QubG93LCAiSGlnaCBEZWJ0Ij1wb3N0LmhpZ2gpKQoKZ2dwbG90KGRhdGEuZnJhbWUodGltZSA9IHBvc3QuaGlnaCkpICsKICBnZW9tX2RlbnNpdHkoZGF0YSA9IGRhdGEuZnJhbWUodGltZSA9IHBvc3QubG93KSwgYWVzKHg9dGltZS82MCwgY29sb3VyID0gImJsdWUiKSkgKwogIGdlb21fZGVuc2l0eShkYXRhID0gZGF0YS5mcmFtZSh0aW1lID0gcG9zdC5oaWdoKSwgIGFlcyh4PXRpbWUvNjAsIGNvbG91ciA9ICJyZWQiICkpICsKICBzY2FsZV94X2xvZzEwKCkgKwogIGxhYnMoCiAgICB0aXRsZSA9ICJQb3N0ZXJpb3IgZGVuc2l0eSBvZiB0aW1lIGZvciBoaWdoIGFuZCBsb3cgZGVidCB2ZXJzaW9ucyIsCiAgICBzdWJ0aXRsZSA9ICJOb3RpY2UhIHgtYXhpcyBpcyBsb2cxMCBzY2FsZWQuIiwKICAgIHggPSJUaW1lIChtaW4pIiwKICAgIHkgPSAiRGVuc2l0eSIKICApICsKICB0aGVtZV9taW5pbWFsKCkgKwogIHNjYWxlX3lfY29udGludW91cyhicmVha3MgPSBOVUxMKSArCiAgc2NhbGVfY29sb3VyX21hbnVhbChuYW1lPSJWZXJzaW9uIixsYWJlbHM9YygiTG93IERlYnQiLCAiSGlnaCBEZWJ0IiksIHZhbHVlcz1jKCJibHVlIiwgInJlZCIpKQoKYGBgCgpXZSBjYW4gYWxzbyBwbG90IHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gdGltZSBmb3IgdGhlIGhpZ2ggZGVidCB2ZXJzaW9uIGFuZCB0aGUgbG93IGRlYnQgdmVyc2lvbi4gSW4gdGhvc2UgZ3JhcGhzIHdlIHNlZSB0aGF0IHRoZSBkaWZmZXJlbmNlIGlzIGNlbnRlcmVkIGFyb3VuZCB6ZXJvIHdpdGggc2xpZ2h0bHkgbW9yZSB3ZWlnaHQgb24gdGhlIHBvc2l0aXZlIChpbmRpY2F0aW5nIHNsaWdodGx5IGxvbmdlciB0aW1lcyBmb3IgdGhlIGhpZ2ggZGVidCB2ZXJzaW9uKQpgYGB7cn0KCmdncGxvdChkYXRhLmZyYW1lKHggPSBwb3N0LmRpZmYvNjApKSArIGdlb21fZGVuc2l0eShhZXMoeD14KSkgKwogIGxhYnMoCiAgICB0aXRsZSA9ICJQb3N0ZXJpb3IgZGVuc2l0eSBvZiB0aW1lIGRpZmZlcmVuY2UgbG93IGFuZCBoaWdoIGRlYnQgdmVyc2lvbnMgIiwKICAgIHN1YnRpdGxlID0gIkRpZmZlcmVuY2UgPSBIaWdoIERlYnQgdGltZSAtIExvdyBEZWJ0IHRpbWUiLAogICAgeCA9IlRpbWUgRGlmZmVyZW5jZSAobWluKSIsCiAgICB5ID0gIkRlbnNpdHkiCiAgKSArCiAgdGhlbWVfbWluaW1hbCgpICsKICBzY2FsZV95X2NvbnRpbnVvdXMoYnJlYWtzID0gTlVMTCkKCgpkYXRhLmZyYW1lKHggPSBwb3N0LmRpZmYuc2NhbGVkKSAlPiUKICBnZ3Bsb3QoKSArCiAgZ2VvbV9kZW5zaXR5KGFlcyh4PXgpKSArCiAgbGFicygKICAgIHRpdGxlID0gIlBvc3RlcmlvciBkZW5zaXR5IG9mIHRpbWUgZGlmZmVyZW5jZSBsb3cgYW5kIGhpZ2ggZGVidCB2ZXJzaW9ucyAiLAogICAgc3VidGl0bGUgPSAiRGlmZmVyZW5jZSA9IEhpZ2ggRGVidCB0aW1lIC0gTG93IERlYnQgdGltZSIsCiAgICB4ID0iVGltZSBEaWZmZXJlbmNlIChwcm9ydGlvbiBvZiBtZWFuIHRpbWUpIiwKICAgIHkgPSAiRGVuc2l0eSIKICApICsKICB0aGVtZV9taW5pbWFsKCkgKwogIHNjYWxlX3lfY29udGludW91cyhicmVha3MgPSBOVUxMKQoKYGBgCgoKV2UgY2FuIGFsc28gY2hlY2sgdGhlIHByb2JhYmlsaXR5IG9mIHRoZSBoaWdoIGRlYnQgZWZmZWN0IGJlaW5nIGxlc3MgdGhhbiBhcyB3ZWxsIGFzIGdyYXRoZXIgdGhlbiB6ZXJvLgpgYGB7cn0Kc3ByaW50ZigiaGlnaCBkZWJ0IGVmZmVjdCA8IDA6ICUuMmYlJSIsIHN1bShzaWduKHBvc3QuZGlmZikgPT0gLTEpL2xlbmd0aChwb3N0LmRpZmYpICogMTAwKQpzcHJpbnRmKCJoaWdoIGRlYnQgZWZmZWN0ID4gMDogJS4yZiUlIiwgc3VtKHNpZ24ocG9zdC5kaWZmKSA9PSAxKS9sZW5ndGgocG9zdC5kaWZmKSAqIDEwMCkKYGBgCgpXZSBjYW4gc2VlIG5vICJzaWduaWZpY2FudCIgcmVsYXRpb24gYmV0d2VlbiB0aGUgYW1vdW50IG9mIHRlY2huaWNhbCBkZWJ0IGluIHRoZSBnaXZlbiBjb2RlYmFzZSBhbmQgdGltZSBzcGVudCBvbiB0aGUgdGFzay4KCg==</div>
+>>>>>>> 56d8b00744a277b267ed800e6ecf48c598a3fc88
 
 
 
