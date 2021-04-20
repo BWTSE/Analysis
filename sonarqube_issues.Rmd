@@ -3,9 +3,8 @@ title: "SonarQube Issues"
 output: html_notebook
 ---
 
-Sonarqube issues:
-
-Descriptive statistics:
+## Looking at the data
+it looks like there might be a difference between the high and low debt groups, the variance is decidedly higher in the high debt group.
 
 ```{r}
 d.both_completed %>%
@@ -16,31 +15,27 @@ mean(d.both_completed$sonarqube_issues)
 var(d.both_completed$sonarqube_issues)
 ```
 
-Super basic:
-
+## Descriptive Statistics:
+Of full sample:
 ```{r}
-sonarqube_issues0 <- brm(
-  sonarqube_issues ~ 1 + (1 |c| session),
-  family = negbinomial(),
-  data = as.data.frame(d.both_completed),
-  prior = c(
-    prior(normal(1.5, 1), class = "Intercept"),
-    prior(gamma(0.01,0.01), class = "shape")
-  ),
-  control = list(adapt_delta = 0.95),
-  #empty = TRUE
-  file = "fits/sonarqube_issues0",
-  file_refit = "on_change"
-)
-
+mean(d.both_completed$sonarqube_issues)
+var(d.both_completed$sonarqube_issues)
 ```
 
-Adding debt level as predictor:
+## Initial model
+Variable names are modeled using the negative binomial family rather than poisson since the variance is much greater than the mean.
+
+We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
+
+### Selecting Priors
+We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases.
+
+
 
 ```{r}
-sonarqube_issues1.with <- extendable_model(
-  base_name = "sonarqube_issues1",
-  base_formula = "sonarqube_issues ~ 1 + high_debt_version + (1 | c | session)",
+sonarqube_issues0.with <- extendable_model(
+  base_name = "sonarqube_issues0",
+  base_formula = "sonarqube_issues ~ 1 + high_debt_version + (1 | session)",
   base_priors = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(1.5, 1), class = "Intercept"),
@@ -53,37 +48,31 @@ sonarqube_issues1.with <- extendable_model(
 )
 
 
-sonarqube_issues1 <- sonarqube_issues1.with()
-summary(sonarqube_issues1)
+sonarqube_issues0 <- sonarqube_issues0.with()
+summary(sonarqube_issues0)
 ```
 
-Compare
+## Model extensions
 
 ```{r}
-loo(sonarqube_issues0, sonarqube_issues1.with())
-
-```
-
-
-```{r}
-summary(sonarqube_issues1.with("work_domain"))
+summary(sonarqube_issues0.with("work_domain"))
 ```
 
 ```{r}
-summary(sonarqube_issues1.with("work_experience_programming.s"))
+summary(sonarqube_issues0.with("work_experience_programming.s"))
 ```
 
 
 ```{r}
-summary(sonarqube_issues1.with("work_experience_java.s"))
+summary(sonarqube_issues0.with("work_experience_java.s"))
 ```
 
 ```{r}
-summary(sonarqube_issues1.with("education_field"))
+summary(sonarqube_issues0.with("education_field"))
 ```
 
 ```{r}
-summary(sonarqube_issues1.with(
+summary(sonarqube_issues0.with(
   "mo(education_level)", 
   c(
     prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
@@ -92,31 +81,31 @@ summary(sonarqube_issues1.with(
 ```
 
 ```{r}
-summary(sonarqube_issues1.with("workplace_peer_review"))
+summary(sonarqube_issues0.with("workplace_peer_review"))
 ```
 
 ```{r}
-summary(sonarqube_issues1.with("workplace_td_tracking"))
+summary(sonarqube_issues0.with("workplace_td_tracking"))
 ```
 
 ```{r}
-summary(sonarqube_issues1.with("workplace_pair_programming"))
+summary(sonarqube_issues0.with("workplace_pair_programming"))
 ```
 
 ```{r}
-summary(sonarqube_issues1.with("workplace_coding_standards"))
+summary(sonarqube_issues0.with("workplace_coding_standards"))
 ```
 
 ```{r}
-summary(sonarqube_issues1.with("scenario"))
+summary(sonarqube_issues0.with("scenario"))
 ```
 
 ```{r}
-summary(sonarqube_issues1.with("group"))
+summary(sonarqube_issues0.with("group"))
 ```
 ```{r}
 summary(
-  sonarqube_issues1.with(
+  sonarqube_issues0.with(
   c("work_domain", 
     "work_experience_programming.s",
     "work_experience_java.s",
@@ -136,7 +125,7 @@ summary(
 )
 
 pp_check(
-  sonarqube_issues1.with(
+  sonarqube_issues0.with(
   c("work_domain", 
     "work_experience_programming.s",
     "work_experience_java.s",
@@ -162,25 +151,25 @@ pp_check(
 ```{r}
 
 loo(
-  sonarqube_issues1.with(),
-  sonarqube_issues1.with("work_domain"),
-  sonarqube_issues1.with("work_experience_programming.s"),
-  sonarqube_issues1.with("work_experience_java.s"),
-  sonarqube_issues1.with("education_field"),
-  sonarqube_issues1.with(
+  sonarqube_issues0.with(),
+  sonarqube_issues0.with("work_domain"),
+  sonarqube_issues0.with("work_experience_programming.s"),
+  sonarqube_issues0.with("work_experience_java.s"),
+  sonarqube_issues0.with("education_field"),
+  sonarqube_issues0.with(
   "mo(education_level)", 
   c(
     prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
   )
   ),
-  sonarqube_issues1.with("workplace_peer_review"),
-  sonarqube_issues1.with("workplace_td_tracking"),
-  sonarqube_issues1.with("workplace_pair_programming"),
-  sonarqube_issues1.with("workplace_coding_standards"),
-  sonarqube_issues1.with("scenario"),
-  sonarqube_issues1.with("group"),
-  sonarqube_issues1.with(c("scenario","group")),
-  sonarqube_issues1.with(
+  sonarqube_issues0.with("workplace_peer_review"),
+  sonarqube_issues0.with("workplace_td_tracking"),
+  sonarqube_issues0.with("workplace_pair_programming"),
+  sonarqube_issues0.with("workplace_coding_standards"),
+  sonarqube_issues0.with("scenario"),
+  sonarqube_issues0.with("group"),
+  sonarqube_issues0.with(c("scenario","group")),
+  sonarqube_issues0.with(
   c("work_domain", 
     "work_experience_programming.s",
     "work_experience_java.s",
@@ -200,11 +189,13 @@ loo(
 )
 ```
 
+## Candidate models
+We inspect some of our top performing models. 
 
+All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data and similar estimates for the high_debt_version beta parameter.
 
-Candidate models:
 ```{r}
-sonarqube_issues_cand1 <- sonarqube_issues1.with()
+sonarqube_issues_cand1 <- sonarqube_issues0.with()
 summary(sonarqube_issues_cand1)
 ranef(sonarqube_issues_cand1)
 plot(sonarqube_issues_cand1)
@@ -214,7 +205,7 @@ pp_check(sonarqube_issues_cand1, type = "bars", nsamples = 100)
 
 ```{r}
 
-sonarqube_issues_cand2 <- sonarqube_issues1.with("scenario")
+sonarqube_issues_cand2 <- sonarqube_issues0.with("scenario")
 summary(sonarqube_issues_cand2)
 ranef(sonarqube_issues_cand2)
 plot(sonarqube_issues_cand2)
@@ -223,7 +214,7 @@ pp_check(sonarqube_issues_cand2, type = "bars", nsamples = 100)
 ```
 
 ```{r}
-sonarqube_issues_cand3 <- sonarqube_issues1.with("group")
+sonarqube_issues_cand3 <- sonarqube_issues0.with("group")
 summary(sonarqube_issues_cand3)
 ranef(sonarqube_issues_cand3)
 plot(sonarqube_issues_cand3)
@@ -233,7 +224,7 @@ pp_check(sonarqube_issues_cand3, type = "bars", nsamples = 100)
 
 ```{r}
 
-sonarqube_issues_cand4 <- sonarqube_issues1.with(c("group","scenario"))
+sonarqube_issues_cand4 <- sonarqube_issues0.with(c("group","scenario"))
 summary(sonarqube_issues_cand4)
 ranef(sonarqube_issues_cand4)
 plot(sonarqube_issues_cand4)
@@ -245,3 +236,88 @@ pp_check(sonarqube_issues_cand4, type = "bars", nsamples = 100)
 loo(sonarqube_issues_cand1,sonarqube_issues_cand2,sonarqube_issues_cand3,sonarqube_issues_cand4)
 
 ```
+
+
+```{r}
+
+high_debt_predictions <- posterior_predict(sonarqube_issues_cand2, newdata = data.frame(session = NA,scenario = NA, high_debt_version ="true"))
+
+low_debt_predictions <- posterior_predict(sonarqube_issues_cand2, newdata = data.frame(session = NA,scenario = NA, high_debt_version ="false"))
+
+
+
+```
+
+### Final model
+Finally our winning candidate is compared vs a verison of itself using covariance. It is not significantly better, so we'll stick with var_names1
+
+```{r}
+sonarqube_issues_with_c <- brm(
+  sonarqube_issues ~ 1 + (1 |c| session),
+  family = negbinomial(),
+  data = as.data.frame(d.both_completed),
+  prior = c(
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(gamma(0.01,0.01), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
+  #empty = TRUE
+  file = "fits/sonarqube_issues_with_c",
+  file_refit = "on_change"
+)
+
+loo(sonarqube_issues_with_c, sonarqube_issues0.with())
+
+```
+### Model with with incomplete data points
+
+Some participants only completed one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r}
+sonarqube_issues.all <- brm(
+  sonarqube_issues ~ 1 + (1 | session),
+  family = negbinomial(),
+  data = as.data.frame(d.both_completed),
+  prior = c(
+    prior(normal(1.5, 1), class = "Intercept"),
+    prior(gamma(0.01,0.01), class = "shape")
+  ),
+  control = list(adapt_delta = 0.95),
+  #empty = TRUE
+  file = "fits/sonarqube_issues.all",
+  file_refit = "on_change"
+)
+
+summary(sonarqube_issues.all)
+```
+
+## Interpreting the model
+
+Extract posterior samples:
+```{r}
+
+sonarqube_issues_post <- posterior_predict(sonarqube_issues.all, newdata = data.frame(high_debt_version = c("false", "true"), session = NA))
+sonarqube_issues_post.low <-  sonarqube_issues_post[,1]
+sonarqube_issues_post.high <- sonarqube_issues_post[,2]
+sonarqube_issues_post.diff <- sonarqube_issues_post.high - sonarqube_issues_post.low
+
+```
+
+
+We can also plot the difference between good variable names for the high debt version and the low debt version. 
+```{r}
+
+ggplot(data.frame(x = sonarqube_issues_post.diff)) + geom_histogram(aes(x=x), stat = "count") +
+  labs(
+    title = "Diff of sonarqube issues",
+    subtitle = "High debt group - low debt group",
+    x ="number of issues",
+    y = "observations"
+  ) +
+  xlim(-20,20) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL)
+
+```
+
+Absolutely no effect...
