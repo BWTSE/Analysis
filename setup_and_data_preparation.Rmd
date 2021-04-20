@@ -58,8 +58,6 @@ d <- data.frame(
   time                          = d.orig$time,
   reused_logic_constructor      = encode.bool(d.orig$reused_logic_constructor),
   reused_logic_validation       = encode.bool(d.orig$reused_logic_validation),
-  reused_logic_equals           = encode.bool(d.orig$reused_logic_equals),
-  reused_logic_hashcode         = encode.bool(d.orig$reused_logic_hashcode),
   equals_state                  = encode.orderedcategorical(d.orig$equals_state, c("Not implemented", "Duplicated", "Good")),
   hashcode_state                = encode.orderedcategorical(d.orig$hashcode_state, c("Not implemented", "Duplicated", "Good")),
   
