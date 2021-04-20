@@ -112,7 +112,7 @@ str(d)
 
 Pick out some subdata sets
 ```{r}
-d.sessions <- d %>% group_by(session) %>% summarise(
+d.sessions <- d %>% group_by(session) %>% dplyr::summarise(
   across(task_completion, min),
   across(c(
     education_level, 
