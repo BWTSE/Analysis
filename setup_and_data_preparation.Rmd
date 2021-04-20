@@ -11,6 +11,8 @@ library(ggplot2) # plotting
 library(brms) # modeling
 library(tidyr) # for data manipulation
 library(hashr) # hashing
+library(likert) # plotting likert scales
+library(plyr) # data manipulation
 ```
 
 ## Data Preparation
