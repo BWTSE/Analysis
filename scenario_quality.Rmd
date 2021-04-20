@@ -1,0 +1,326 @@
+---
+title: "Scenario Quality"
+output: html_notebook
+---
+## Looking at the data
+We plot the data and can see that there is no obvious large difference between the debt versions.
+
+```{r}
+data.frame(
+  High_Debt_Version = d.both_completed %>%
+    filter(high_debt_version == "true") %>%
+    pull(quality_pre_task) %>%
+    revalue(c(
+      "-3"="Very Bad",
+      "-2"="Bad",
+      "-1"="Somewhat Bad",
+      "0"="Neutral",
+      "1"="Somewhat Good",
+      "2"="Good",
+      "3"="Very Good"
+    )),
+  Low_Debt_Version = d.both_completed %>%
+    filter(high_debt_version == "false") %>%
+    pull(quality_pre_task) %>%
+    revalue(c(
+      "-3"="Very Bad",
+      "-2"="Bad",
+      "-1"="Somewhat Bad",
+      "0"="Neutral",
+      "1"="Somewhat Good",
+      "2"="Good",
+      "3"="Very Good"
+    ))
+) %>%
+  likert() %>%
+  plot(
+    type="density",
+    facet = TRUE,
+  )
+
+data.frame(
+  Tickets = d.both_completed %>%
+    filter(scenario == "tickets") %>%
+    pull(quality_pre_task) %>%
+    revalue(c(
+      "-3"="Very Bad",
+      "-2"="Bad",
+      "-1"="Somewhat Bad",
+      "0"="Neutral",
+      "1"="Somewhat Good",
+      "2"="Good",
+      "3"="Very Good"
+    )),
+  Booking = d.both_completed %>%
+    filter(scenario == "booking") %>%
+    pull(quality_pre_task) %>%
+    revalue(c(
+      "-3"="Very Bad",
+      "-2"="Bad",
+      "-1"="Somewhat Bad",
+      "0"="Neutral",
+      "1"="Somewhat Good",
+      "2"="Good",
+      "3"="Very Good"
+    ))
+) %>%
+  likert() %>%
+  plot(
+    type="density",
+    facet = TRUE,
+  )
+```
+
+## Initial model
+As the variance is much greater than the mean we will use a negative binomial family that allows us to model the variance separately.
+
+We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
+
+### Selecting Priors
+We iterate over the model until we have sane priors
+```{r}
+
+scenario_quality0.with <- extendable_model(
+  base_name = "scenario_quality0",
+  base_formula = "quality_pre_task ~ 1 + high_debt_version + (1 | session)",
+  base_priors = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 2.5), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  family = cumulative(),
+  data = d.both_completed,
+)
+
+# Default priors:
+prior_summary(scenario_quality0.with(only_priors= TRUE))
+
+# Our priors:
+prior_summary(scenario_quality0.with(sample_prior = "only"))
+
+# Prior predictive check
+pp_check(scenario_quality0.with(sample_prior = "only"), nsamples = 200, type = "bars")
+```
+
+### Model fit
+We check the posterior distribution and can see that the model seems to have been able to fit the data well
+```{r}
+# Posterior predictive check
+pp_check(scenario_quality0.with(), nsamples = 100, type = "bars")
+
+summary(scenario_quality0.with())
+```
+
+## Model extenstions
+
+We use loo to check some possible extensions on the model.
+
+```{r}
+
+edlvl_prior <- c(
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+)
+
+loo(
+  scenario_quality0.with(),
+  scenario_quality0.with("work_domain"),
+  scenario_quality0.with("work_experience_programming.s"),
+  scenario_quality0.with("work_experience_java.s"),
+  scenario_quality0.with("education_field"),
+  scenario_quality0.with("mo(education_level)", edlvl_prior),
+  scenario_quality0.with("workplace_peer_review"),
+  scenario_quality0.with("workplace_td_tracking"),
+  scenario_quality0.with("workplace_pair_programming"),
+  scenario_quality0.with("workplace_coding_standards"),
+  scenario_quality0.with("scenario"),
+  scenario_quality0.with("group"),
+  scenario_quality0.with("order")
+)
+```
+
+We pick out some interesting variables and try combining them
+
+```{r}
+
+loo(
+  scenario_quality0.with(),
+  scenario_quality0.with("work_experience_programming.s"),
+  scenario_quality0.with("work_experience_java.s"),
+  scenario_quality0.with("workplace_peer_review"),
+  scenario_quality0.with("workplace_coding_standards"),
+  scenario_quality0.with("order"),
+  
+  
+  scenario_quality0.with(c("work_experience_programming.s", "work_experience_java.s")),
+  scenario_quality0.with(c("work_experience_programming.s", "workplace_peer_review")),
+  scenario_quality0.with(c("work_experience_programming.s", "workplace_coding_standards")),
+  scenario_quality0.with(c("work_experience_programming.s", "order")),
+  
+  
+  scenario_quality0.with(c("work_experience_java.s", "workplace_peer_review")),
+  scenario_quality0.with(c("work_experience_java.s", "workplace_coding_standards")),
+  scenario_quality0.with(c("work_experience_java.s", "order")),
+  
+  
+  scenario_quality0.with(c("workplace_peer_review", "workplace_coding_standards")),
+  scenario_quality0.with(c("workplace_peer_review", "order")),
+  
+  
+  scenario_quality0.with(c("workplace_coding_standards", "order"))
+)
+```
+
+```{r}
+
+loo(
+  scenario_quality0.with(),
+  scenario_quality0.with("work_experience_programming.s"),
+  scenario_quality0.with("work_experience_java.s"),
+  scenario_quality0.with("workplace_peer_review"),
+  scenario_quality0.with("workplace_coding_standards"),
+  scenario_quality0.with("order"),
+  
+  
+  scenario_quality0.with(c("work_experience_programming.s", "order")),
+  scenario_quality0.with(c("work_experience_java.s", "order")),
+  scenario_quality0.with(c("workplace_peer_review", "order")),
+  scenario_quality0.with(c("workplace_coding_standards", "order")),
+  
+  
+  scenario_quality0.with(c("work_experience_java.s", "work_experience_programming.s", "order")),
+  scenario_quality0.with(c("workplace_peer_review", "work_experience_programming.s", "order")),
+  scenario_quality0.with(c("workplace_coding_standards", "work_experience_programming.s", "order")),
+  
+  scenario_quality0.with(c("workplace_peer_review", "work_experience_java.s", "order")),
+  scenario_quality0.with(c("workplace_coding_standards", "work_experience_java.s", "order")),
+  
+  scenario_quality0.with(c("workplace_coding_standards", "workplace_peer_review", "order"))
+)
+```
+## Candidate models
+We inspect some of our top performing models. 
+
+All models seems to have sampled nicely (rhat is ca 1 and fluffy plots) they also have about the same fit to the data end similar estimated for the high_debt_version beta parameter
+
+
+```{r}
+scenario_quality0 <- scenario_quality0.with()
+summary(scenario_quality0)
+ranef(scenario_quality0)
+plot(scenario_quality0, ask = FALSE)
+
+pp_check(scenario_quality0, nsamples = 150, type= "bars")
+
+```
+
+
+```{r}
+scenario_quality1 <- scenario_quality0.with("order")
+summary(scenario_quality1)
+ranef(scenario_quality1)
+plot(scenario_quality1, ask = FALSE)
+
+pp_check(scenario_quality1, nsamples = 150, type= "bars")
+
+```
+
+
+```{r}
+scenario_quality2 <- scenario_quality0.with(c("order", "workplace_coding_standards"))
+summary(scenario_quality2)
+ranef(scenario_quality2)
+plot(scenario_quality2, ask = FALSE)
+
+pp_check(scenario_quality2, nsamples = 150, type= "bars")
+
+```
+
+```{r}
+scenario_quality3 <- scenario_quality0.with(c("order", "workplace_coding_standards", "work_experience_programming.s"))
+summary(scenario_quality3)
+ranef(scenario_quality3)
+plot(scenario_quality3, ask = FALSE)
+
+pp_check(scenario_quality3, nsamples = 150, type= "bars")
+
+```
+
+### Final model
+All models have sampled nicely and have similar estimated for the high debt version beat parameter. Loo does however late the simpler models significantly lower than the more complex models. `scenario_quality2` seems to bee the simpler model with a top score in loo and will therefore be selected as our final model.
+
+### Trying to add covariance
+
+```{r}
+scenario_quality2_with_c <- brm(
+  "quality_pre_task ~ 1 + high_debt_version + order + workplace_coding_standards  + (1 | c | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 2.5), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  family = cumulative(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/scenario_quality2_with_c",
+  file_refit = "on_change"
+)
+
+summary(scenario_quality2_with_c)
+ranef(scenario_quality2_with_c)
+plot(scenario_quality2_with_c, ask = FALSE)
+
+pp_check(scenario_quality2_with_c, nsamples = 150, type= "bars")
+```
+
+```{r}
+loo(
+  scenario_quality2_with_c,
+  scenario_quality2
+)
+```
+The covaraiance didn't seem to influence model much and we will therefore continue with the simpler model without it.
+
+### Model with with incomplete data points
+
+Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r}
+scenario_quality2.all <- brm(
+  "quality_pre_task ~ 1 + high_debt_version + order + workplace_coding_standards  + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 2.5), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  family = cumulative(),
+  data = as.data.frame(d.completed),
+  file = "fits/scenario_quality2.all",
+  file_refit = "on_change"
+)
+summary(scenario_quality2.all)
+ranef(scenario_quality2.all)
+plot(scenario_quality2.all, ask = FALSE)
+
+pp_check(scenario_quality2.all, nsamples = 150, type= "bars")
+```
+
+Training the model on all data points reduces the uncertainty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
+
+
+Extract posterior samples:
+```{r}
+
+post <- posterior_predict(scenario_quality2.all, newdata = data.frame(
+  high_debt_version = c("false", "true"),
+  session = NA,
+  order = NA,
+  workplace_coding_standards = NA
+))
+post.low <-  post[,1]
+post.high <- post[,2]
+summary(post)
+
+```
+
+
+
+
