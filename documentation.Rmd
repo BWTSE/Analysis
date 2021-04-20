@@ -3,22 +3,156 @@ title: "Documentation"
 output: html_notebook
 ---
 
+## Looking at the data
+We plot the data and can see that there is no obvious large difference between the debt versions.
+
 ```{r}
-d.completed %>%
+d.both_completed %>%
   ggplot(aes(high_debt_version, fill = documentation)) +
   geom_bar(position = "fill") +
   scale_y_reverse() +
   scale_fill_manual("legend", values = c("Correct" = "green", "None" = "yellow", "Incorrect" = "red"), guide = guide_legend(reverse = TRUE))
 ```
+## Initial model
+The type of the outcome is adjacent categories and is modeled as a cumulative family.
+
+We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
+
+### Selecting Priors
+We iterate over the model until we have sane priors
+
+```{r}
+
+documentation0.with <- extendable_model(
+  base_name = "documentation0",
+  base_formula = "documentation ~ 1 + high_debt_version + (1 | session)",
+  base_priors = c(
+    prior(normal(0, 0.9), class = "b"),
+    prior(normal(0, 0.9), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = d.both_completed,
+)
+
+# Default priors:
+prior_summary(documentation0.with(only_priors= TRUE))
+
+# Our priors:
+prior_summary(documentation0.with(sample_prior = "only"))
+
+# Prior predictive check
+pp_check(documentation0.with(sample_prior = "only"), nsamples = 200, type = "bars")
+```
+
+
+### Model fit
+We check the posterior distribution and can see that the model seems to have been able to fit the data well
+```{r}
+# Posterior predictive check
+pp_check(documentation0.with(), nsamples = 100, type = "bars")
+
+summary(documentation0.with())
+```
+## Model extenstions
+
+We use loo to check some possible extensions on the model.
+
+```{r}
+
+edlvl_prior <- c(
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muIncorrect"),
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muNone")
+)
+
+loo(
+  documentation0.with(),
+  documentation0.with("work_domain"),
+  documentation0.with("work_experience_programming.s"),
+  documentation0.with("work_experience_java.s"),
+  documentation0.with("education_field"),
+  documentation0.with("mo(education_level)", edlvl_prior),
+  documentation0.with("workplace_peer_review"),
+  documentation0.with("workplace_td_tracking"),
+  documentation0.with("workplace_pair_programming"),
+  documentation0.with("workplace_coding_standards"),
+  documentation0.with("scenario"),
+  documentation0.with("group"),
+  documentation0.with("order")
+)
+```
+
+We pick out some interesting variables and try combining them
+
+```{r}
+loo(
+  documentation0.with(),
+  documentation0.with("work_domain"),
+  documentation0.with("workplace_peer_review"),
+  documentation0.with("workplace_td_tracking"),
+  
+  documentation0.with(c("work_domain", "workplace_peer_review")),
+  documentation0.with(c("work_domain", "workplace_td_tracking")),
+  
+  documentation0.with(c("workplace_peer_review", "workplace_td_tracking")),
+  
+  documentation0.with(c("work_domain", "workplace_peer_review", "workplace_td_tracking"))
+)
+```
+## Candidate models
+We inspect some of our top performing models. 
+
+All models seems to have sampled nicely (rhat is ca 1 and fluffy plots) they also have about the same fit to the data end similar estimated for the high_debt_version beta parameter
 
 
 ```{r}
-documentation0 <- brm(
-  documentation ~ 1
-  + high_debt_version
-  + (1 | c | session),
-  family = categorical(),
-  data = as.data.frame(d.completed),
+documentation0 <- documentation0.with()
+summary(documentation0)
+ranef(documentation0)
+plot(documentation0, ask = FALSE)
+
+pp_check(documentation0, nsamples = 150, type= "bars")
+
+```
+```{r}
+documentation1 <- documentation0.with("workplace_peer_review")
+summary(documentation1)
+ranef(documentation1)
+plot(documentation1, ask = FALSE)
+
+pp_check(documentation1, nsamples = 150, type= "bars")
+
+```
+
+```{r}
+documentation2 <- documentation0.with(c("workplace_peer_review", "work_domain"))
+summary(documentation2)
+ranef(documentation2)
+plot(documentation2, ask = FALSE)
+
+pp_check(documentation2, nsamples = 150, type= "bars")
+
+```
+
+```{r}
+documentation3 <- documentation0.with(c("workplace_peer_review", "work_domain", "workplace_td_tracking"))
+summary(documentation3)
+ranef(documentation3)
+plot(documentation3, ask = FALSE)
+
+pp_check(documentation3, nsamples = 150, type= "bars")
+
+```
+
+### Final model
+All models have sampled okey but documentation3 has a bitter fit for the high debt beta parameter is significantly better than some of the simple models according to loo. wee choose documentation3 as out final model.
+
+### Trying to add covariance
+
+```{r}
+documentation3_with_c <- brm(
+  "documentation ~ 1 + high_debt_version + workplace_peer_review + work_domain + workplace_td_tracking + (1 | c | session)",
   prior = c(
     prior(normal(0, 0.9), class = "b"),
     prior(normal(0, 0.9), class = "Intercept"),
@@ -26,124 +160,68 @@ documentation0 <- brm(
     prior(exponential(1), class = "sd", dpar = "muNone"),
     prior(lkj(2), class = "L")
   ),
-  # empty = TRUE, # If you only want to check prior definitions
-  # sample_prior = "only",
-  backend = "cmdstanr",
-  chains = 4,
-  cores = 4,
-  file = "fits/documentation0",
+  family = categorical(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/documentation3_with_c",
   file_refit = "on_change"
 )
 
-pp_check(documentation0, nsamples = 200, type = "bars")
+summary(documentation3_with_c)
+ranef(documentation3_with_c)
+plot(documentation3_with_c, ask = FALSE)
 
-summary(documentation0)
+pp_check(documentation3_with_c, nsamples = 150, type= "bars")
 ```
 
 ```{r}
-documentation0.with <- extendable_model(
-  base_name = "documentation0",
-  base_formula = "documentation ~ 1 + high_debt_version + (1 | c | session)",
-  base_priors = c(
+loo(
+  documentation3,
+  documentation3_with_c
+)
+```
+Adding the covariance parameter did not significantly improve the model and we will therefore continue to use the simpler model documentation3.
+
+### Model with with incomplete data points
+
+Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r}
+documentation3.all <- brm(
+  "documentation ~ 1 + high_debt_version + workplace_peer_review + work_domain + workplace_td_tracking + (1 | session)",
+  prior = c(
     prior(normal(0, 0.9), class = "b"),
     prior(normal(0, 0.9), class = "Intercept"),
     prior(exponential(1), class = "sd", dpar = "muIncorrect"),
-    prior(exponential(1), class = "sd", dpar = "muNone"),
-    prior(lkj(2), class = "L")
+    prior(exponential(1), class = "sd", dpar = "muNone")
   ),
   family = categorical(),
-  data = d.completed
+  data = as.data.frame(d.completed),
+  file = "fits/documentation3.all",
+  file_refit = "on_change"
 )
+summary(documentation3.all)
+ranef(documentation3.all)
+plot(documentation3.all, ask = FALSE)
+
+pp_check(documentation3_with_c, nsamples = 150, type= "bars")
 ```
 
+Training the model on all data points reduces the uncertainty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
 
+## Interpreting the model
 
-```{r}
-documentation0.work_domain <- documentation0.with("work_domain")
-
-summary(documentation0.work_domain)
-```
-
-```{r}
-documentation0.work_experience_programming <- documentation0.with("work_experience_programming.s")
-
-summary(documentation0.work_experience_programming)
-```
-
-
-```{r}
-documentation0.work_experience_java <- documentation0.with("work_experience_java.s")
-
-summary(documentation0.work_experience_java)
-```
-
-```{r}
-documentation0.education_field <- documentation0.with("education_field")
-
-summary(documentation0.education_field)
-```
-
-```{r}
-documentation0.education_level <- documentation0.with(
-  "mo(education_level)", 
-  c(
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muIncorrect"),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muNone")
-  )
-)
-
-summary(documentation0.education_level)
-```
-```{r}
-documentation0.workplace_peer_review <- documentation0.with("workplace_peer_review")
-
-summary(documentation0.workplace_peer_review)
-```
-
-```{r}
-documentation0.workplace_td_tracking <- documentation0.with("workplace_td_tracking")
-
-summary(documentation0.workplace_td_tracking)
-```
-
-```{r}
-documentation0.workplace_pair_programming <- documentation0.with("workplace_pair_programming")
-
-summary(documentation0.workplace_pair_programming)
-```
-
-```{r}
-documentation0.workplace_coding_standards <- documentation0.with("workplace_coding_standards")
-
-summary(documentation0.workplace_coding_standards)
-```
-
-```{r}
-documentation0.scenario <- documentation0.with("scenario")
-
-summary(documentation0.scenario)
-```
-
-```{r}
-documentation0.group <- documentation0.with("group")
-
-summary(documentation0.group)
-```
-
+Extract posterior samples:
 ```{r}
 
-loo(
-  documentation0,
-  documentation0.work_domain,
-  documentation0.work_experience_programming,
-  documentation0.work_experience_java,
-  documentation0.education_field,
-  documentation0.education_level,
-  documentation0.workplace_peer_review,
-  documentation0.workplace_td_tracking,
-  documentation0.workplace_pair_programming,
-  documentation0.workplace_coding_standards,
-  documentation0.scenario,
-  documentation0.group
-)
+post <- posterior_predict(documentation3.all, newdata = data.frame(
+  high_debt_version = c("false", "true"),
+  session = NA, 
+  workplace_peer_review = NA, 
+  work_domain = NA, 
+  workplace_td_tracking = NA
+))
+post.low <-  post[,1]
+post.high <- post[,2]
+summary(post)
+
 ```

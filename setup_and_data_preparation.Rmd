@@ -10,6 +10,7 @@ library(curl) # data fetching
 library(ggplot2) # plotting
 library(brms) # modeling
 library(tidyr) # for data manipulation
+library(hashr) # hashing
 ```
 
 ## Data Preparation
@@ -57,8 +58,8 @@ d <- data.frame(
   reused_logic_validation       = encode.bool(d.orig$reused_logic_validation),
   reused_logic_equals           = encode.bool(d.orig$reused_logic_equals),
   reused_logic_hashcode         = encode.bool(d.orig$reused_logic_hashcode),
-  has_equals                    = encode.bool(d.orig$has_equals),
-  has_hashcode                  = encode.bool(d.orig$has_hashcode),
+  equals_state                  = encode.orderedcategorical(d.orig$equals_state, c("Not implemented", "Duplicated", "Good")),
+  hashcode_state                = encode.orderedcategorical(d.orig$hashcode_state, c("Not implemented", "Duplicated", "Good")),
   
   documentation                 = factor(d.orig$documentation),
   
@@ -71,7 +72,11 @@ d <- data.frame(
   var_names_edited_all          = d.orig$var_names_edited_all,
   var_names_edited_good         = d.orig$var_names_edited_good,
   var_names_edited_good.ratio   = d.orig$var_names_edited_good / d.orig$var_names_edited_all,
-  sonarqube_issues              = d.orig$sonarqube_issues,
+  sonarqube_issues              = d.orig$sonarqube_issues_major + d.orig$sonarqube_issues_minor + d.orig$sonarqube_issues_info + d.orig$sonarqube_issues_critical,
+  sonarqube_issues.major       = d.orig$sonarqube_issues_major,
+  sonarqube_issues.minor       = d.orig$sonarqube_issues_minor,
+  sonarqube_issues.info        = d.orig$sonarqube_issues_info,
+  sonarqube_issues.critical    = d.orig$sonarqube_issues_critical,
   
   group                         = factor(d.orig$group),
   education_level               = encode.orderedcategorical(d.orig$education_level, c("None", "Some bachelor studies", "Bachelor degree", "Some master studies", "Master degree", "Some Ph.D. studies", "Ph. D.")),
@@ -139,7 +144,6 @@ d.both_completed$work_experience_java.s = scale(d.both_completed$work_experience
 
 Utility function
 ```{r}
-library(hashr)
 
 extendable_model <- function(base_name, base_formula, family, data, base_priors = NULL, base_control = NULL) {
   function(additional_variables = NULL, additional_priors = NULL, only_priors = FALSE, sample_prior = "no", control_override = NULL) {

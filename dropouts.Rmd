@@ -42,7 +42,7 @@ d.sessions %>%
 ```
 
 ## Initial model
-The type of the outcome is adjacent categories and is modeled as a cumulative family.
+The outcome model represent incremental steps and will therefore be modeled with stopping ratio
 
 We include `high_debt_verison` in our initial model.
 
@@ -228,5 +228,29 @@ post.diff <- post.high - post.low
 
 
 
+```{r}
+
+data.frame(
+  task_completion = factor(
+    c(post.low, post.high),
+    ordered = TRUE,
+    levels = c(1, 2, 3, 4),
+    labels = c("Not submitted", "Does not compile", "Incorrect", "Correct")
+  ), 
+  debt_version = c(
+    rep("Low Debt", length(post.low)),
+    rep("High Debt", length(post.high))
+  )
+) %>%
+  ggplot(aes(debt_version, fill=task_completion)) +
+  geom_bar() +
+  labs(title = "Dropputs per signup group") +
+  ylab("Number of dropouts") +
+  xlab("Version")
+sum(post.diff < 0)/length(post.diff)
+sum(post.diff > 0)/length(post.diff)
+
+
+```
 
 
