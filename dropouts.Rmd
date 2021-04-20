@@ -42,7 +42,7 @@ d.sessions %>%
 ```
 
 ## Initial model
-The type of the outcome is adjacent categories and is modeled as a cumulative family.
+The outcome model represent incremental steps and will therefore be modeled with stopping ratio
 
 We include `high_debt_verison` in our initial model.
 

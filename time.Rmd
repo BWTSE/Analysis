@@ -134,7 +134,7 @@ loo(
 ## Candidate models
 We inspect some of our top performing models. 
 
-All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end simila estimated for the high_debt_version beta parameter
+All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end similar estimated for the high_debt_version beta parameter
 
 
 ```{r}
