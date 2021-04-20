@@ -3,7 +3,8 @@ title: "Variable Names"
 output: html_notebook
 ---
 
-Variable names:
+## Looking at the data
+There appears to be significant difference in the rate of bad variable naming between the low and high debt groups.
 
 ```{r}
 
@@ -21,40 +22,31 @@ mean(d.completed$var_names_new_good)
 var(d.completed$var_names_new_good)
 ```
 
-
-
+## Descriptive Statistics:
 ```{r}
-# Sample model example
-sample <- posterior_predict(var_names0, newdata = data.frame(high_debt_version = "false", var_names_new_all = 10), re_formula = NA)
+d.both_completed %>%
+  pull(var_names_new_good.ratio) %>% 
+  summary()
 
+variance <- d.both_completed %>%
+  pull(var_names_new_good.ratio) %>%
+  var()
+sprintf("Variance: %f", variance)
 
 ```
+## Initial model
+Variable names are modeled using the binomial family, where the amount fo trials is the total amount of new variables..
 
-Basic model with binomial distribution:
+We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
 
-```{r}
-variable_names0 <- brm(
-  var_names_new_good | trials(var_names_new_all) ~ 1 + (1 |c| session),
-  family = binomial(),
-  data = as.data.frame(d.both_completed),
-  prior = c(
-    prior(normal(2, 1), class = "Intercept"),
-    prior(exponential(1), class = "sd")
-  ),
-  control = list(adapt_delta = 0.95),
-  #empty = TRUE
-  file = "fits/variable_names0",
-  file_refit = "on_change"
-)
+### Selecting Priors
+We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. The prior "lkj(2)" will mean the model is sceptical of strong correlations.
 
-```
-
-Adding debt level as predictor:
 
 ```{r}
-variable_names1.with <- extendable_model(
-  base_name = "variable_names1",
-  base_formula = "var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + (1 | c | session)",
+variable_names0.with <- extendable_model(
+  base_name = "variable_names0",
+  base_formula = "var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + (1  | session)",
   base_priors = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(2, 1), class = "Intercept"),
@@ -66,37 +58,40 @@ variable_names1.with <- extendable_model(
 )
 
 
-variable_names1 <- variable_names1.with()
-summary(variable_names1)
-```
-
-Compare
-
-```{r}
-loo(variable_names0, variable_names1.with())
+variable_names0 <- variable_names0.with()
+summary(variable_names0)
 
 ```
 
+### Model fit
+We check the posterior distribution and can see that the model seems to have been able to fit the data well
+```{r}
+
+# Prior predictive checks
+pp_check(variable_names0.with(), type = "bars", nsamples = 200)
+```
+
+## Model extensions
 
 ```{r}
-summary(variable_names1.with("work_domain"))
+summary(variable_names0.with("work_domain"))
 ```
 
 ```{r}
-summary(variable_names1.with("work_experience_programming.s"))
+summary(variable_names0.with("work_experience_programming.s"))
 ```
 
 
 ```{r}
-summary(variable_names1.with("work_experience_java.s"))
+summary(variable_names0.with("work_experience_java.s"))
 ```
 
 ```{r}
-summary(variable_names1.with("education_field"))
+summary(variable_names0.with("education_field"))
 ```
 
 ```{r}
-summary(variable_names1.with(
+summary(variable_names0.with(
   "mo(education_level)", 
   c(
     prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
@@ -105,49 +100,49 @@ summary(variable_names1.with(
 ```
 
 ```{r}
-summary(variable_names1.with("workplace_peer_review"))
+summary(variable_names0.with("workplace_peer_review"))
 ```
 
 ```{r}
-summary(variable_names1.with("workplace_td_tracking"))
+summary(variable_names0.with("workplace_td_tracking"))
 ```
 
 ```{r}
-summary(variable_names1.with("workplace_pair_programming"))
+summary(variable_names0.with("workplace_pair_programming"))
 ```
 
 ```{r}
-summary(variable_names1.with("workplace_coding_standards"))
+summary(variable_names0.with("workplace_coding_standards"))
 ```
 
 ```{r}
-summary(variable_names1.with("scenario"))
+summary(variable_names0.with("scenario"))
 ```
 
 ```{r}
-summary(variable_names1.with("group"))
+summary(variable_names0.with("group"))
 ```
 
 ```{r}
 loo(
-  variable_names1.with(),
-  variable_names1.with("work_domain"),
-  variable_names1.with("work_experience_programming.s"),
-  variable_names1.with("work_experience_java.s"),
-  variable_names1.with("education_field"),
-  variable_names1.with(
+  variable_names0.with(),
+  variable_names0.with("work_domain"),
+  variable_names0.with("work_experience_programming.s"),
+  variable_names0.with("work_experience_java.s"),
+  variable_names0.with("education_field"),
+  variable_names0.with(
   "mo(education_level)", 
   c(
     prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
   )
   ),
-  variable_names1.with("workplace_peer_review"),
-  variable_names1.with("workplace_td_tracking"),
-  variable_names1.with("workplace_pair_programming"),
-  variable_names1.with("workplace_coding_standards"),
-  variable_names1.with("scenario"),
-  variable_names1.with("group"),
-  variable_names1.with(
+  variable_names0.with("workplace_peer_review"),
+  variable_names0.with("workplace_td_tracking"),
+  variable_names0.with("workplace_pair_programming"),
+  variable_names0.with("workplace_coding_standards"),
+  variable_names0.with("scenario"),
+  variable_names0.with("group"),
+  variable_names0.with(
   c("work_domain", 
     "work_experience_programming.s",
     "work_experience_java.s",
@@ -172,18 +167,18 @@ loo(
 
 ```{r}
 loo(
-  variable_names1.with(),
-  variable_names1.with("work_experience_programming.s"),
-  variable_names1.with("work_experience_java.s"),
-  variable_names1.with("workplace_peer_review"),
-  variable_names1.with("workplace_td_tracking"),
-  variable_names1.with("workplace_coding_standards"),
-  variable_names1.with(c("scenario","workplace_td_tracking")),
-  variable_names1.with(c("scenario","workplace_peer_review")),
-  variable_names1.with(c("scenario","work_experience_java.s")),
-  variable_names1.with(c("scenario","work_experience_java.s","workplace_td_tracking","workplace_peer_review")),
-    variable_names1.with(c("scenario","work_experience_java.s","workplace_td_tracking")),
-  variable_names1.with(
+  variable_names0.with(),
+  variable_names0.with("work_experience_programming.s"),
+  variable_names0.with("work_experience_java.s"),
+  variable_names0.with("workplace_peer_review"),
+  variable_names0.with("workplace_td_tracking"),
+  variable_names0.with("workplace_coding_standards"),
+  variable_names0.with(c("scenario","workplace_td_tracking")),
+  variable_names0.with(c("scenario","workplace_peer_review")),
+  variable_names0.with(c("scenario","work_experience_java.s")),
+  variable_names0.with(c("scenario","work_experience_java.s","workplace_td_tracking","workplace_peer_review")),
+    variable_names0.with(c("scenario","work_experience_java.s","workplace_td_tracking")),
+  variable_names0.with(
   c("work_domain", 
     "work_experience_programming.s",
     "work_experience_java.s",
@@ -206,56 +201,133 @@ loo(
 ```
 
 
-Candidate models:
+
+## Candidate models
+We inspect some of our top performing models. 
+
+All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data and similar estimates for the high_debt_version beta parameter.
   
 ```{r}
-variable_names_cand1 <- variable_names1.with()
-summary(variable_names_cand1)
-ranef(variable_names_cand1)
-plot(variable_names_cand1)
-pp_check(variable_names_cand1, type = "bars", nsamples = 100)
+variable_names1 <- variable_names0.with()
+summary(variable_names1)
+ranef(variable_names1)
+plot(variable_names1)
+pp_check(variable_names1, type = "bars", nsamples = 100)
 
 ```
 
 
 ```{r}
-variable_names_cand2 <- variable_names1.with("scenario")
-summary(variable_names_cand2)
-ranef(variable_names_cand2)
-plot(variable_names_cand2)
-pp_check(variable_names_cand2, type = "bars", nsamples = 100)
+variable_names2 <- variable_names0.with("scenario")
+summary(variable_names2)
+ranef(variable_names2)
+plot(variable_names2)
+pp_check(variable_names2, type = "bars", nsamples = 100)
 
 ```
 
 ```{r}
-variable_names_cand3 <- variable_names1.with(c("scenario", "work_experience_java.s"))
-summary(variable_names_cand3)
-ranef(variable_names_cand3)
-plot(variable_names_cand3)
-pp_check(variable_names_cand4, type = "bars", nsamples = 100)
+variable_names3 <- variable_names0.with(c("scenario", "work_experience_java.s"))
+summary(variable_names3)
+ranef(variable_names3)
+plot(variable_names3)
+pp_check(variable_names3, type = "bars", nsamples = 100)
 
 ```
 
 
 ```{r}
-variable_names_cand4 <- variable_names1.with(c("scenario", "work_experience_java.s",     "workplace_td_tracking", "workplace_peer_review"))
-summary(variable_names_cand4)
-ranef(variable_names_cand4)
-plot(variable_names_cand4)
-pp_check(variable_names_cand4, type = "bars", nsamples = 100)
+variable_names4 <- variable_names0.with(c("scenario", "work_experience_java.s",     "workplace_td_tracking", "workplace_peer_review"))
+summary(variable_names4)
+ranef(variable_names4)
+plot(variable_names4)
+pp_check(variable_names4, type = "bars", nsamples = 100)
 
 ```
 ```{r}
-variable_names_cand5 <- variable_names1.with(c("scenario", "work_experience_java.s","workplace_peer_review"))
-summary(variable_names_cand5)
-ranef(variable_names_cand5)
-plot(variable_names_cand5)
-pp_check(variable_names_cand5, type = "bars", nsamples = 100)
+variable_names5 <- variable_names0.with(c("scenario", "work_experience_java.s","workplace_peer_review"))
+summary(variable_names5)
+ranef(variable_names5)
+plot(variable_names5)
+pp_check(variable_names5, type = "bars", nsamples = 100)
 
 ```
 
 ```{r}
-loo(variable_names_cand1,variable_names_cand2,variable_names_cand3,variable_names_cand4,variable_names_cand5)
+loo(variable_names1,variable_names2,variable_names3,variable_names4,variable_names5)
 ```
+
+
 
 Estimate of debt level effect (high_debt_version) seems robust, no predictors appear to affect it significantly. In fact, slightly increases with additional predictors.
+
+### Final model
+Finally our winning candidate is compared vs a verison of itself using covariance. It is not significantly better, so we'll stick with var_names1
+
+```{r}
+variable_names0_with_c <- brm(
+  var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + (1 |c | session),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  family = binomial(),
+  data = d.both_completed,
+  control = list(adapt_delta = 0.95),
+  file = "fits/variable_names0_with_c",
+  file_refit = "on_change"
+)
+
+loo(variable_names0.with(),variable_names0_with_c)
+```
+### Model with with incomplete data points
+
+Some participants only completed one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r}
+variable_names0.all <- brm(
+  var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + (1 | session),
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(2, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  family = binomial(),
+  data = as.data.frame(d.completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/variable_names0.all",
+  file_refit = "on_change"
+)
+
+summary(variable_names0.all)
+```
+
+## Interpreting the model
+
+Extract posterior samples:
+```{r}
+
+variable_names_post <- posterior_predict(variable_names0.all, newdata = data.frame(high_debt_version = c("false", "true"), session = NA, var_names_new_all = 15))
+variable_names_post.low <-  variable_names_post[,1]
+variable_names_post.high <- variable_names_post[,2]
+variable_names_post.diff <- variable_names_post.high - variable_names_post.low
+variable_names_post.diff.scaled <- variable_names_post.diff / mean(variable_names_post)
+
+```
+
+
+We can also plot the difference between good variable names for the high debt version and the low debt version. 
+```{r}
+
+ggplot(data.frame(x = variable_names_post.diff)) + geom_histogram(aes(x=x), stat = "count") +
+  labs(
+    title = "Bad var names with total var names diff",
+    subtitle = "total var names = 15",
+    x ="observations",
+    y = "bad var names difference"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL)
+
+```
