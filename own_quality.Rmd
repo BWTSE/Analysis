@@ -28,7 +28,7 @@ We iterate over the model until we have sane priors, in this case a prior giving
 
 own_quality0.with <- extendable_model(
   base_name = "own_quality0",
-  base_formula = "quality_post_task ~ 1  + (1 | session)",
+  base_formula = "quality_post_task ~ 1  + (1 | session) + sonarqube_issues.s + var_names_new_good.ratio + reused_logic_constructor + reused_logic_validation",
     base_priors = c(
     prior(normal(0, 2.5), class = "Intercept")
   ),
@@ -64,13 +64,16 @@ We use loo to check some possible extensions on the model.
 ```{r}
 
 edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
-quality_pre_task_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
-
 
 summary(own_quality0.with("quality_pre_task"))
 
 ```
 
+```{r}
+d.both_completed$time.s = scale(d.both_completed$time)
+d.both_completed$modified_lines.s = scale(d.both_completed$modified_lines)
+d.both_completed$sonarqube_issues.s = scale(d.both_completed$sonarqube_issues)
+```
     
 ```{r}
 
@@ -87,17 +90,12 @@ loo(
   own_quality0.with("workplace_coding_standards"),
   own_quality0.with("scenario"),
   own_quality0.with("group"),
-  own_quality0.with("time"),
-  own_quality0.with("var_names_new_good"),
-  own_quality0.with("var_names_copied_good"),
-  own_quality0.with("sonarqube_issues"),
-  own_quality0.with("own_qualityd_logic_constructor"),
-  own_quality0.with("own_qualityd_logic_validation"),
-  own_quality0.with("own_qualityd_logic_constructor"),
+  own_quality0.with("time.s"),
   own_quality0.with("quality_pre_task"),
   own_quality0.with("order"),
-  own_quality0.with("modified_lines"),
-  own_quality0.with("quality_pre_task")
+  own_quality0.with("modified_lines.s"),
+  own_quality0.with("quality_pre_task"),
+  own_quality0.with("high_debt_version")
   
 )
 
@@ -117,7 +115,7 @@ pp_check(own_quality1, type = "bars", nsamples = 100)
 ```
 
 ```{r}
-own_quality2 <-   own_quality0.with("modified_lines")
+own_quality2 <-   own_quality0.with("modified_lines.s")
 summary(own_quality2)
 ranef(own_quality2)
 plot(own_quality2)
@@ -135,27 +133,132 @@ pp_check(own_quality3, type = "bars", nsamples = 100)
 ```
 
 ```{r}
-own_quality4 <- own_quality0.with("var_names_new_good")
+own_quality4 <- own_quality0.with("time.s")
 summary(own_quality4)
 ranef(own_quality4)
 plot(own_quality4)
 pp_check(own_quality4, type = "bars")
+```
+
+
+
+
+```{r}
+own_quality23 <-   own_quality0.with("modified_lines.s + mo(education_level)", edlvl_prior)
+summary(own_quality23)
+ranef(own_quality23)
+plot(own_quality23)
+pp_check(own_quality23, type = "bars", nsamples = 100)
 ```
 
 ```{r}
-own_quality5 <- own_quality0.with("reused_logic_validation")
-summary(own_quality4)
-ranef(own_quality4)
-plot(own_quality4)
-pp_check(own_quality4, type = "bars")
+own_quality24 <-   own_quality0.with("time.s + modified_lines"
+                                     )
+summary(own_quality24)
+ranef(own_quality24)
+plot(own_quality24)
+pp_check(own_quality24, type = "bars", nsamples = 100)
 ```
 
 ```{r}
-own_quality6 <- own_quality0.with("time")
-summary(own_quality4)
-ranef(own_quality4)
-plot(own_quality4)
-pp_check(own_quality4, type = "bars")
+own_quality25 <-   own_quality0.with("time.s + mo(education_level)", edlvl_prior)
+summary(own_quality25)
+ranef(own_quality25)
+plot(own_quality25)
+pp_check(own_quality25, type = "bars", nsamples = 100)
 ```
 
+```{r}
+own_quality235 <-   own_quality0.with("time.s + reused_logic_validation + mo(education_level)")
+summary(own_quality235)
+ranef(own_quality235)
+plot(own_quality235)
+pp_check(own_quality235, type = "bars", nsamples = 100)
+```
 
+```{r}
+loo(own_quality1,own_quality2,own_quality3,own_quality4,own_quality23,own_quality24,own_quality235)
+```
+
+### Final model
+Verdict: own_quality23 with c is no better than without, we'll stick to own_quality23
+
+```{r}
+own_quality23_with_c <- brm(quality_post_task ~ 1  
+  + (1 |c| session) 
+  + sonarqube_issues.s 
+  + var_names_new_good.ratio
+  + reused_logic_constructor
+  + reused_logic_validation
+  + modified_lines.s 
+  + mo(education_level),
+    prior = c(
+    prior(normal(0, 2.5), class = "Intercept"),
+    edlvl_prior
+  ),
+  family = cumulative(),
+  data = d.both_completed,
+  control = list(adapt_delta = 0.95)
+  )
+  
+loo(own_quality23,own_quality23_with_c)
+```
+
+### Model with with incomplete data points
+
+Some participants only completed one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r}
+d.completed$time.s = scale(d.completed$time)
+d.completed$modified_lines.s = scale(d.completed$modified_lines)
+d.completed$sonarqube_issues.s = scale(d.completed$sonarqube_issues)
+```
+
+```{r}
+own_quality23.all <- brm(quality_post_task ~ 1  
+  + (1 | session) 
+  + sonarqube_issues.s 
+  + var_names_new_good.ratio
+  + reused_logic_constructor
+  + reused_logic_validation
+  + modified_lines.s 
+  + mo(education_level),
+    prior = c(
+    prior(normal(0, 2.5), class = "Intercept"),
+    edlvl_prior
+  ),
+  family = cumulative(),
+  data = as.data.frame(d.completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/own_quality23.all",
+  file_refit = "on_change"
+)
+
+summary(own_quality23.all)
+ranef(own_quality23.all)
+plot(own_quality23.all, ask = FALSE)
+pp_check(own_quality23.all, type = "bars", nsamples = 200)
+
+```
+
+## Interpreting the model
+
+Extract posterior samples:
+
+```{r}
+
+reuse_validation_post <- posterior_predict(reuse0.with(), newdata = data.frame(high_debt_version = c("false", "true"), session = NA), resp ="reusedlogicvalidation")
+
+reuse_validation_post.low <-  reuse_validation_post[,1]
+reuse_validation_post.high <-  reuse_validation_post[,2]
+
+mean(reuse_validation_post.low)
+mean(reuse_validation_post.high)
+
+reuse_constructor_post <- posterior_predict(reuse0.with(), newdata = data.frame(high_debt_version = c("false", "true"), session = NA), resp ="reusedlogicconstructor")
+
+reuse_constructor_post.low <-  reuse_constructor_post[,1]
+reuse_constructor_post.high <-  reuse_constructor_post[,2]
+
+mean(reuse_constructor_post.low)
+mean(reuse_constructor_post.high)
