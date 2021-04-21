@@ -1,0 +1,223 @@
+---
+title: "Utility Methods Model"
+output:
+  html_notebook: 
+    toc: yes
+    theme: united
+    fig_width: 10
+    code_folding: show
+author: Hampus Broman & William Levén
+date: 2021-04
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Looking at the data
+We plot the data and can see that there is no obvious large difference between the debt versions.
+
+```{r}
+d.both_completed %>%
+  ggplot(aes(high_debt_version, fill = hashcode_state)) +
+  geom_bar(position = "fill") +
+  scale_y_reverse() +
+  scale_fill_manual("legend", values = c("Good" = "green", "Duplicated" = "yellow", "Not implemented" = "red"), guide = guide_legend(reverse = TRUE))
+```
+
+```{r}
+d.both_completed %>%
+  ggplot(aes(high_debt_version, fill = equals_state)) +
+  geom_bar(position = "fill") +
+  scale_y_reverse() +
+  scale_fill_manual("legend", values = c("Good" = "green", "Duplicated" = "yellow", "Not implemented" = "red"), guide = guide_legend(reverse = TRUE))
+```
+
+
+## Initial model
+The type of the outcome is ordered categorical and is modeled as a cumulative family.
+
+We include `high_debt_verison` as well as a varying intercept for each individual in our initial model. Since they may correlate, hashcode and equals state are both included in a single multivariate model.
+
+```{r}
+
+utility0.with <- extendable_model(
+  base_name = "utility0",
+  base_formula = "mvbind(hashcode_state, equals_state) ~ 1 + high_debt_version + (1 | c | session)",
+  base_priors = c(
+    prior(normal(0, 1), class = "b", resp = "equalsstate"),
+    prior(normal(0, 1), class = "b", resp = "hashcodestate"),
+    prior(normal(0.3, 1), class = "Intercept", resp = "equalsstate"),
+    prior(normal(0.3, 1), class = "Intercept", resp = "hashcodestate"),
+    prior(exponential(1), class = "sd", resp = "equalsstate"),
+    prior(exponential(1), class = "sd", resp = "hashcodestate"),
+    prior(lkj(2), class = "L")
+  ),
+  family = sratio(),
+  data = d.both_completed,
+)
+```
+
+### Selecting Priors
+We iterate over the model until we have sane priors
+
+```{r}
+
+# Default priors:
+prior_summary(utility0.with(only_priors= TRUE))
+
+# Our priors:
+prior_summary(utility0.with(sample_prior = "only"))
+
+# Prior predictive check
+pp_check(utility0.with(sample_prior = "only"), nsamples = 200, type = "bars", resp = "equalsstate")
+```
+
+### Model fit
+We check the posterior distribution and can see that the model seems to have been able to fit the data well
+```{r}
+# Posterior predictive check
+pp_check(utility0.with(), nsamples = 100, type = "bars", resp = "equalsstate")
+pp_check(utility0.with(), nsamples = 100, type = "bars", resp = "hashcodestate")
+
+summary(utility0.with())
+```
+## Model extenstions
+
+We use loo to check some possible extensions on the model.
+
+```{r}
+
+edlvl_prior <- c(
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "equalsstate"),
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "hashcodestate")
+)
+
+loo(
+  utility0.with(),
+  utility0.with("work_domain"),
+  utility0.with("work_experience_programming.s"),
+  utility0.with("work_experience_java.s"),
+  utility0.with("education_field"),
+  utility0.with("mo(education_level)", edlvl_prior),
+  utility0.with("workplace_peer_review"),
+  utility0.with("workplace_td_tracking"),
+  utility0.with("workplace_pair_programming"),
+  utility0.with("workplace_coding_standards"),
+  utility0.with("scenario"),
+  utility0.with("group"),
+  utility0.with("order")
+)
+```
+
+We pick out some mildly interesting variables and try combining them
+
+```{r}
+loo(
+  utility0.with(),
+  utility0.with("workplace_pair_programming"),
+  utility0.with("scenario"),
+  utility0.with("workplace_td_tracking"),
+  
+  
+  utility0.with(c("workplace_pair_programming", "scenario")),
+  utility0.with(c("workplace_pair_programming", "workplace_td_tracking")),
+  utility0.with(c("scenario", "workplace_td_tracking")),
+  utility0.with(c("workplace_pair_programming", "scenario", "workplace_td_tracking"))
+)
+```
+
+
+## Candidate models
+We inspect some of our top performing models. 
+
+All models seems to have sampled nicely (rhat is ca 1 and fluffy plots) they also have about the same fit to the data and similar estimates for the high_debt_version beta parameters
+
+
+
+```{r}
+utility0 <- utility0.with()
+summary(utility0)
+ranef(utility0)
+plot(utility0, ask = FALSE)
+
+pp_check(utility0, nsamples = 200, type = "bars", resp = "equalsstate")
+pp_check(utility0, nsamples = 200, type = "bars", resp = "hashcodestate")
+
+```
+
+```{r}
+utility1 <- utility0.with("workplace_pair_programming")
+summary(utility1)
+ranef(utility1)
+plot(utility1, ask = FALSE)
+
+pp_check(utility1, nsamples = 200, type = "bars", resp = "equalsstate")
+pp_check(utility1, nsamples = 200, type = "bars", resp = "hashcodestate")
+
+```
+```{r}
+utility2 <- utility0.with("scenario")
+summary(utility2)
+ranef(utility2)
+plot(utility2, ask = FALSE)
+
+pp_check(utility2, nsamples = 200, type = "bars", resp = "equalsstate")
+pp_check(utility2, nsamples = 200, type = "bars", resp = "hashcodestate")
+
+```
+### Final model
+All models have sampled well and have similar predictions. We will proceed with the simplest model utility0.
+
+
+### Model with with incomplete data points
+
+Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r}
+utility0.all <- brm(
+  mvbind(hashcode_state, equals_state) ~ 1 + high_debt_version + (1 | c | session),
+  prior = c(
+    prior(normal(0, 1), class = "b", resp = "equalsstate"),
+    prior(normal(0, 1), class = "b", resp = "hashcodestate"),
+    prior(normal(0.3, 1), class = "Intercept", resp = "equalsstate"),
+    prior(normal(0.3, 1), class = "Intercept", resp = "hashcodestate"),
+    prior(exponential(1), class = "sd", resp = "equalsstate"),
+    prior(exponential(1), class = "sd", resp = "hashcodestate"),
+    prior(lkj(2), class = "L")
+  ),
+  family = sratio(),
+  data = as.data.frame(d.completed),
+  file = "fits/utility0.all",
+  file_refit = "on_change"
+)
+summary(utility0.all)
+ranef(utility0.all)
+plot(utility0.all, ask = FALSE)
+
+
+pp_check(utility0.all, nsamples = 200, type = "bars", resp = "equalsstate")
+pp_check(utility0.all, nsamples = 200, type = "bars", resp = "hashcodestate")
+```
+
+Training the model on all data points only slightly increases the uncertanty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
+
+## Interpreting the model
+
+Extract posterior samples:
+```{r}
+
+post <- posterior_predict(utility0.all, newdata = data.frame(
+  high_debt_version = c("false", "true"),
+  session = NA
+))
+
+post_hashcode <- post[,,"hashcodestate"]
+post_hashcode.low <-  post_hashcode[,1]
+post_hashcode.high <- post_hashcode[,2]
+summary(post_hashcode)
+
+post_equals <- post[,,"equalsstate"]
+post_equals.low <-  post_equals[,1]
+post_equals.high <- post_equals[,2]
+summary(post_equals)
+
+```
