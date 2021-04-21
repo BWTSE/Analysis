@@ -1,0 +1,7 @@
+---
+title: "Broken Window Theory Investigation - Analysis"
+output: html_notebook
+---
+Hej hej hej
+
+[Setup script](setup_and_data_preparation.nb.html)
