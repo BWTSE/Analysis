@@ -1,8 +1,19 @@
 ---
-title: "Scenario Quality"
-output: html_notebook
+title: "Scenario Quality Model"
+output:
+  html_notebook: 
+    toc: yes
+    theme: united
+    fig_width: 10
+    code_folding: show
+author: Hampus Broman & William Levén
+date: 2021-04
+editor_options: 
+  chunk_output_type: console
 ---
+
 ## Looking at the data
+
 We plot the data and can see that there is no obvious large difference between the debt versions.
 
 ```{r}
@@ -37,7 +48,9 @@ data.frame(
     type="density",
     facet = TRUE,
   )
+```
 
+```{r}
 data.frame(
   Tickets = d.both_completed %>%
     filter(scenario == "tickets") %>%
@@ -72,14 +85,12 @@ data.frame(
 ```
 
 ## Initial model
+
 As the variance is much greater than the mean we will use a negative binomial family that allows us to model the variance separately.
 
 We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
 
-### Selecting Priors
-We iterate over the model until we have sane priors
 ```{r}
-
 scenario_quality0.with <- extendable_model(
   base_name = "scenario_quality0",
   base_formula = "quality_pre_task ~ 1 + high_debt_version + (1 | session)",
@@ -91,6 +102,14 @@ scenario_quality0.with <- extendable_model(
   family = cumulative(),
   data = d.both_completed,
 )
+```
+
+
+### Selecting Priors
+
+We iterate over the model until we have sane priors
+
+```{r}
 
 # Default priors:
 prior_summary(scenario_quality0.with(only_priors= TRUE))
@@ -103,7 +122,9 @@ pp_check(scenario_quality0.with(sample_prior = "only"), nsamples = 200, type = "
 ```
 
 ### Model fit
+
 We check the posterior distribution and can see that the model seems to have been able to fit the data well
+
 ```{r}
 # Posterior predictive check
 pp_check(scenario_quality0.with(), nsamples = 100, type = "bars")
@@ -197,11 +218,12 @@ loo(
   scenario_quality0.with(c("workplace_coding_standards", "workplace_peer_review", "order"))
 )
 ```
+
 ## Candidate models
-We inspect some of our top performing models. 
+
+We inspect some of our top performing models.
 
 All models seems to have sampled nicely (rhat is ca 1 and fluffy plots) they also have about the same fit to the data end similar estimated for the high_debt_version beta parameter
-
 
 ```{r}
 scenario_quality0 <- scenario_quality0.with()
@@ -213,7 +235,6 @@ pp_check(scenario_quality0, nsamples = 150, type= "bars")
 
 ```
 
-
 ```{r}
 scenario_quality1 <- scenario_quality0.with("order")
 summary(scenario_quality1)
@@ -223,7 +244,6 @@ plot(scenario_quality1, ask = FALSE)
 pp_check(scenario_quality1, nsamples = 150, type= "bars")
 
 ```
-
 
 ```{r}
 scenario_quality2 <- scenario_quality0.with(c("order", "workplace_coding_standards"))
@@ -246,6 +266,7 @@ pp_check(scenario_quality3, nsamples = 150, type= "bars")
 ```
 
 ### Final model
+
 All models have sampled nicely and have similar estimated for the high debt version beat parameter. Loo does however late the simpler models significantly lower than the more complex models. `scenario_quality2` seems to bee the simpler model with a top score in loo and will therefore be selected as our final model.
 
 ### Trying to add covariance
@@ -277,6 +298,7 @@ loo(
   scenario_quality2
 )
 ```
+
 The covaraiance didn't seem to influence model much and we will therefore continue with the simpler model without it.
 
 ### Model with with incomplete data points
@@ -305,8 +327,8 @@ pp_check(scenario_quality2.all, nsamples = 150, type= "bars")
 
 Training the model on all data points reduces the uncertainty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
 
-
 Extract posterior samples:
+
 ```{r}
 
 post <- posterior_predict(scenario_quality2.all, newdata = data.frame(
@@ -320,7 +342,3 @@ post.high <- post[,2]
 summary(post)
 
 ```
-
-
-
-

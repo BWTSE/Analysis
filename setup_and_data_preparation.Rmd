@@ -20,9 +20,9 @@ We begin by importing the csv data
 
 ```{r}
 # d.orig <- read.csv(curl("https://raw.githubusercontent.com/BrokenWindowsInvestigation/Submissions/master/data.csv?token=AB26LHN6X2UD5NOF3RBOKI3AMGIJS"))
-#d.orig <- read.csv("/home/gurgy/Projects/RobotResearcher/submissions/data.csv")
+d.orig <- read.csv("/home/gurgy/Projects/RobotResearcher/submissions/data.csv")
 #d.orig <- read.csv("C:/Users/namor/source/repos/submissions/data.csv")
-d.orig <- read.csv("C:/Users/Hampus/repos/submissions/data.csv")
+#d.orig <- read.csv("C:/Users/Hampus/repos/submissions/data.csv")
 head(d.orig)
 ```
 
