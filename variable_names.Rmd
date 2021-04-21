@@ -308,7 +308,8 @@ summary(variable_names0.all)
 Extract posterior samples:
 ```{r}
 
-variable_names_post <- posterior_predict(variable_names0.all, newdata = data.frame(high_debt_version = c("false", "true"), session = NA, var_names_new_all = 15))
+variable_names_post <- posterior_predict(variable_names0.all, newdata = expand.grid
+(high_debt_version = c("false", "true"), session = NA, var_names_new_all = 1:15))
 variable_names_post.low <-  variable_names_post[,1]
 variable_names_post.high <- variable_names_post[,2]
 variable_names_post.diff <- variable_names_post.high - variable_names_post.low
@@ -329,5 +330,7 @@ ggplot(data.frame(x = variable_names_post.diff)) + geom_histogram(aes(x=x), stat
   ) +
   theme_minimal() +
   scale_y_continuous(breaks = NULL)
+
+### Needs fixing after Richards expand grid shenanigans.
 
 ```

@@ -279,8 +279,8 @@ reuse0_with_c <- brm(
   mvbind(
     reused_logic_validation,
     reused_logic_constructor
-  ) ~ 1 + high_debt_version + (1 | session),
-    priors = c(
+  ) ~ 1 + high_debt_version + (1 | c | session),
+    prior = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),
     prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
@@ -289,8 +289,10 @@ reuse0_with_c <- brm(
   ),
   family = bernoulli(),
   data = d.both_completed,
-  base_control = list(adapt_delta = 0.95)
+  control = list(adapt_delta = 0.95)
 )
+
+loo(reuse0.with(), reuse0_with_c)
 ```
 
 

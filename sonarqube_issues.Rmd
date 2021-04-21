@@ -275,9 +275,9 @@ Some participants only completed one scenario. Those has been excluded from the 
 
 ```{r}
 sonarqube_issues.all <- brm(
-  sonarqube_issues ~ 1 + (1 | session),
+  sonarqube_issues ~ 1 + (1 | session) + high_debt_version,
   family = negbinomial(),
-  data = as.data.frame(d.both_completed),
+  data = as.data.frame(d.completed),
   prior = c(
     prior(normal(1.5, 1), class = "Intercept"),
     prior(gamma(0.01,0.01), class = "shape")
