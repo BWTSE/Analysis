@@ -14,7 +14,7 @@ d.both_completed %>%
   scale_fill_manual("legend", values = c("Correct" = "green", "None" = "yellow", "Incorrect" = "red"), guide = guide_legend(reverse = TRUE))
 ```
 ## Initial model
-The type of the outcome is adjacent categories and is modeled as a cumulative family.
+The type of the outcome is adjacent categories and is modeled as a cumulative family. TODO FIX!
 
 We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
 
@@ -203,7 +203,7 @@ summary(documentation3.all)
 ranef(documentation3.all)
 plot(documentation3.all, ask = FALSE)
 
-pp_check(documentation3_with_c, nsamples = 150, type= "bars")
+pp_check(documentation3.all, nsamples = 150, type= "bars")
 ```
 
 Training the model on all data points reduces the uncertainty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
