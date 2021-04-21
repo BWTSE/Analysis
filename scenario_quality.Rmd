@@ -9,7 +9,7 @@ output:
 author: Hampus Broman & William Levén
 date: 2021-04
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ## Looking at the data

@@ -1,0 +1,9 @@
+title: "Broken Windows Investigation"
+type: default
+left:
+  - text: "About"
+    href: index.html
+  - text: "Setup"
+    href: setup.html
+  - text: "Time Model"
+    href: time.html

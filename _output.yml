@@ -1,0 +1,10 @@
+html_document: 
+  toc: yes
+  theme: "united"
+  fig_width: 10
+  code_download: yes
+  code_folding: "hide"
+  self_contained: yes
+  df_print: "paged"
+  # css: "_styles.css"
+  # lib_dir: "html/lib"
