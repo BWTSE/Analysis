@@ -1,7 +1,14 @@
 ---
-title: "Broken Window Theory Investigation - Analysis"
-output: html_notebook
+title: "Broken Windows Investigation Replication Package"
+author: Hampus Broman & William Levén
+date: 2021-04
+output: 
+  html_document: 
+    pandoc_args: [ "-o", "html/index.html" ]
+    toc: no
 ---
 Hej hej hej
 
-[Setup script](setup_and_data_preparation.nb.html)
+## Sub pages:
+
+* [Setup](setup.html) - Explanation
