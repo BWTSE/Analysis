@@ -1,0 +1,161 @@
+title: "Own work quality"
+output: html_notebook
+---
+## Looking at the data
+Looks like there is a slightly higher rate of negative ratings for the high debt group, but also an even smaller increase in positive ratings.
+```{r}
+d.completed %>%
+  ggplot(aes(high_debt_version)) +
+  geom_bar(aes(fill = quality_post_task), position = "fill") +
+  labs(title = "Own work quality assessment") +
+  xlab("High Debt version") +
+  ylab("Rating of own work")
+```
+## Descriptive Statistics
+Full own work evaluation:
+```{r}
+```
+
+## Initial model
+For a boolean outcome, bernoulli is the most suitable family.
+We include `high_debt_verison` as well as a varying intercept for each individual in our initial model. Since they may correlate, constructor and logic own_quality are both included in a single multivariate model.
+
+### Selecting Priors
+We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. The prior "lkj(2)" will mean the model is sceptical of strong correlations.
+
+```{r}
+
+
+own_quality0.with <- extendable_model(
+  base_name = "own_quality0",
+  base_formula = "quality_post_task ~ 1  + (1 | session)",
+    base_priors = c(
+    prior(normal(0, 2.5), class = "Intercept")
+  ),
+  family = cumulative(),
+  data = data.frame(d.both_completed),
+  base_control = list(adapt_delta = 0.95)
+)
+
+# Default priors:
+prior_summary(own_quality0.with(only_priors= TRUE))
+
+# Our priors:
+prior_summary(own_quality0.with(sample_prior = "only"))
+
+# Prior predictive checks
+pp_check(own_quality0.with(sample_prior = "only"), type = "bars", nsamples = 200)
+
+```
+
+### Model fit
+We check the posterior distribution and can see that the model seems to have been able to fit the data well
+```{r}
+# Posterior predictive check
+pp_check(own_quality0.with(), nsamples = 100, type = "bars")
+
+summary(own_quality0.with())
+```
+
+## Model extenstions
+
+We use loo to check some possible extensions on the model.
+
+```{r}
+
+edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+quality_pre_task_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+
+
+summary(own_quality0.with("quality_pre_task"))
+
+```
+
+    
+```{r}
+
+loo(
+  own_quality0.with(),
+  own_quality0.with("work_domain"),
+  own_quality0.with("work_experience_programming.s"),
+  own_quality0.with("work_experience_java.s"),
+  own_quality0.with("education_field"),
+  own_quality0.with("mo(education_level)", edlvl_prior),
+  own_quality0.with("workplace_peer_review"),
+  own_quality0.with("workplace_td_tracking"),
+  own_quality0.with("workplace_pair_programming"),
+  own_quality0.with("workplace_coding_standards"),
+  own_quality0.with("scenario"),
+  own_quality0.with("group"),
+  own_quality0.with("time"),
+  own_quality0.with("var_names_new_good"),
+  own_quality0.with("var_names_copied_good"),
+  own_quality0.with("sonarqube_issues"),
+  own_quality0.with("own_qualityd_logic_constructor"),
+  own_quality0.with("own_qualityd_logic_validation"),
+  own_quality0.with("own_qualityd_logic_constructor"),
+  own_quality0.with("quality_pre_task"),
+  own_quality0.with("order"),
+  own_quality0.with("modified_lines"),
+  own_quality0.with("quality_pre_task")
+  
+)
+
+```
+## Candidate models
+We inspect some of our top performing models. 
+
+All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end similar estimates for the high_debt_version beta parameter
+
+```{r}
+own_quality1 <-   own_quality0.with()
+summary(own_quality1)
+ranef(own_quality1)
+
+plot(own_quality1)
+pp_check(own_quality1, type = "bars", nsamples = 100)
+```
+
+```{r}
+own_quality2 <-   own_quality0.with("modified_lines")
+summary(own_quality2)
+ranef(own_quality2)
+plot(own_quality2)
+pp_check(own_quality2, type = "bars", nsamples = 100)
+```
+
+```{r}
+
+own_quality3 <-   own_quality0.with("mo(education_level)", edlvl_prior)
+summary(own_quality3)
+ranef(own_quality3)
+plot(own_quality3)
+pp_check(own_quality3, type = "bars", nsamples = 100)
+
+```
+
+```{r}
+own_quality4 <- own_quality0.with("var_names_new_good")
+summary(own_quality4)
+ranef(own_quality4)
+plot(own_quality4)
+pp_check(own_quality4, type = "bars")
+```
+
+```{r}
+own_quality5 <- own_quality0.with("reused_logic_validation")
+summary(own_quality4)
+ranef(own_quality4)
+plot(own_quality4)
+pp_check(own_quality4, type = "bars")
+```
+
+```{r}
+own_quality6 <- own_quality0.with("time")
+summary(own_quality4)
+ranef(own_quality4)
+plot(own_quality4)
+pp_check(own_quality4, type = "bars")
+```
+
+
