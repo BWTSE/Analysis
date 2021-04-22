@@ -1,3 +1,4 @@
+---
 title: "Own work quality"
 output: html_notebook
 ---
@@ -28,9 +29,11 @@ We iterate over the model until we have sane priors, in this case a prior giving
 
 own_quality0.with <- extendable_model(
   base_name = "own_quality0",
-  base_formula = "quality_post_task ~ 1  + (1 | session) + sonarqube_issues.s + var_names_new_good.ratio + reused_logic_constructor + reused_logic_validation",
+  base_formula = "quality_post_task ~ 1  + (1 | session) + sonarqube_issues.s + var_names_new_good.ratio + reused_logic_constructor + reused_logic_validation + high_debt_version",
     base_priors = c(
-    prior(normal(0, 2.5), class = "Intercept")
+    prior(normal(0, 2.5), class = "Intercept"),
+    prior(normal(0, 2), class = "b"),
+    prior(exponential(1), class = "sd")
   ),
   family = cumulative(),
   data = data.frame(d.both_completed),
@@ -222,9 +225,12 @@ own_quality23.all <- brm(quality_post_task ~ 1
   + reused_logic_constructor
   + reused_logic_validation
   + modified_lines.s 
+  + high_debt_version
   + mo(education_level),
     prior = c(
     prior(normal(0, 2.5), class = "Intercept"),
+    prior(normal(0, 2), class = "b"),
+    prior(exponential(1), class = "sd"),
     edlvl_prior
   ),
   family = cumulative(),
@@ -247,18 +253,30 @@ Extract posterior samples:
 
 ```{r}
 
-reuse_validation_post <- posterior_predict(reuse0.with(), newdata = data.frame(high_debt_version = c("false", "true"), session = NA), resp ="reusedlogicvalidation")
+own_quality_post <- posterior_predict(own_quality23.all, newdata = data.frame(high_debt_version = c("false", "true"), session = NA, sonarqube_issues.s = 1, var_names_new_good.ratio = 0.9, reused_logic_constructor = "false",reused_logic_validation = "false", modified_lines.s = 1, education_level = "Master degree"))
 
-reuse_validation_post.low <-  reuse_validation_post[,1]
-reuse_validation_post.high <-  reuse_validation_post[,2]
+own_quality_post.low <-  own_quality_post[,1]
+own_quality_post.high <-  own_quality_post[,2]
+own_quality_post.diff <- own_quality_post.high - own_quality_post.low
 
-mean(reuse_validation_post.low)
-mean(reuse_validation_post.high)
+mean(own_quality_post.low)
+mean(own_quality_post.high)
 
-reuse_constructor_post <- posterior_predict(reuse0.with(), newdata = data.frame(high_debt_version = c("false", "true"), session = NA), resp ="reusedlogicconstructor")
+```
 
-reuse_constructor_post.low <-  reuse_constructor_post[,1]
-reuse_constructor_post.high <-  reuse_constructor_post[,2]
 
-mean(reuse_constructor_post.low)
-mean(reuse_constructor_post.high)
+```{r}
+
+ggplot(data.frame(x = own_quality_post.diff)) + geom_histogram(aes(x=x), stat = "count") +
+  labs(
+    title = "Quality rating diff, high debt vs low debt",
+    subtitle =,
+    x ="observations",
+    y = "quality impact self rating difference"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(breaks = NULL)
+
+#kinda nonsense plot
+
+```
