@@ -7,8 +7,17 @@ output:
     pandoc_args: [ "-o", "html/index.html" ]
     toc: no
 ---
-Hej hej hej
+This is a replication package for the Broken Windows Investigation thesis conducted by [Hampus Broman](https://github.com/HBroman) and [William Levén](https://github.com/williamleven) in 2021.
+
+The package contains a presentation as well as the [source](https://github.com/BrokenWindowsInvestigation/Analysis) for the whole analysis performed.
+
+Read the Broken Window Investigation thesis for more information and justification about the analysis and procedure.
 
 ## Sub pages:
 
-* [Setup](setup.html) - Explanation
+* [Overview](index.html) - Provides an overview if the replication package.
+* [Setup](setup.html) - Data preparation, utility function and library imports.
+* [Data Exploration](data_exploration.html) - Plots and data descriptions not relating to the outcomes, those are found in "Baysian Models".
+* Baysian Models - All our models grouped by which outcome they measure.
+  * [Time Model](time.html) - Exploration and models related to the time outcome.
+* [Computational Environment](environment.html) - Description of the environment used to perform the analysis.
