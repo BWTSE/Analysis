@@ -1,9 +1,35 @@
 title: "Broken Windows Investigation"
 type: default
 left:
-  - text: "About"
+  - text: "Overview"
     href: index.html
   - text: "Setup"
     href: setup.html
-  - text: "Time Model"
-    href: time.html
+  - text: "Data Exploration"
+    href: data_exploration.html
+  - text: "Baysian Models"
+    menu:
+    - text: "Time Model"
+      href: time.html
+    - text: "Variable Names Model"
+      href: variable_names.html
+    - text: "Reuse Model"
+      href: reuse.html
+    - text: "Sonarqube Issues Model"
+      href: sonarqube_issues.html
+    - text: "Documentation Model"
+      href: documentation.html
+    - text: "Utility Methods Model"
+      href: utility_methods.html
+    - text: "Experienced Quality Model"
+      href: experienced_quality.html
+    - text: "Self Assessed Quality Model"
+      href: self_assessed_quality.html
+    - text: "Dropouts Model"
+      href: dropouts.html
+  - text: "Computational Environment"
+    href: environment.html
+right:
+  - text: " Source"
+    icon: fab fa-github 
+    href: https://github.com/BrokenWindowsInvestigation/Analysis
