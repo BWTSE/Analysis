@@ -1,0 +1,23 @@
+---
+title: "Computational Environment"
+author: Hampus Broman & William Levén
+date: 2021-04
+output: 
+  html_document: 
+    toc: no
+    pandoc_args: [ "-o", "html/environment.html" ]
+---
+
+```{r include-setup, include=FALSE}
+# Load setup file
+source(knitr::purl('setup.Rmd', output = tempfile()))
+```
+
+```{r sessioninfo, class.source = 'fold-show'}
+sessionInfo()
+```
+
+```{r rprofile, class.source = 'fold-show'}
+writeLines(readLines(".Rprofile"))
+```
+
