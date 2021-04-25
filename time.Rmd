@@ -8,13 +8,16 @@ output:
 ---
 
 ```{r include-setup, include=FALSE}
+# Load setup file
 source(knitr::purl('setup.Rmd', output = tempfile()))
 ```
 
 
 ## Looking at the data
-We plot the data and can see that there is no obvious large difference between the debt versions
-```{r}
+
+We plot the data and can see that there is no obvious large difference between the versions with high and low debt
+
+```{r plot}
 d.both_completed %>%
   ggplot(aes(x=time/60, fill=high_debt_version)) + 
   geom_boxplot() +
@@ -30,30 +33,30 @@ d.both_completed %>%
 ```
 
 ## Descriptive Statistics
-For the whole dataset:
-```{r}
+
+```{r descriptive-statistics}
 d.both_completed %>%
   pull(time) %>% 
   summary()
 
-variance <- d.both_completed %>%
-  pull(time) %>%
-  var()
-sprintf("Variance: %.0f", variance)
+sprintf("Variance: %.0f", var(pull(d.both_completed, time)))
 ```
-
 
 ## Initial model
 As the variance is much greater than the mean we will use a negative binomial family that allows us to model the variance separately.
 
-We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
+We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
+We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
 
-### Selecting Priors
-We iterate over the model until we have sane priors
-```{r}
+### Selecting Priors {.tabset}
 
-time0.with <- extendable_model(
-  base_name = "time0",
+We iterate over the model until we have sane priors.
+
+#### Base model with priors
+
+```{r initial-model-definition, class.source = 'fold-show'}
+time.with <- extendable_model(
+  base_name = "time",
   base_formula = "time ~ 1 + high_debt_version + (1 | session)",
   base_priors = c(
     prior(normal(0, 1), class = "b"),
@@ -65,203 +68,492 @@ time0.with <- extendable_model(
   data = d.both_completed,
   base_control = list(adapt_delta = 0.95)
 )
-
-# Default priors:
-prior_summary(time0.with(only_priors= TRUE))
-
-# Our priors:
-prior_summary(time0.with(sample_prior = "only"))
-
-# Prior predictive check
-pp_check(time0.with(sample_prior = "only"), nsamples = 200) + 
-  scale_x_log10()
-```
-### Model fit
-We check the posterior distribution and can see that the model seems to have been able to fit the data well
-```{r}
-# Posterior predictive check
-pp_check(time0.with(), nsamples = 100) +
-  scale_x_log10()
-
-summary(time0.with())
 ```
 
-## Model extenstions
+#### Default priors
 
-We use loo to check some possible extensions on the model.
+```{r default-priors}
+prior_summary(time.with(only_priors= TRUE))
+```
 
-```{r}
+#### Selected priors
 
+```{r selected-priors}
+prior_summary(time.with(sample_prior = "only"))
+```
+
+#### Prior Predictive Check
+
+```{r priors-check, warning=FALSE}
+pp_check(time.with(sample_prior = "only"), nsamples = 200) + 
+  scale_x_log10()
+```
+
+### Model fit {.tabset}
+
+We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
+Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
+
+#### Posterior Predictive check
+
+Notice: log10 scale on x-axis.
+
+```{r base-pp-check}
+pp_check(time.with(), nsamples = 100) +
+  scale_x_log10()
+```
+
+#### Summary
+
+```{r base-summary}
+summary(time.with())
+```
+
+#### Sampling plots
+
+```{r base-plot}
+plot(time.with(), ask = FALSE)
+```
+
+## Model predictor extenstions {.tabset}
+
+```{r mo-priors}
+# default prior for monotonic predictor
 edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+```
 
-loo(
-  time0.with(),
-  time0.with("work_domain"),
-  time0.with("work_experience_programming.s"),
-  time0.with("work_experience_java.s"),
-  time0.with("education_field"),
-  time0.with("mo(education_level)", edlvl_prior),
-  time0.with("workplace_peer_review"),
-  time0.with("workplace_td_tracking"),
-  time0.with("workplace_pair_programming"),
-  time0.with("workplace_coding_standards"),
-  time0.with("scenario"),
-  time0.with("group")
+
+We use `loo` to check some possible extensions on the model.
+
+### One variable {.tabset}
+
+```{r model-extension-1, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  time.with(),
+  
+  # New model(s)
+  time.with("work_domain"),
+  time.with("work_experience_programming.s"),
+  time.with("work_experience_java.s"),
+  time.with("education_field"),
+  time.with("mo(education_level)", edlvl_prior),
+  time.with("workplace_peer_review"),
+  time.with("workplace_td_tracking"),
+  time.with("workplace_pair_programming"),
+  time.with("workplace_coding_standards"),
+  time.with("scenario"),
+  time.with("group")
 )
 ```
 
+#### Comparison
 
-Some variables seem to stand out as better than other. We try combining those to see if we can further improve our model.
+```{r model-extension-1-sum, warning=FALSE}
+loo_result[2]
+```
 
-```{r}
-loo(
-  time0.with(),
-  time0.with("scenario"),
-  time0.with("education_field"),
-  time0.with("workplace_peer_review"),
-  time0.with("mo(education_level)", edlvl_prior),
-  time0.with(c("scenario", "education_field")),
-  time0.with(c("scenario", "mo(education_level)"), edlvl_prior),
-  time0.with(c("scenario", "workplace_peer_review")),
-  time0.with(c("education_field", "mo(education_level)"), edlvl_prior),
-  time0.with(c("education_field", "workplace_peer_review")),
-  time0.with(c("mo(education_level)", "workplace_peer_review"), edlvl_prior)
+#### Diagnostics
+
+```{r model-extension-1-dig, warning=FALSE}
+loo_result[1]
+```
+
+### Two variables {.tabset}
+
+```{r model-extension-2, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  time.with(),
+  time.with("scenario"),
+  time.with("education_field"),
+  time.with("workplace_peer_review"),
+  time.with("mo(education_level)", edlvl_prior),
+  
+  # New model(s)
+  time.with(c("scenario", "education_field")),
+  time.with(c("scenario", "mo(education_level)"), edlvl_prior),
+  time.with(c("scenario", "workplace_peer_review")),
+  time.with(c("education_field", "mo(education_level)"), edlvl_prior),
+  time.with(c("education_field", "workplace_peer_review")),
+  time.with(c("mo(education_level)", "workplace_peer_review"), edlvl_prior)
 )
 ```
-None one of the new models stand out as particularly better than the old models, We try combining the so far most prominent features in one model.
 
-```{r}
-loo(
-  time0.with(),
-  time0.with("scenario"),
-  time0.with(c("scenario", "education_field")),
-  time0.with(c("scenario", "mo(education_level)"), edlvl_prior),
-  time0.with(c("scenario", "mo(education_level)", "education_field"), edlvl_prior)
+#### Comparison
+
+```{r model-extension-2-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-2-dig, warning=FALSE}
+loo_result[1]
+```
+
+
+### Three variables {.tabset}
+
+```{r model-extension-3, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  time.with(),
+  time.with("scenario"),
+  time.with(c("scenario", "education_field")),
+  time.with(c("scenario", "mo(education_level)"), edlvl_prior),
+  
+  # New model(s)
+  time.with(c("scenario", "mo(education_level)", "education_field"), edlvl_prior)
 )
 ```
 
-## Candidate models
-We inspect some of our top performing models. 
+#### Comparison
 
-All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end similar estimated for the high_debt_version beta parameter
-
-
-```{r}
-time0 <- time0.with()
-summary(time0)
-ranef(time0)
-plot(time0, ask = FALSE)
-
-pp_check(time0, nsamples = 150) + scale_x_log10()
-
+```{r model-extension-3-sum, warning=FALSE}
+loo_result[2]
 ```
 
-```{r}
-time1 <- time0.with("scenario")
-summary(time1)
-ranef(time1)
-plot(time1, ask = FALSE)
+#### Diagnostics
 
-pp_check(time1, nsamples = 150) + scale_x_log10()
+```{r model-extension-3-dig, warning=FALSE}
+loo_result[1]
 ```
 
-```{r}
-time2 <- time0.with(c("scenario", "education_field"))
-summary(time2)
-ranef(time2)
-plot(time2, ask = FALSE)
 
-pp_check(time2, nsamples = 150) + scale_x_log10()
-```
+## Candidate models  {.tabset}
+We pick some of our top performing models as candidates and inspect them closer.
 
-```{r}
-time3 <- time0.with(c("scenario", "mo(education_level)"), edlvl_prior)
-summary(time2)
-ranef(time2)
-plot(time2, ask = FALSE)
+The candidate models are named and listed in order of complexity.
 
-pp_check(time2, nsamples = 150) + scale_x_log10()
-```
+### Time0  {.tabset}
 
-### Final model
-All models look nice, none is significantly better than the others, we go for the simplest model. time0
+We select the simplest model as a baseline.
 
-### Trying to add covariance
-
-```{r}
-time0_with_c <- brm(
-  "time ~ 1 + high_debt_version + (1 | c | session)",
+```{r time0, class.source = 'fold-show'}
+time0 <- brm(
+  "time ~ 1 + high_debt_version + (1 | session)",
   prior = c(
     prior(normal(0, 1), class = "b"),
-    prior(normal(9, 1), class = "Intercept"),
+    prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
   ),
   family = negbinomial(),
   data = as.data.frame(d.both_completed),
   control = list(adapt_delta = 0.95),
-  file = "fits/time0_with_c",
-  file_refit = "on_change"
+  file = "fits/time0",
+  file_refit = "on_change",
+  seed = 20210421
 )
 ```
 
-```{r}
-loo(
-  time0,
-  time0_with_c
+#### Summary
+
+```{r time0-sum}
+summary(time0)
+```
+
+#### Random effects
+
+```{r time0-raneff}
+ranef(time0)
+```
+
+#### Sampling plots
+
+```{r time0-plot}
+plot(time0, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r time0-pp}
+pp_check(time0, nsamples = 150) + scale_x_log10()
+```
+
+### Time1  {.tabset}
+
+We select the best performing model with one variable.
+
+```{r time1, class.source = 'fold-show'}
+time1 <- brm(
+  "time ~ 1 + high_debt_version + scenario + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(7.5, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape")
+  ),
+  family = negbinomial(),
+  data = as.data.frame(d.both_completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/time1",
+  file_refit = "on_change",
+  seed = 20210421
 )
 ```
-Adding the covariance parameter did not improve the model and we will therefore continue to use the simple model time0.
 
-### Model with with incomplete data points
+#### Summary
+
+```{r time1-sum}
+summary(time1)
+```
+
+#### Random effects
+
+```{r time1-raneff}
+ranef(time1)
+```
+
+#### Sampling plots
+
+```{r time1-plot}
+plot(time1, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r time1-pp}
+pp_check(time1, nsamples = 150) + scale_x_log10()
+```
+
+### Time2  {.tabset}
+
+We select the best performing model with two variables.
+
+```{r time2, class.source = 'fold-show'}
+time2 <- brm(
+  "time ~ 1 + high_debt_version + scenario + mo(education_level) + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(7.5, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape"),
+    prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+  ),
+  family = negbinomial(),
+  data = as.data.frame(d.both_completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/time2",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r time2-sum}
+summary(time2)
+```
+
+#### Random effects
+
+```{r time2-raneff}
+ranef(time2)
+```
+
+#### Sampling plots
+
+```{r time2-plot}
+plot(time2, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r time2-pp}
+pp_check(time2, nsamples = 150) + scale_x_log10()
+```
+
+### Time3  {.tabset}
+
+We select the second best performing model with two variables.
+
+```{r time3, class.source = 'fold-show'}
+time3 <- brm(
+  "time ~ 1 + high_debt_version + scenario + education_field + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(7.5, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape")
+  ),
+  family = negbinomial(),
+  data = as.data.frame(d.both_completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/time3",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r time3-sum}
+summary(time3)
+```
+
+#### Random effects
+
+```{r time3-raneff}
+ranef(time3)
+```
+
+#### Sampling plots
+
+```{r time3-plot}
+plot(time3, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r time3-pp}
+pp_check(time3, nsamples = 150) + scale_x_log10()
+```
+
+## Final Model 
+All candidate models look nice, none is significantly better than the others, we will proceed the simplest model: `time0`
+
+### Variations {.tabset}
+We will try a few different variations of the selected candidate model.
+
+#### All data points {.tabset}
 
 Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
 
-```{r}
+```{r variation.all, class.source = 'fold-show'}
 time0.all <- brm(
   "time ~ 1 + high_debt_version + (1 | session)",
   prior = c(
     prior(normal(0, 1), class = "b"),
-    prior(normal(9, 1), class = "Intercept"),
+    prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
   ),
   family = negbinomial(),
   data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.95),
-  file = "fits/time0_with_all_submissions",
-  file_refit = "on_change"
+  file = "fits/time0.all",
+  file_refit = "on_change",
+  seed = 20210421
 )
-summary(time0.all)
-ranef(time0.all)
-plot(time0.all, ask = FALSE)
+```
 
+##### Summary
+
+```{r variation.all-sum}
+summary(time0.all)
+```
+
+##### Random effects
+
+```{r variation.all-raneff}
+ranef(time0.all)
+```
+
+##### Sampling plots
+
+```{r variation.all-plot}
+plot(time0.all, ask = FALSE)
+```
+
+##### Posterior predictive check
+
+```{r variation.all-pp}
 pp_check(time0.all, nsamples = 150) + scale_x_log10()
 ```
 
-Training the model on all data points reduces the uncertainty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
+#### With experience predictor {.tabset}
+
+As including all data points didn't harm the model we will create this variant with all data points as well.
+
+```{r variation.all.exp, class.source = 'fold-show'}
+time0.all.exp <- brm(
+  "time ~ 1 + high_debt_version + work_experience_programming.s + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(7.5, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd"),
+    prior(gamma(0.01, 0.01), class = "shape")
+  ),
+  family = negbinomial(),
+  data = as.data.frame(d.completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/time0.all.exp",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+##### Summary
+
+```{r variation.all.exp-sum}
+summary(time0.all.exp)
+```
+
+##### Random effects
+
+```{r variation.all.exp-raneff}
+ranef(time0.all.exp)
+```
+
+##### Loo comparison
+
+```{r variation.all.exp-loo, warning=FALSE}
+loo(
+  time0.all,
+  time0.all.exp
+)
+```
+
+##### Sampling plots
+
+```{r variation.all.exp-plot}
+plot(time0.all.exp, ask = FALSE)
+```
+
+##### Posterior predictive check
+
+```{r variation.all.exp-pp}
+pp_check(time0.all.exp, nsamples = 150) + scale_x_log10()
+```
+
+### Final model
+* Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
+* Adding the experience predictors did not significantly damage the model and will be used as it provides useful insight.
+
+This means that our final model, with all data points and experience predictors, is `time0.all.exp`
 
 ## Interpreting the model
 
-Extract posterior samples:
 ```{r}
+summary(time0.all.exp, prob = 0.89)
+```
 
-post <- posterior_predict(time0.all, newdata = data.frame(high_debt_version = c("false", "true"), session = NA))
+### Effects sizes
+We start by extracting posterior samples
+```{r}
+post <- posterior_predict(time0.all.exp, newdata = data.frame(
+  high_debt_version = c("false", "true"),
+  session = NA,
+  work_experience_programming.s = (10 - mean(d.completed$work_experience_programming))/ sd(d.completed$work_experience_programming)
+))
 post.low <-  post[,1]
 post.high <- post[,2]
+summary(data.frame(
+  "Low Debt"=post.low,
+  "High Debt"=post.high
+))
 post.diff <- post.high - post.low
 post.diff.scaled <- post.diff / mean(post)
-
 ```
 
 
 When we look at the distribution of the data between the high and low debt version we can see a difference, they are however quite similar.
 ```{r}
-summary(data.frame("Low Debt"=post.low, "High Debt"=post.high))
-
 ggplot(data.frame(time = post.high)) +
   geom_density(data = data.frame(time = post.low), aes(x=time/60, colour = "blue")) +
-  geom_density(data = data.frame(time = post.high),  aes(x=time/60, colour = "red" )) +
+  geom_density(data = data.frame(time = post.high),  aes(x=time/60, colour = "red", linetype="dashed" )) +
   scale_x_log10() +
   labs(
     title = "Posterior density of time for high and low debt versions",

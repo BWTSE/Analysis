@@ -21,7 +21,7 @@ library(curl)
 library(hashr)
 
 # Easier plotting
-library(ggplot2)
+library(ggplot2); theme_set(theme_minimal())
 library(likert)
 
 # Baysian modeling
@@ -141,9 +141,11 @@ str(d)
 ```
 
 ## Partial data sets and aggregates {.tabset}
+
 For some models partial data sets and aggregates are needed.
 
 ### Sessions as rows
+
 ```{r partial-sessions}
 d.sessions <- d %>% group_by(session) %>% dplyr::summarise(
   across(task_completion, min),
@@ -168,6 +170,7 @@ d.sessions
 ```
 
 ### Sessions as rows (only completed)
+
 ```{r partial-sessions-completed}
 d.sessions.completed <- d.sessions %>% filter(task_completion == "Completed")
 
@@ -175,6 +178,7 @@ d.sessions.completed
 ```
 
 ### Only completed
+
 ```{r partial-submitted}
 d.completed <- d %>% filter(task_completion == "Completed")
 
@@ -196,7 +200,21 @@ d.both_completed
 
 ## Model expansion utility function
 
-TODO: explain functionality
+The function `extendable_model` takes some basic arguments for creating brms models and returns a function that can be called with additioanl parameters to combine with those passed to `extendable_model`. The `extendable_model` takes the following arguments:
+
+* `base_name` is a name that is used to identify this extendable model while caching.
+* `base_formula` the formula that will be extended and passed to `brms::brm`, represented as string.
+* `data` the data frame to be passed to `brms::brm`.
+* `base_priors` (`NULL`) is a vector of priors to be passed to `brms::brm`.
+* `base_control` (`NULL`) is a vector of control options to be passed to `brms::brm`.
+
+The returned function takes the following arguments:
+
+* `additional_variables` (`NULL`) a vector of aditional variables (predictors) to pass to pass to `brms::brm` in adition to `base_formula`.
+* `additional_priors` (`NULL`) a vector of additioanl priors to pass to `brms::brm` in adition to `base_priors`.
+* `only_priors` (`FALSE`) indicates if the model should be epty and not compiled, usefull to extract default priors of a model.
+* `sample_prior` (`"no"`) is passed to the `sample_prior` of `brms::brm`.
+* `control_override` (`NULL`) takes a vector of `control` arguments for `brms::brm` that will override `base_control`.
 
 ```{r extendable-model}
 extendable_model <- function(
@@ -259,6 +277,7 @@ extendable_model <- function(
       sample_prior = sample_prior,
       file = paste("fits", name, sep = "/"),
       file_refit = "on_change",
+      seed = 20210421,
       control = control
     )
   }
