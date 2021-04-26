@@ -13,6 +13,8 @@ output:
 library(dplyr)
 library(plyr)
 library(tidyr)
+library(reshape2)
+library(tibble)
 
 # Fetching data
 library(curl)
@@ -23,6 +25,10 @@ library(hashr)
 # Easier plotting
 library(ggplot2); theme_set(theme_minimal())
 library(likert)
+library(bayesplot)
+library(ggpubr)
+library(HDInterval)
+library(ggridges)
 
 # Baysian modeling
 library(brms)

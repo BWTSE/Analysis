@@ -15,7 +15,7 @@ source(knitr::purl('setup.Rmd', output = tempfile()))
 
 ## Looking at the data
 
-We plot the data and can see that there is no obvious large difference between the versions with high and low debt
+We plot the data and can see that there is no obvious large difference between the versions with high and low debt.
 
 ```{r plot}
 d.both_completed %>%
@@ -28,8 +28,12 @@ d.both_completed %>%
   ) +
   scale_y_continuous(breaks = NULL) +
   scale_x_log10() +
-  scale_fill_discrete(name = "Debt Level", labels = c("High Debt", "Low Debt"), guide = guide_legend(reverse = TRUE)) +
-  theme_minimal()
+  scale_fill_manual(
+    name = "Debt level", 
+    labels = c("High debt", "Low debt"), 
+    values = c("#7070FF", "lightblue"), 
+    guide = guide_legend(reverse = TRUE)
+  ) 
 ```
 
 ## Descriptive Statistics
@@ -85,8 +89,7 @@ prior_summary(time.with(sample_prior = "only"))
 #### Prior Predictive Check
 
 ```{r priors-check, warning=FALSE}
-pp_check(time.with(sample_prior = "only"), nsamples = 200) + 
-  scale_x_log10()
+pp_check(time.with(sample_prior = "only"), nsamples = 200) + scale_x_log10()
 ```
 
 ### Model fit {.tabset}
@@ -96,11 +99,8 @@ Sampling seems to also have worked well as Rhat values are close to 1 and the sa
 
 #### Posterior Predictive check
 
-Notice: log10 scale on x-axis.
-
 ```{r base-pp-check}
-pp_check(time.with(), nsamples = 100) +
-  scale_x_log10()
+pp_check(time.with(), nsamples = 200) + scale_x_log10()
 ```
 
 #### Summary
@@ -269,7 +269,7 @@ plot(time0, ask = FALSE)
 #### Posterior predictive check
 
 ```{r time0-pp}
-pp_check(time0, nsamples = 150) + scale_x_log10()
+pp_check(time0, nsamples = 200) + scale_x_log10()
 ```
 
 ### Time1  {.tabset}
@@ -315,7 +315,7 @@ plot(time1, ask = FALSE)
 #### Posterior predictive check
 
 ```{r time1-pp}
-pp_check(time1, nsamples = 150) + scale_x_log10()
+pp_check(time1, nsamples = 200) + scale_x_log10()
 ```
 
 ### Time2  {.tabset}
@@ -362,7 +362,7 @@ plot(time2, ask = FALSE)
 #### Posterior predictive check
 
 ```{r time2-pp}
-pp_check(time2, nsamples = 150) + scale_x_log10()
+pp_check(time2, nsamples = 200) + scale_x_log10()
 ```
 
 ### Time3  {.tabset}
@@ -408,7 +408,7 @@ plot(time3, ask = FALSE)
 #### Posterior predictive check
 
 ```{r time3-pp}
-pp_check(time3, nsamples = 150) + scale_x_log10()
+pp_check(time3, nsamples = 200) + scale_x_log10()
 ```
 
 ## Final Model 
@@ -460,7 +460,7 @@ plot(time0.all, ask = FALSE)
 ##### Posterior predictive check
 
 ```{r variation.all-pp}
-pp_check(time0.all, nsamples = 150) + scale_x_log10()
+pp_check(time0.all, nsamples = 200) + scale_x_log10()
 ```
 
 #### With experience predictor {.tabset}
@@ -515,7 +515,7 @@ plot(time0.all.exp, ask = FALSE)
 ##### Posterior predictive check
 
 ```{r variation.all.exp-pp}
-pp_check(time0.all.exp, nsamples = 150) + scale_x_log10()
+pp_check(time0.all.exp, nsamples = 200) + scale_x_log10()
 ```
 
 ### Final model
@@ -525,82 +525,78 @@ pp_check(time0.all.exp, nsamples = 150) + scale_x_log10()
 This means that our final model, with all data points and experience predictors, is `time0.all.exp`
 
 ## Interpreting the model
+To begin interpreting the model we look at how it's parameters were estimated. As our research is focused on how the outcome of the model is effected we will mainly analyze the $\beta$ parameters.
 
-```{r}
-summary(time0.all.exp, prob = 0.89)
+### $\beta$ parameters
+```{r interpret-beta-plot, warning=FALSE, message=FALSE}
+mcmc_areas(time0.all.exp, pars = c("b_high_debt_versionfalse", "b_work_experience_programming.s"), prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c("High debt version: false", "Professional programming experience")) +
+  ggtitle("Beta parameters densities in time model", subtitle = "Shaded region marks 95% of the density. Line marks the median")
 ```
+
+
 
 ### Effects sizes
 We start by extracting posterior samples
-```{r}
-post <- posterior_predict(time0.all.exp, newdata = data.frame(
+```{r effect-size}
+scale_programming_experience <- function(x) {
+  (x - mean(d.completed$work_experience_programming))/ sd(d.completed$work_experience_programming)
+}
+unscale_programming_experience <- function(x) {
+  x * sd(d.completed$work_experience_programming) + mean(d.completed$work_experience_programming)
+}
+
+post_settings <- expand.grid(
   high_debt_version = c("false", "true"),
   session = NA,
-  work_experience_programming.s = (10 - mean(d.completed$work_experience_programming))/ sd(d.completed$work_experience_programming)
-))
-post.low <-  post[,1]
-post.high <- post[,2]
-summary(data.frame(
-  "Low Debt"=post.low,
-  "High Debt"=post.high
-))
-post.diff <- post.high - post.low
-post.diff.scaled <- post.diff / mean(post)
-```
+  work_experience_programming.s = sapply(c(0, 3, 10, 25, 40), scale_programming_experience)
+)
 
+post <- posterior_predict(time0.all.exp, newdata = post_settings) %>%
+  melt(value.name = "estimate", varnames = c("sample_number", "settings_id")) %>%
+  left_join(
+    rowid_to_column(post_settings, var= "settings_id"),
+    by = "settings_id"
+  ) %>%
+  mutate(work_experience_programming = unscale_programming_experience(work_experience_programming.s)) %>%
+  select(
+    estimate,
+    high_debt_version,
+    work_experience_programming
+  ) %>%
+  mutate(estimate = estimate/60)
 
-When we look at the distribution of the data between the high and low debt version we can see a difference, they are however quite similar.
-```{r}
-ggplot(data.frame(time = post.high)) +
-  geom_density(data = data.frame(time = post.low), aes(x=time/60, colour = "blue")) +
-  geom_density(data = data.frame(time = post.high),  aes(x=time/60, colour = "red", linetype="dashed" )) +
+ggplot(post, aes(x=estimate, fill = high_debt_version)) +
+  geom_density(alpha = 0.5) +
   scale_x_log10() +
+  scale_fill_manual(
+    name = "Debt version",
+    labels = c("Low debt", "High debt"),
+    values = c("lightblue", "darkblue")
+  ) +
+  facet_grid(rows = vars(work_experience_programming)) +
   labs(
-    title = "Posterior density of time for high and low debt versions",
+    title = "Time to complete task / years of programming experience",
     subtitle = "Notice! x-axis is log10 scaled.",
-    x ="Time (min)",
+    x = "Time (min)",
     y = "Density"
-  ) +
-  theme_minimal() +
-  scale_y_continuous(breaks = NULL) +
-  scale_colour_manual(name="Version",labels=c("Low Debt", "High Debt"), values=c("blue", "red"))
+  )
 
 ```
 
-We can also plot the difference between time for the high debt version and the low debt version. In those graphs we see that the difference is centered around zero with slightly more weight on the positive (indicating slightly longer times for the high debt version)
-```{r}
+```{r effect-size-diff, warning=FALSE, message=FALSE}
+post.diff <- post %>% filter(high_debt_version == "true")
+post.diff$estimate = post.diff$estimate -  filter(post, high_debt_version == "false")$estimate
 
-ggplot(data.frame(x = post.diff/60)) + geom_density(aes(x=x)) +
+ggplot(post.diff, aes(x=estimate, y = 0, fill = stat(quantile))) +
+  geom_density_ridges_gradient(quantile_lines = TRUE, quantile_fun = hdi, vline_linetype = 2) +
+  scale_fill_manual(name = "HDI", labels = c("100%", "95%", "100%"), values = c("transparent", "lightblue", "transparent"),) +
+  xlim(-100, 100) +
+  facet_grid(rows = vars(work_experience_programming)) +
   labs(
-    title = "Posterior density of time difference low and high debt versions ",
-    subtitle = "Difference = High Debt time - Low Debt time",
-    x ="Time Difference (min)",
+    title = "Time to complete task / years of programming experience",
+    subtitle = "Difference as: high debt time - low debt time",
+    x = "Time (min)",
     y = "Density"
-  ) +
-  theme_minimal() +
-  scale_y_continuous(breaks = NULL)
-
-
-data.frame(x = post.diff.scaled) %>%
-  ggplot() +
-  geom_density(aes(x=x)) +
-  labs(
-    title = "Posterior density of time difference low and high debt versions ",
-    subtitle = "Difference = High Debt time - Low Debt time",
-    x ="Time Difference (prortion of mean time)",
-    y = "Density"
-  ) +
-  theme_minimal() +
-  scale_y_continuous(breaks = NULL)
-
+  )
 ```
-
-
-We can also check the probability of the high debt effect being less than as well as grather then zero.
-```{r}
-sprintf("high debt effect < 0: %.2f%%", sum(sign(post.diff) == -1)/length(post.diff) * 100)
-sprintf("high debt effect > 0: %.2f%%", sum(sign(post.diff) == 1)/length(post.diff) * 100)
-```
-
-We can see no "significant" relation between the amount of technical debt in the given codebase and time spent on the task.
-
