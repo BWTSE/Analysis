@@ -20,4 +20,5 @@ Read the Broken Window Investigation thesis for more information and justificati
 * [Data Exploration](data_exploration.html) - Plots and data descriptions not relating to the outcomes, those are found in "Baysian Models".
 * Baysian Models - All our models grouped by which outcome they measure.
   * [Time Model](time.html) - Exploration and models related to the time outcome.
+  * [Reuse Model](reuse.html) - Exploration and models related to code reuse.
 * [Computational Environment](environment.html) - Description of the environment used to perform the analysis.

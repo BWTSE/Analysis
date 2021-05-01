@@ -1,55 +1,75 @@
 ---
-title: "Reuse"
-output: html_notebook
+title: "Reuse Outcome"
+author: Hampus Broman & William Levén
+date: 2021-04
+output: 
+  html_document: 
+    pandoc_args: [ "-o", "html/reuse.html" ]
 ---
+
+```{r include-setup, include=FALSE}
+# Load setup file
+source(knitr::purl('setup.Rmd', output = tempfile()))
+```
+
+
 ## Looking at the data
+
 There appears to be significant difference in the reuse rate between high and low debt versions.
 
-```{r}
+### Constructor Reuse
+
+```{r plot-constructor}
 d.completed %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
   ggplot(aes(high_debt_version)) +
   geom_bar(aes(fill = reused_logic_constructor), position = "fill") + 
-  scale_fill_manual("legend", values = c("true" = "green", "false" = "red")) +
-  labs(title = "Constructor Reuse") +
-  xlab("High Debt version") +
+  scale_fill_manual("Legend", values = c("lightblue", "darkblue"), labels = c("Reused", "Not reused")) +
+  labs(title = "Constructor reuse") +
+  xlab("Debt version") +
   ylab("Ratio of reuse")
+```
 
+### Validation Reuse
+
+```{r plot-validation}
 d.completed %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
   ggplot(aes(high_debt_version)) +
   geom_bar(aes(fill = reused_logic_validation), position = "fill") + 
-  scale_fill_manual("legend", values = c("true" = "green", "false" = "red")) +
-  labs(title = "Validation Reuse") +
-  xlab("High Debt version") +
+  scale_fill_manual("Legend", values = c("lightblue", "darkblue"), labels = c("Reused", "Not reused")) +
+  labs(title = "Constructor reuse") +
+  xlab("Debt version") +
   ylab("Ratio of reuse")
-
-```
-## Descriptive Statistics
-Full set reuse of constructor:
-```{r}
-d.both_completed %>%
-  pull(reused_logic_constructor) %>% 
-  summary()
-
 ```
 
-Full set reuse of validation:
-```{r}
-d.both_completed %>%
-  pull(reused_logic_validation) %>% 
-  summary()
-
-```
 ## Initial model
 For a boolean outcome, bernoulli is the most suitable family.
 
-We include `high_debt_verison` as well as a varying intercept for each individual in our initial model. Since they may correlate, constructor and logic reuse are both included in a single multivariate model.
+We include `high_debt_verison` as well as a varying intercept for each individual in our initial model. 
 
-### Selecting Priors
-We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. The prior "lkj(2)" will mean the model is sceptical of strong correlations.
+We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
+We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
+Since they may correlate, constructor and logic reuse are both included in a single multivariate model.
 
-```{r}
-reuse0.with <- extendable_model(
-  base_name = "reuse0",
+### Selecting Priors {.tabset}
+
+We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. 
+The prior `lkj(2)` will mean the model is sceptical of strong correlations.
+
+#### Base model with priors
+
+```{r initial-model-definition, class.source = 'fold-show'}
+reuse.with <- extendable_model(
+  base_name = "reuse",
   base_formula = "mvbind(
     reused_logic_validation,
     reused_logic_constructor
@@ -65,222 +85,188 @@ reuse0.with <- extendable_model(
   data = d.both_completed,
   base_control = list(adapt_delta = 0.95)
 )
-
-# Default priors:
-prior_summary(reuse0.with(only_priors= TRUE))
-
-# Our priors:
-prior_summary(reuse0.with(sample_prior = "only"))
-
-# Prior predictive checks
-pp_check(reuse0.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
-
-pp_check(reuse0.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
-
-
 ```
 
-### Model fit
-We check the posterior distribution and can see that the model seems to have been able to fit the data well
-```{r}
-# Posterior predictive check
-pp_check(reuse0.with(), type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
+#### Default priors
 
-pp_check(reuse0.with(), type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
-
-summary(reuse0.with())
+```{r default-priors}
+prior_summary(reuse.with(only_priors= TRUE))
 ```
 
-## Model extenstions
+#### Selected priors
 
-```{r}
-summary(reuse0.with("work_domain"))
+```{r selected-priors, warning=FALSE}
+prior_summary(reuse.with(sample_prior = "only"))
 ```
 
-```{r}
-summary(reuse0.with("work_experience_programming.s"))
+#### Prior Predictive Check
+
+##### Constructor Reuse
+
+```{r priors-check-constructor, warning=FALSE, message=FALSE}
+pp_check(reuse.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
+```
+
+##### Validation Reuse
+
+```{r priors-check-validation, warning=FALSE, message=FALSE}
+pp_check(reuse.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
+```
+
+### Model fit {.tabset}
+
+We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
+Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
+
+#### Posterior Predictive check
+
+##### Constructor Reuse
+```{r base-pp-check-constructor, warning=FALSE, message=FALSE}
+pp_check(reuse.with(), type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
+```
+
+##### Validation Reuse
+
+```{r base-pp-check-validation, warning=FALSE, message=FALSE}
+pp_check(reuse.with(), type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
+```
+
+#### Summary
+
+```{r base-summary, warning=FALSE,}
+summary(reuse.with())
+```
+
+#### Sampling plots
+
+```{r base-plot, warning=FALSE, message=FALSE}
+plot(reuse.with(), ask = FALSE)
 ```
 
 
-```{r}
-summary(reuse0.with("work_experience_java.s"))
-```
+## Model predictor extenstions {.tabset}
 
-```{r}
-summary(reuse0.with("education_field"))
-```
-
-```{r}
-summary(reuse0.with(
-  "mo(education_level)", 
-  c(
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicconstructor"),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicvalidation")
-  )
-))
-```
-
-```{r}
-summary(reuse0.with("workplace_peer_review"))
-```
-
-```{r}
-summary(reuse0.with("workplace_td_tracking"))
-```
-
-```{r}
-summary(reuse0.with("workplace_pair_programming"))
-```
-
-```{r}
-summary(reuse0.with("workplace_coding_standards"))
-```
-
-```{r}
-summary(reuse0.with("scenario"))
-```
-
-```{r}
-summary(reuse0.with("group"))
-```
-
-Comparing some extensions with loo.
-
-```{r}
-loo(
-  reuse0.with(),
-  reuse0.with("work_domain"),
-  reuse0.with("work_experience_programming.s"),
-  reuse0.with("work_experience_java.s"),
-  reuse0.with("education_field"),
-  reuse0.with(
-  "mo(education_level)", 
-    c(
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicconstructor"),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicvalidation")
-  )
-  ),
-  reuse0.with("workplace_peer_review"),
-  reuse0.with("workplace_td_tracking"),
-  reuse0.with("workplace_pair_programming"),
-  reuse0.with("workplace_coding_standards"),
-  reuse0.with("scenario"),
-  reuse0.with("group"),
-  reuse0.with(
-  c("work_domain", 
-    "work_experience_programming.s",
-    "work_experience_java.s",
-    "education_field",
-    "mo(education_level)",
-    "workplace_peer_review",
-    "workplace_td_tracking",
-    "workplace_pair_programming",
-    "workplace_coding_standards",
-    "scenario",
-    "group"
-    ),
-    c(
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicconstructor"),
-    prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicvalidation")
-  )
+```{r mo-priors}
+# default prior for monotonic predictor
+edlvl_prior <- c(
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicconstructor"),
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "reusedlogicvalidation")
 )
+```
+
+We use `loo` to check some possible extensions on the model.
+
+### One variable {.tabset}
+
+```{r model-extension-1, warning=FALSE, class.source = 'fold-show', message=FALSE}
+loo_result <- loo(
+  # Benchmark model(s)
+  reuse.with(),
+  
+  # New model(s)
+  reuse.with("work_domain"),
+  reuse.with("work_experience_programming.s"),
+  reuse.with("work_experience_java.s"),
+  reuse.with("education_field"),
+  reuse.with("mo(education_level)", edlvl_prior),
+  reuse.with("workplace_peer_review"),
+  reuse.with("workplace_td_tracking"),
+  reuse.with("workplace_pair_programming"),
+  reuse.with("workplace_coding_standards"),
+  reuse.with("scenario"),
+  reuse.with("group")
 )
-
-
 ```
 
-## Candidate models
-We inspect some of our top performing models. 
+#### Comparison
 
-All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end similar estimates for the high_debt_version beta parameter
-
-```{r}
-reuse1 <-   reuse0.with()
-summary(reuse1)
-ranef(reuse1)
-
-plot(reuse1)
-pp_check(reuse1, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
-pp_check(reuse1, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+```{r model-extension-1-sum, warning=FALSE}
+loo_result[2]
 ```
 
-```{r}
-reuse2 <-   reuse0.with("workplace_peer_review")
-summary(reuse2)
-ranef(reuse2)
-plot(reuse2)
-pp_check(reuse2, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
-pp_check(reuse2, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+#### Diagnostics
+
+```{r model-extension-1-dig, warning=FALSE}
+loo_result[1]
+```
+### Two variables {.tabset}
+
+```{r model-extension-2, warning=FALSE, class.source = 'fold-show', message=FALSE}
+loo_result <- loo(
+  # Benchmark model(s)
+  reuse.with(),
+  reuse.with("scenario"),
+  reuse.with("workplace_peer_review"),
+  reuse.with("mo(education_level)", edlvl_prior),
+  reuse.with("workplace_coding_standards"),
+  
+  # New model(s)
+  reuse.with(c("scenario", "workplace_peer_review")),
+  reuse.with(c("scenario", "mo(education_level)"), edlvl_prior),
+  reuse.with(c("scenario", "workplace_coding_standards")),
+  
+  reuse.with(c("workplace_peer_review", "mo(education_level)"), edlvl_prior),
+  reuse.with(c("workplace_peer_review", "workplace_coding_standards")),
+  
+  reuse.with(c("workplace_coding_standards", "mo(education_level)"), edlvl_prior)
+)
 ```
 
-```{r}
-reuse3 <- reuse0.with("workplace_coding_standards")
-summary(reuse3)
-ranef(reuse3)
-plot(reuse3)
-pp_check(reuse3, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
-pp_check(reuse3, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+#### Comparison
+
+```{r model-extension-2-sum, warning=FALSE}
+loo_result[2]
 ```
 
-```{r}
-reuse4 <-   reuse0.with("workplace_pair_programming")
-summary(reuse4)
-ranef(reuse4)
-plot(reuse4)
-pp_check(reuse4, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
-pp_check(reuse4, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+#### Diagnostics
+
+```{r model-extension-2-dig, warning=FALSE}
+loo_result[1]
 ```
 
-```{r}
-reuse34 <-   reuse0.with(c("workplace_pair_programming","workplace_coding_standards"))
-summary(reuse34)
-ranef(reuse34)
-plot(reuse34)
-pp_check(reuse34, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
-pp_check(reuse34, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+### Three variables {.tabset}
+
+```{r model-extension-3, warning=FALSE, class.source = 'fold-show', message=FALSE}
+loo_result <- loo(
+  # Benchmark model(s)
+  reuse.with(),
+  reuse.with("scenario"),
+  reuse.with("workplace_peer_review"),
+  reuse.with("mo(education_level)", edlvl_prior),
+  reuse.with("workplace_coding_standards"),
+  reuse.with(c("scenario", "workplace_coding_standards")),
+  
+  # New model(s)
+  reuse.with(c("scenario", "workplace_coding_standards", "mo(education_level)"), edlvl_prior)
+)
 ```
 
-```{r}
-reuse23 <-   reuse0.with(c("workplace_peer_review","workplace_coding_standards"))
-summary(reuse23)
-ranef(reuse23)
-plot(reuse23)
-pp_check(reuse23, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
-pp_check(reuse23, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+#### Comparison
+
+```{r model-extension-3-sum, warning=FALSE}
+loo_result[2]
 ```
 
-```{r}
-reuse42 <-   reuse0.with(c("workplace_peer_review","workplace_pair_programming"))
-summary(reuse23)
-ranef(reuse23)
-plot(reuse23)
-pp_check(reuse23, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
-pp_check(reuse23, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
+#### Diagnostics
+
+```{r model-extension-3-dig, warning=FALSE}
+loo_result[1]
 ```
 
-```{r}
-reuse234 <-   reuse0.with(c("workplace_peer_review","workplace_pair_programming","workplace_coding_standards"))
-summary(reuse23)
-ranef(reuse23)
-plot(reuse23)
-pp_check(reuse23, type = "bars", nsamples = 100, resp = "reusedlogicconstructor")
-pp_check(reuse23, type = "bars", nsamples = 100, resp = "reusedlogicvalidation")
-```
+## Candidate models  {.tabset}
+We pick some of our top performing models as candidates and inspect them closer.
 
-```{r}
-loo(reuse1,reuse2,reuse3,reuse4,reuse23,reuse34,reuse42,reuse234)
-```
+The candidate models are named and listed in order of complexity.
 
-### Final model
-Verdict: while candidates 2,3,4 are rated slightly better by loo, its very minor, and well within the margin of error. aNY When adding multiple of the factors that increased loo score on its own, the model instead performs worse than the most basic one. We chose reuse1, the model using only session and debt level as predictors.
+### Reuse0 {.tabset}
 
-```{r}
-reuse0_with_c <- brm(
-  mvbind(
+```{r reuse0, class.source = 'fold-show', warning=FALSE, message=FALSE}
+reuse0 <- brm(
+  "mvbind(
     reused_logic_validation,
     reused_logic_constructor
-  ) ~ 1 + high_debt_version + (1 | c | session),
-    prior = c(
+  ) ~ 1 + high_debt_version + (1 |c| session)",
+  prior = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),
     prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
@@ -288,24 +274,175 @@ reuse0_with_c <- brm(
     prior(lkj(2), class = "L")
   ),
   family = bernoulli(),
-  data = d.both_completed,
-  control = list(adapt_delta = 0.95)
+  data = as.data.frame(d.both_completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/reuse0",
+  file_refit = "on_change",
+  seed = 20210421
 )
-
-loo(reuse0.with(), reuse0_with_c)
 ```
 
+#### Summary
 
-### Model with with incomplete data points
+```{r reuse0-sum}
+summary(reuse0)
+```
 
-Some participants only completed one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+#### Random effects
 
-```{r}
-reuse0.all <- brm(mvbind(
+```{r reuse0-raneff}
+ranef(reuse0)
+```
+
+#### Sampling plots
+
+```{r reuse0-plot}
+plot(reuse0, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+##### Constructor Reuse
+
+```{r reuse0-pp-constructor}
+pp_check(reuse0, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
+```
+
+##### Validation Reuse
+
+```{r reuse0-pp-validation}
+pp_check(reuse0, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
+```
+
+### Reuse1 {.tabset}
+
+```{r reuse1, class.source = 'fold-show', warning=FALSE, message=FALSE}
+reuse1 <- brm(
+  "mvbind(
     reused_logic_validation,
     reused_logic_constructor
-  ) ~ 1 + high_debt_version + (1 | c |session),
-    prior = c(
+  ) ~ 1 + high_debt_version + scenario + (1 |c| session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
+    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
+    prior(lkj(2), class = "L")
+  ),
+  family = bernoulli(),
+  data = as.data.frame(d.both_completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/reuse1",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r reuse1-sum}
+summary(reuse1)
+```
+
+#### Random effects
+
+```{r reuse1-raneff}
+ranef(reuse1)
+```
+
+#### Sampling plots
+
+```{r reuse1-plot}
+plot(reuse1, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+##### Constructor Reuse
+
+```{r reuse1-pp-constructor}
+pp_check(reuse1, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
+```
+
+##### Validation Reuse
+
+```{r reuse1-pp-validation}
+pp_check(reuse1, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
+```
+
+### Reuse2 {.tabset}
+
+```{r reuse2, class.source = 'fold-show', warning=FALSE, message=FALSE}
+reuse2 <- brm(
+  "mvbind(
+    reused_logic_validation,
+    reused_logic_constructor
+  ) ~ 1 + high_debt_version + scenario + workplace_coding_standards + (1 |c| session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
+    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
+    prior(lkj(2), class = "L")
+  ),
+  family = bernoulli(),
+  data = as.data.frame(d.both_completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/reuse2",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r reuse2-sum}
+summary(reuse2)
+```
+
+#### Random effects
+
+```{r reuse2-raneff}
+ranef(reuse2)
+```
+
+#### Sampling plots
+
+```{r reuse2-plot}
+plot(reuse2, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+##### Constructor Reuse
+
+```{r reuse2-pp-constructor}
+pp_check(reuse2, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
+```
+
+##### Validation Reuse
+
+```{r reuse2-pp-validation}
+pp_check(reuse2, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
+```
+
+## Final Model 
+All candidate models look nice, none is significantly better than the others, we will proceed the simplest model: `reuse0`
+
+### Variations {.tabset}
+We will try a few different variations of the selected candidate model.
+
+#### All data points {.tabset}
+
+Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r variation.all, class.source = 'fold-show', warning=FALSE, message=FALSE}
+reuse0.all <- brm(
+  "mvbind(
+    reused_logic_validation,
+    reused_logic_constructor
+  ) ~ 1 + high_debt_version + (1 |c| session)",
+  prior = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(0, 1), class = "Intercept"),
     prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
@@ -316,104 +453,224 @@ reuse0.all <- brm(mvbind(
   data = as.data.frame(d.completed),
   control = list(adapt_delta = 0.95),
   file = "fits/reuse0.all",
-  file_refit = "on_change"
+  file_refit = "on_change",
+  seed = 20210421
 )
-
-summary(reuse0.all)
-ranef(reuse0.all)
-plot(reuse0.all, ask = FALSE)
-
-pp_check(reuse0.all, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
-
-pp_check(reuse0.all, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
-
 ```
 
-Training the model on all data points reduces does increase the uncertainity. Inlcude or not?
+##### Summary
+
+```{r variation.all-sum, warning=FALSE}
+summary(reuse0.all)
+```
+
+##### Random effects
+
+```{r variation.all-raneff, warning=FALSE}
+ranef(reuse0.all)
+```
+
+##### Sampling plots
+
+```{r variation.all-plot, message=FALSE, warning=FALSE}
+plot(reuse0.all, ask = FALSE)
+```
+
+##### Posterior predictive check
+
+###### Constructor Reuse
+
+```{r variation.all-pp-constructor, warning=FALSE, message=FALSE}
+pp_check(reuse0.all, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
+```
+
+###### Validation Reuse
+
+```{r variation.all-pp-validation, warning=FALSE, message=FALSE}
+pp_check(reuse0.all, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
+```
+
+
+#### With experience predictor {.tabset}
+
+As including all data points didn't harm the model we will create this variant with all data points as well.
+
+This variation includes `work_experience_programming.s` predictors as it can give further insight into how experience play a factor in the effect we try to measure. This is especially important as our sampling shewed towards containing less experienced developer than the population at large.
+
+```{r variation.all.exp, class.source = 'fold-show'}
+reuse0.all.exp <- brm(
+  "mvbind(
+    reused_logic_validation,
+    reused_logic_constructor
+  ) ~ 1 + high_debt_version + work_experience_programming.s + (1 |c| session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = reusedlogicconstructor),
+    prior(exponential(1), class = "sd", resp = reusedlogicvalidation),
+    prior(lkj(2), class = "L")
+  ),
+  family = bernoulli(),
+  data = as.data.frame(d.completed),
+  control = list(adapt_delta = 0.95),
+  file = "fits/reuse0.all.exp",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+##### Summary
+
+```{r variation.all.exp-sum}
+summary(reuse0.all.exp)
+```
+
+##### Random effects
+
+```{r variation.all.exp-raneff}
+ranef(reuse0.all.exp)
+```
+
+##### Loo comparison
+
+```{r variation.all.exp-loo, warning=FALSE}
+loo(
+  reuse0.all,
+  reuse0.all.exp
+)
+```
+
+##### Sampling plots
+
+```{r variation.all.exp-plot}
+plot(reuse0.all.exp, ask = FALSE)
+```
+
+##### Posterior predictive check
+
+###### Constructor Reuse
+
+```{r variation.all.exp-pp-constructor, warning=FALSE, message=FALSE}
+pp_check(reuse0.all.exp, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
+```
+
+###### Validation Reuse
+
+```{r variation.all.exp-pp-validation, warning=FALSE, message=FALSE}
+pp_check(reuse0.all.exp, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
+```
+
+`
+
+### Final model
+* Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
+* Adding the experience predictors did not significantly damage the model and will be used as it provides useful insight.
+
+This means that our final model, with all data points and experience predictors, is `time0.all.exp`
 
 ## Interpreting the model
+To begin interpreting the model we look at how it's parameters were estimated. As our research is focused on how the outcome of the model is effected we will mainly analyze the $\beta$ parameters.
 
-Extract posterior samples:
+### $\beta$ parameters
 
-```{r}
-
-reuse_validation_post <- posterior_predict(reuse0.with(), newdata = data.frame(high_debt_version = c("false", "true"), session = NA), resp ="reusedlogicvalidation")
-
-reuse_validation_post.low <-  reuse_validation_post[,1]
-reuse_validation_post.high <-  reuse_validation_post[,2]
-
-mean(reuse_validation_post.low)
-mean(reuse_validation_post.high)
-
-reuse_constructor_post <- posterior_predict(reuse0.with(), newdata = data.frame(high_debt_version = c("false", "true"), session = NA), resp ="reusedlogicconstructor")
-
-reuse_constructor_post.low <-  reuse_constructor_post[,1]
-reuse_constructor_post.high <-  reuse_constructor_post[,2]
-
-mean(reuse_constructor_post.low)
-mean(reuse_constructor_post.high)
-
-
-
-```
-## Constructor reuse
-
-```{r}
-
-reuse_constructor_post.diff <- reuse_constructor_post.high - reuse_constructor_post.low
-
-data.frame(x = reuse_constructor_post.diff) %>%
-  ggplot() +
-  geom_histogram(aes(x=x), stat = "count") +
-  labs(
-    title = "Diff of constructor reuse",
-    subtitle = "Difference = High Debt reuse - Low Debt reuse",
-    x ="Reuse difference",
-    y = "Observations"
-  ) +
-  theme_minimal() +
-  scale_y_continuous(breaks = NULL)
-
-reuse_hypo <- hypothesis(reuse1, "reusedlogicvalidation_high_debt_versionfalse < 0")
-
-# Portion of cases improved by low debt
-sum(reuse_constructor_post.diff > 0) / length(reuse_constructor_post.diff)
-
-# Portion of cases made worse by low debt
-sum(reuse_constructor_post.diff < 0) / length(reuse_constructor_post.diff)
-
-# Net reuse gain caused by low debt
-sum(reuse_constructor_post.diff > 0) / length(reuse_constructor_post.diff) - sum(reuse_constructor_post.diff < 0) / length(reuse_constructor_post.diff)
-
+#### Constructor reuse
+```{r interpret-beta-plot-constructor, warning=FALSE, message=FALSE}
+mcmc_areas(reuse0.all.exp, pars = c("b_reusedlogicconstructor_high_debt_versionfalse", "b_reusedlogicconstructor_work_experience_programming.s"), prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c("High debt version: false", "Professional programming experience")) +
+  ggtitle("Beta parameters densities in reuse constructor model", subtitle = "Shaded region marks 95% of the density. Line marks the median")
 ```
 
-## Validation reuse
+#### Validation reuse
 
-```{r}
+```{r interpret-beta-plot-validation, warning=FALSE, message=FALSE}
+mcmc_areas(reuse0.all.exp, pars = c("b_reusedlogicvalidation_high_debt_versionfalse", "b_reusedlogicvalidation_work_experience_programming.s"), prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c("High debt version: false", "Professional programming experience")) +
+  ggtitle("Beta parameters densities in reuse validation model", subtitle = "Shaded region marks 95% of the density. Line marks the median")
+```
+### Effects sizes
 
-reuse_validation_post.diff <- reuse_validation_post.high - reuse_validation_post.low
+When we look at effect size we will look at both outcomes combined
+```{r effect-size, fig.width=8}
+scale_programming_experience <- function(x) {
+  (x - mean(d.completed$work_experience_programming))/ sd(d.completed$work_experience_programming)
+}
+unscale_programming_experience <- function(x) {
+  x * sd(d.completed$work_experience_programming) + mean(d.completed$work_experience_programming)
+}
 
-data.frame(x = reuse_validation_post.diff) %>%
-  ggplot() +
-  geom_histogram(aes(x=x), stat = "count") +
-  labs(
-    title = "Validation reuse diff",
-    subtitle = "Difference = High Debt reuse - Low Debt reuse",
-    x ="Reuse difference",
-    y = "Observations"
-  ) +
-  theme_minimal() +
-  scale_y_continuous(breaks = NULL)
+post_settings <- expand.grid(
+  high_debt_version = c("false", "true"),
+  session = NA,
+  work_experience_programming.s = sapply(c(0, 3, 10, 25, 40), scale_programming_experience)
+)
 
-reuse_hypo <- hypothesis(reuse1, "reusedlogicvalidation_high_debt_versionfalse < 0")
+post <- posterior_predict(reuse0.all.exp, newdata = post_settings) %>%
+  melt(value.name = "estimate", varnames = c("sample_number", "settings_id", "model")) %>%
+  left_join(
+    rowid_to_column(post_settings, var= "settings_id"),
+    by = "settings_id"
+  ) %>%
+  mutate(work_experience_programming = unscale_programming_experience(work_experience_programming.s)) %>%
+  select(
+    estimate,
+    high_debt_version,
+    work_experience_programming,
+    model
+  )
 
-# Portion of cases improved by low debt
-sum(reuse_validation_post.diff > 0) / length(reuse_validation_post.diff)
-
-# Portion of cases made worse by low debt
-sum(reuse_validation_post.diff < 0) / length(reuse_validation_post.diff)
-
-# Net reuse gain caused by low debt
-sum(reuse_validation_post.diff > 0) / length(reuse_validation_post.diff) - sum(reuse_validation_post.diff < 0) / length(reuse_validation_post.diff)
+post %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
+  mutate_at("estimate", 
+            function(x) case_when(
+              x == 1 ~ "Reused",
+              x == 0 ~ "Duplicated"
+            )) %>%
+  ggplot(aes(high_debt_version)) +
+  geom_bar(aes(fill = estimate), position = "fill") + 
+  facet_grid(rows = vars(work_experience_programming)) +
+  scale_fill_manual("Legend", values = c("lightblue", "darkblue"), labels = c("Reused", "Duplicated")) +
+  labs(title = "Reuse / programming experience") +
+  xlab("Debt version") +
+  ylab("Ratio of reuse")
 
 ```
+
+We can then proceed to calculate some likelihoods of duplication:
+
+
+```{r es-a, class.source = 'fold-show'}
+d <- post
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+sum(d.high) / sum(d.low)
+```
+Given all the simulated cases we find that developers are `88%` more likely to duplicate code in our high debt scenario.
+
+```{r es-10, class.source = 'fold-show'}
+d <- post %>% filter(work_experience_programming == 10)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+sum(d.high) / sum(d.low)
+```
+Considering developers with 10 years of professional programming experience we find that they are `104%` more likely to duplicate code in our high debt scenario.
+
+```{r es-0, class.source = 'fold-show'}
+d <- post %>% filter(work_experience_programming == 0)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+sum(d.high) / sum(d.low)
+```
+Considering developers with no professional programming experience we find that they are `112%` more likely to duplicate code in our high debt scenario.
+
+
+```{r es-25, class.source = 'fold-show'}
+d <- post %>% filter(work_experience_programming == 25)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+sum(d.high) / sum(d.low)
+```
+Considering developers with 25 years of professional programming experience we find that they are `85%` more likely to duplicate code in our high debt scenario.
