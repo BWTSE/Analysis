@@ -28,7 +28,7 @@ d.completed %>%
             )) %>%
   ggplot(aes(high_debt_version)) +
   geom_bar(aes(fill = reused_logic_constructor), position = "fill") + 
-  scale_fill_manual("Legend", values = c("lightblue", "darkblue"), labels = c("Reused", "Not reused")) +
+  scale_fill_manual("Legend", values = c("lightblue", "darkblue"), labels = c("Reused", "Duplicated")) +
   labs(title = "Constructor reuse") +
   xlab("Debt version") +
   ylab("Ratio of reuse")
@@ -45,8 +45,8 @@ d.completed %>%
             )) %>%
   ggplot(aes(high_debt_version)) +
   geom_bar(aes(fill = reused_logic_validation), position = "fill") + 
-  scale_fill_manual("Legend", values = c("lightblue", "darkblue"), labels = c("Reused", "Not reused")) +
-  labs(title = "Constructor reuse") +
+  scale_fill_manual("Legend", values = c("lightblue", "darkblue"), labels = c("Reused", "Duplicated")) +
+  labs(title = "Validation reuse") +
   xlab("Debt version") +
   ylab("Ratio of reuse")
 ```
