@@ -63,7 +63,7 @@ time.with <- extendable_model(
   base_name = "time",
   base_formula = "time ~ 1 + high_debt_version + (1 | session)",
   base_priors = c(
-    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "b"),
     prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
@@ -90,6 +90,27 @@ prior_summary(time.with(sample_prior = "only"))
 
 ```{r priors-check, warning=FALSE}
 pp_check(time.with(sample_prior = "only"), nsamples = 200) + scale_x_log10()
+```
+
+#### Beta Parameter Influence
+
+```{r priors-beta, warning=FALSE}
+sim.size <- 1000
+sim.intercept <- rnorm(sim.size, 7.5, 1)
+sim.beta <- rnorm(sim.size, 0, 0.5)
+sim.beta.diff <- exp(sim.intercept + sim.beta) - exp(sim.intercept)
+sim.beta.diff.min <- sim.beta.diff / 60
+
+data.frame(x = sim.beta.diff.min) %>%
+  ggplot(aes(x)) +
+  geom_density() +
+  xlim(-50, 50) +
+  labs(
+    title = "Beta parameter prior influence",
+    x = "Time difference (min)",
+    y = "Density"
+  )
+
 ```
 
 ### Model fit {.tabset}
@@ -121,7 +142,6 @@ plot(time.with(), ask = FALSE)
 # default prior for monotonic predictor
 edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
 ```
-
 
 We use `loo` to check some possible extensions on the model.
 
@@ -167,16 +187,12 @@ loo_result <- loo(
   time.with(),
   time.with("scenario"),
   time.with("education_field"),
-  time.with("workplace_peer_review"),
   time.with("mo(education_level)", edlvl_prior),
   
   # New model(s)
   time.with(c("scenario", "education_field")),
   time.with(c("scenario", "mo(education_level)"), edlvl_prior),
-  time.with(c("scenario", "workplace_peer_review")),
   time.with(c("education_field", "mo(education_level)"), edlvl_prior),
-  time.with(c("education_field", "workplace_peer_review")),
-  time.with(c("mo(education_level)", "workplace_peer_review"), edlvl_prior)
 )
 ```
 
@@ -234,7 +250,7 @@ We select the simplest model as a baseline.
 time0 <- brm(
   "time ~ 1 + high_debt_version + (1 | session)",
   prior = c(
-    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "b"),
     prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
@@ -280,7 +296,7 @@ We select the best performing model with one variable.
 time1 <- brm(
   "time ~ 1 + high_debt_version + scenario + (1 | session)",
   prior = c(
-    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "b"),
     prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
@@ -326,7 +342,7 @@ We select the best performing model with two variables.
 time2 <- brm(
   "time ~ 1 + high_debt_version + scenario + mo(education_level) + (1 | session)",
   prior = c(
-    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "b"),
     prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape"),
@@ -373,7 +389,7 @@ We select the second best performing model with two variables.
 time3 <- brm(
   "time ~ 1 + high_debt_version + scenario + education_field + (1 | session)",
   prior = c(
-    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "b"),
     prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
@@ -425,7 +441,7 @@ Some participants did only complete one scenario. Those has been excluded from t
 time0.all <- brm(
   "time ~ 1 + high_debt_version + (1 | session)",
   prior = c(
-    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "b"),
     prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
@@ -467,11 +483,13 @@ pp_check(time0.all, nsamples = 200) + scale_x_log10()
 
 As including all data points didn't harm the model we will create this variant with all data points as well.
 
+This variation includes `work_experience_programming.s` predictors as it can give further insight into how experience play a factor in the effect we try to measure. This is especially important as our sampling shewed towards containing less experienced developer than the population at large.
+
 ```{r variation.all.exp, class.source = 'fold-show'}
 time0.all.exp <- brm(
   "time ~ 1 + high_debt_version + work_experience_programming.s + (1 | session)",
   prior = c(
-    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "b"),
     prior(normal(7.5, 1), class = "Intercept"),
     prior(exponential(1), class = "sd"),
     prior(gamma(0.01, 0.01), class = "shape")
