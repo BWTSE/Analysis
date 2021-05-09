@@ -1,5 +1,5 @@
 ---
-title: "Time Outcome"
+title: "Variable Names"
 author: Hampus Broman & William Levén
 date: 2021-04
 output: 
