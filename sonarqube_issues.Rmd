@@ -1,7 +1,7 @@
 ---
 title: "SonarQube Issues"
 author: Hampus Broman & William Levén
-date: 2021-04
+date: 2021-05
 output: 
   html_document: 
     pandoc_args: [ "-o", "html/sonarqube_issues.html" ]
@@ -12,16 +12,26 @@ output:
 source(knitr::purl('setup.Rmd', output = tempfile()))
 ```
 
-## Looking at the data {.tabset}
+## Looking at the data
 it looks like there might be a difference between the high and low debt groups, the variance is decidedly higher in the high debt group.
 
-```{r plot 1}
+```{r plot-1}
 d.both_completed %>%
   ggplot(aes(x=sonarqube_issues, fill=high_debt_version)) + 
-  geom_boxplot()
+  geom_boxplot() +
+  scale_fill_manual(
+    name = "Debt level", 
+    labels = c("High debt", "Low debt"), 
+    values = c("#7070FF", "lightblue"), 
+    guide = guide_legend(reverse = TRUE)
+  ) +
+  labs(
+    title = "Distribution of detected sonarqube isues for the different debt levels",
+    x ="Number of sonarqube issues"
+  ) +
+  scale_y_continuous(breaks = NULL) +
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12))
 
-mean(d.both_completed$sonarqube_issues)
-var(d.both_completed$sonarqube_issues)
 ```
 
 ## Descriptive Statistics:
@@ -34,7 +44,7 @@ sprintf("Variance: %.2f", var(pull(d.both_completed, sonarqube_issues)))
 ```
 
 ## Initial model
-Variable names are modeled using the negative binomial family rather than poisson since the variance is much greater than the mean.
+Variable names are modeled using the negative binomial family rather than poisson since the variance is greater than the mean.
 
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
