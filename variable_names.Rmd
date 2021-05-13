@@ -1,7 +1,7 @@
 ---
 title: "Variable Names"
 author: Hampus Broman & William Levén
-date: 2021-04
+date: 2021-05
 output: 
   html_document: 
     pandoc_args: [ "-o", "html/variable_names.html" ]
@@ -23,7 +23,7 @@ d.both_completed %>%
   geom_boxplot() +
   labs(
     title = "Distribution of good variable naming rate for the different debt levels (new variables)",
-    x ="rate of good variable name selection"
+    x ="Ratio of good variable name selection"
   ) +
   scale_y_continuous(breaks = NULL) +
   scale_fill_manual(
@@ -34,6 +34,7 @@ d.both_completed %>%
   ) 
 
 ```
+
 ### Copied Variable Names
 ```{r plot2}
 d.both_completed %>%
@@ -41,7 +42,7 @@ d.both_completed %>%
   geom_boxplot() +
   labs(
     title = "Distribution of good variable naming rate for the different debt levels (copied variables)",
-    x ="rate of good variable name selection"
+    x ="Ratio of good variable name selection"
   ) +
   scale_y_continuous(breaks = NULL) +
   scale_fill_manual(
@@ -54,6 +55,7 @@ d.both_completed %>%
 ```
 
 ## Descriptive Statistics: {.tabset}
+
 ### New Variable Names
 ```{r descriptive-statistics-new-vars}
 d.both_completed %>%
@@ -63,13 +65,22 @@ d.both_completed %>%
 sprintf("Variance: %.2f", var(pull(d.both_completed, var_names_new_good.ratio)))
 ```
 
+### Copied Variable Names
+```{r descriptive-statistics-copied-vars}
+d.both_completed %>%
+  pull(var_names_copied_good.ratio) %>% 
+  summary()
+
+sprintf("Variance: %.2f", var(pull(d.both_completed, var_names_copied_good.ratio)))
+```
+
 ## Initial model
-Variable names are modeled using the binomial family, where the amount of trials is the total amount of new variables..
+Variable names are modeled using the binomial family, where the amount of trials is the total amount of new/copied variable names.
 
 We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
 
 ### Selecting Priors {.tabset}
-We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. The prior "lkj(2)" will mean the model is sceptical of strong correlations.
+We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. The prior "lkj(2)" will mean the model is skeptical of strong correlations.
 
 #### Base model with priors
 ```{r initial-model-definition, class.source = 'fold-show'}
@@ -87,11 +98,13 @@ variable_names.with <- extendable_model(
 )
 
 ```
+
 #### Default priors
 
 ```{r default-priors}
 prior_summary(variable_names.with(only_priors= TRUE))
 ```
+
 #### Selected priors
 
 ```{r selected-priors}
@@ -105,20 +118,19 @@ pp_check(variable_names.with(sample_prior = "only"), nsamples = 200)
 ```
 
 #### Beta Parameter Influence
-Är detta verkligen rimligt öht?
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
 sim.intercept <- rnorm(sim.size, 2, 1)
 sim.beta <- rnorm(sim.size, 0, 1)
-sim.beta.diff <- exp(sim.intercept + sim.beta) - exp(sim.intercept)
+sim.beta.diff <- (plogis(sim.intercept + sim.beta) / plogis(sim.intercept) * 100) - 100
 
 data.frame(x = sim.beta.diff) %>%
   ggplot(aes(x)) +
   geom_density() +
-  xlim(-25, 25) +
+  xlim(-80, 80) +
   labs(
     title = "Beta parameter prior influence",
-    x = "Good var names",
+    x = "Estimate with beta as % of estimate without beta",
     y = "Density"
   )
 
@@ -128,11 +140,13 @@ data.frame(x = sim.beta.diff) %>%
 ### Model fit  {.tabset}
 We check the posterior distribution and can see that the model seems to have been able to fit the data well
 Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
+
 #### Posterior Predictive check
 
 ```{r base-pp-check}
 pp_check(variable_names.with(), nsamples = 200, type = "bars")
 ```
+
 #### Summary
 
 ```{r base-summary}
@@ -144,8 +158,6 @@ summary(variable_names.with())
 ```{r base-plot}
 plot(variable_names.with(), ask = FALSE)
 ```
-
-
 
 ## Model predictor extenstions {.tabset}
 
@@ -160,6 +172,7 @@ edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
 loo_result <- loo(
   # Benchmark model(s)
   variable_names.with(),
+  
   # New model(s)
   variable_names.with("work_domain"),
   variable_names.with("work_experience_programming.s"),
@@ -173,8 +186,6 @@ loo_result <- loo(
   variable_names.with("scenario"),
   variable_names.with("group")
 )
-
-
 ```
 
 #### Comparison
@@ -196,17 +207,20 @@ loo_result <- loo(
   # Benchmark model(s)
   variable_names.with(),
   variable_names.with("work_experience_programming.s"),
+  variable_names.with("education_field"),
   variable_names.with("work_experience_java.s"),
-  variable_names.with("workplace_peer_review"),
-  variable_names.with("workplace_td_tracking"),
-  variable_names.with("workplace_coding_standards"),
-  #New model(s)
-  variable_names.with(c("scenario","workplace_td_tracking")),
-  variable_names.with(c("scenario","workplace_peer_review")),
-  variable_names.with(c("scenario","work_experience_java.s"))
+  variable_names.with("workplace_pair_programming"),
+  
+  # New model(s)
+  variable_names.with(c("work_experience_programming.s", "education_field")),
+  variable_names.with(c("work_experience_programming.s", "work_experience_java.s")),
+  variable_names.with(c("work_experience_programming.s", "workplace_pair_programming")),
+  
+  variable_names.with(c("education_field", "work_experience_java.s")),
+  variable_names.with(c("education_field", "workplace_pair_programming")),
+  
+  variable_names.with(c("work_experience_java.s", "workplace_pair_programming"))
 )
-
-
 ```
 
 #### Comparison
@@ -223,21 +237,24 @@ loo_result[1]
 
 ### Three variables {.tabset}
 
-```{r model-extension-3, warning=FALSE, class.source = 'fold-show'}
-loo(
+```{r model-extension-3, warning=FALSE, class.source= 'fold-show'}
+loo_result <- loo(
   # Benchmark model(s)
   variable_names.with(),
+  
   variable_names.with("work_experience_programming.s"),
+  variable_names.with("education_field"),
   variable_names.with("work_experience_java.s"),
-  variable_names.with("workplace_peer_review"),
-  variable_names.with("workplace_td_tracking"),
-  variable_names.with("workplace_coding_standards"),
-  variable_names.with(c("scenario","workplace_td_tracking")),
-  variable_names.with(c("scenario","workplace_peer_review")),
+  variable_names.with("workplace_pair_programming"),
+  
+  variable_names.with(c("work_experience_programming.s", "education_field")),
+  variable_names.with(c("education_field", "work_experience_java.s")),
+  variable_names.with(c("education_field", "workplace_pair_programming")),
+  
   # New model(s)
-  variable_names.with(c("scenario","work_experience_java.s")),
-  variable_names.with(c("scenario","work_experience_java.s","workplace_td_tracking","workplace_peer_review")),
-  variable_names.with(c("scenario","work_experience_java.s","workplace_td_tracking"))
+  variable_names.with(c("education_field", "work_experience_programming.s", "work_experience_java.s")),
+  variable_names.with(c("education_field", "work_experience_programming.s", "workplace_pair_programming")),
+  variable_names.with(c("education_field", "work_experience_java.s", "workplace_pair_programming"))
 )
 
 
@@ -280,6 +297,7 @@ variable_names0 <- brm(
 )
 
 ```
+
 #### Summary
 
 ```{r variable_names0-sum}
@@ -309,7 +327,7 @@ We select the best performing model with one variable.
   
 ```{r variable_names1, class.source = 'fold-show'}
 variable_names1 <- brm(
-  "var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + scenario + (1 | session)",
+  "var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + work_experience_programming.s + (1 | session)",
   prior = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(2, 1), class = "Intercept"),
@@ -324,6 +342,7 @@ variable_names1 <- brm(
 )
 
 ```
+
 #### Summary
 
 ```{r variable_names1-sum}
@@ -349,11 +368,11 @@ pp_check(variable_names1, nsamples = 200, type = "bars")
 ```
 
 ### variable_names2  {.tabset}
-We select the best performing model with one variable.
+We select the second best performing model with one variable.
   
 ```{r variable_names2, class.source = 'fold-show'}
 variable_names2 <- brm(
-  "var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + scenario + work_experience_java.s + (1 | session)",
+  "var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + education_field + (1 | session)",
   prior = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(2, 1), class = "Intercept"),
@@ -393,11 +412,11 @@ pp_check(variable_names2, nsamples = 200, type = "bars")
 ```
 
 ### variable_names3  {.tabset}
-We select the best performing model with one variable.
+We select the best performing model with three variable.
   
 ```{r variable_names3, class.source = 'fold-show'}
 variable_names3 <- brm(
-  "var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + scenario + work_experience_java.s + (1 | session)",
+  "var_names_new_good | trials(var_names_new_all) ~ 1 + high_debt_version + work_experience_programming.s + education_field + workplace_pair_programming + (1 | session)",
   prior = c(
     prior(normal(0, 1), class = "b"),
     prior(normal(2, 1), class = "Intercept"),
@@ -410,8 +429,8 @@ variable_names3 <- brm(
   file_refit = "on_change",
   seed = 20210421
 )
-
 ```
+
 #### Summary
 
 ```{r variable_names3-sum}
@@ -433,7 +452,7 @@ plot(variable_names3, ask = FALSE)
 #### Posterior predictive check
 
 ```{r variable_names3-pp}
-pp_check(variable_names2, nsamples = 200, type = "bars")
+pp_check(variable_names3, nsamples = 200, type = "bars")
 ```
 
 
@@ -559,9 +578,17 @@ To begin interpreting the model we look at how it's parameters were estimated. A
 
 ### $\beta$ parameters
 ```{r interpret-beta-plot, warning=FALSE, message=FALSE}
-mcmc_areas(variable_names0.all.exp, pars = c("b_high_debt_versionfalse", "b_work_experience_programming.s"), prob = 0.95) + scale_y_discrete() +
+mcmc_areas(
+  variable_names0.all.exp, 
+  pars = c("b_high_debt_versionfalse", "b_work_experience_programming.s"), 
+  prob = 0.95
+) + 
+  scale_y_discrete() +
   scale_y_discrete(labels=c("High debt version: false", "Professional programming experience")) +
-  ggtitle("Beta parameters densities in time model", subtitle = "Shaded region marks 95% of the density. Line marks the median")
+  ggtitle(
+    "Beta parameters densities in time model", 
+    subtitle = "Shaded region marks 95% of the density. Line marks the median"
+  )
 ```
 
 ### Effects sizes
@@ -677,4 +704,3 @@ ggplot(post, aes(x=estimate, fill = high_debt_version)) +
   scale_y_continuous(limits = NULL, breaks = c(500,1000,1500,2000,2500), labels = c("10%","20%","30%","40%","50%")) + theme(legend.position = "hidden")
 
 ```
-We can also plot the difference between good variable names for the high debt version and the low debt version. 

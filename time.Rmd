@@ -1,7 +1,7 @@
 ---
 title: "Time Outcome"
 author: Hampus Broman & William Levén
-date: 2021-04
+date: 2021-05
 output: 
   html_document: 
     pandoc_args: [ "-o", "html/time.html" ]
@@ -192,7 +192,7 @@ loo_result <- loo(
   # New model(s)
   time.with(c("scenario", "education_field")),
   time.with(c("scenario", "mo(education_level)"), edlvl_prior),
-  time.with(c("education_field", "mo(education_level)"), edlvl_prior),
+  time.with(c("education_field", "mo(education_level)"), edlvl_prior)
 )
 ```
 
