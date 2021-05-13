@@ -566,7 +566,7 @@ post <- posterior_predict(sonarqube_issues0.all.exp, newdata = post_settings) %>
   mutate(estimate = estimate)
 
 ggplot(post %>% filter(work_experience_programming == 10), aes(x=estimate, fill = high_debt_version)) +
-  geom_bar(alpha = 0.5 , position = "dodge2") +
+  geom_boxplot(alpha = 0.5 , position = "dodge2") +
   scale_fill_manual(
     name = "Debt version",
     labels = c("Low debt", "High debt"),
@@ -575,11 +575,10 @@ ggplot(post %>% filter(work_experience_programming == 10), aes(x=estimate, fill 
   facet_grid(rows = vars(work_experience_programming)) +
   labs(
     title = "SonarQube issues generated",
-    x = "Rate",
-    y = "Incidence rate"
+    y = "Debt level",
+    x = "Issues generated"
   ) + 
-  xlim(-1, 10) + 
-  scale_y_continuous(limits = NULL, breaks = c(500,1000,1500,2000,2500), labels = c("10%","20%","30%","40%","50%"))
+  scale_x_continuous(limits = c(-1,7), breaks = c(0,1,2,3,4,5,6,7), labels = c("0","1","2","3","4","5","6","7"))
 
 ```
 
@@ -588,20 +587,23 @@ We can also plot the difference between good variable names for the high debt ve
 
 ```{r effect-size-2}
 ggplot(post, aes(x=estimate, fill = high_debt_version)) +
-  geom_bar(alpha = 0.5 , position = "dodge2") +
+  geom_bar(position = "dodge2") +
   scale_fill_manual(
     name = "Debt version",
     labels = c("Low debt", "High debt"),
-    values = c("lightblue", "darkblue")
+      values = c("#80aaff", "darkblue")
   ) +
   facet_grid(rows = vars(work_experience_programming)) +
   labs(
     title = "SonarQube issues generated",
-    x = "Rate",
+    subtitle = "estimated for five different experience levels",
+    x = "Issued generated",
     y = "Incidence rate"
   ) + 
   xlim(-1, 10) + 
-  scale_y_continuous(limits = NULL, breaks = c(500,1000,1500,2000,2500), labels = c("10%","20%","30%","40%","50%"))
+  scale_x_continuous(limits = c(-1,7), breaks = c(0,1,2,3,4,5,6,7), labels = c("0","1","2","3","4","5","6","7")) +
+  scale_y_continuous(limits = NULL, breaks = c(500,1500,2500), labels = c("10%","30%","50%")) + 
+  theme(legend.position = "top")
 ```
 
 ```{r effect-size-diff, warning=FALSE, message=FALSE}
@@ -609,7 +611,7 @@ post.diff <- post %>% filter(high_debt_version == "true")
 post.diff$estimate = post.diff$estimate -  filter(post, high_debt_version == "false")$estimate
 
 ggplot(post.diff, aes(x=estimate)) +
-  geom_bar(quantile_lines = TRUE, quantile_fun = hdi, vline_linetype = 2) +
+  geom_boxplot(quantile_lines = TRUE, quantile_fun = hdi, vline_linetype = 2) +
   xlim(-10, 10) +
   facet_grid(rows = vars(work_experience_programming)) +
   labs(
