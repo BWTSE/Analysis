@@ -54,16 +54,15 @@ d.completed %>%
 ## Initial model
 For a boolean outcome, bernoulli is the most suitable family.
 
-We include `high_debt_verison` as well as a varying intercept for each individual in our initial model. 
-
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
+
 Since they may correlate, constructor and logic reuse are both included in a single multivariate model.
 
 ### Selecting Priors {.tabset}
 
 We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. 
-The prior `lkj(2)` will mean the model is sceptical of strong correlations.
+The prior `lkj(2)` will mean the model is skeptical of strong correlations.
 
 #### Base model with priors
 
@@ -111,6 +110,26 @@ pp_check(reuse.with(sample_prior = "only"), type = "bars", nsamples = 200, resp 
 
 ```{r priors-check-validation, warning=FALSE, message=FALSE}
 pp_check(reuse.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
+```
+
+#### Beta Parameter Influence
+
+```{r priors-beta, warning=FALSE}
+sim.size <- 1000
+sim.intercept <- rnorm(sim.size, 0, 1)
+sim.beta <- rnorm(sim.size, 0, 1)
+sim.beta.diff <- (plogis(sim.intercept + sim.beta) / plogis(sim.intercept) * 100) - 100
+
+data.frame(x = sim.beta.diff) %>%
+  ggplot(aes(x)) +
+  geom_density() +
+  xlim(-150, 150) +
+  labs(
+    title = "Beta parameter prior influence",
+    x = "Estimate with beta as % of estimate without beta",
+    y = "Density"
+  )
+
 ```
 
 ### Model fit {.tabset}
@@ -497,7 +516,7 @@ As including all data points didn't harm the model we will create this variant w
 
 This variation includes `work_experience_programming.s` predictors as it can give further insight into how experience play a factor in the effect we try to measure. This is especially important as our sampling shewed towards containing less experienced developer than the population at large.
 
-```{r variation.all.exp, class.source = 'fold-show'}
+```{r variation.all.exp, class.source = 'fold-show', message=FALSE, warning=FALSE}
 reuse0.all.exp <- brm(
   "mvbind(
     reused_logic_validation,
@@ -560,8 +579,6 @@ pp_check(reuse0.all.exp, type = "bars", nsamples = 200, resp = "reusedlogicconst
 pp_check(reuse0.all.exp, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
 ```
 
-`
-
 ### Final model
 * Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
 * Adding the experience predictors did not significantly damage the model and will be used as it provides useful insight.
@@ -574,6 +591,7 @@ To begin interpreting the model we look at how it's parameters were estimated. A
 ### $\beta$ parameters
 
 #### Constructor reuse
+
 ```{r interpret-beta-plot-constructor, warning=FALSE, message=FALSE}
 mcmc_areas(reuse0.all.exp, pars = c("b_reusedlogicconstructor_high_debt_versionfalse", "b_reusedlogicconstructor_work_experience_programming.s"), prob = 0.95) + scale_y_discrete() +
   scale_y_discrete(labels=c("High debt version: false", "Professional programming experience")) +
@@ -632,7 +650,7 @@ post %>%
   ggplot(aes(high_debt_version)) +
   geom_bar(aes(fill = estimate), position = "fill") + 
   facet_grid(rows = vars(work_experience_programming)) +
-  scale_fill_manual("Legend", values = c("lightblue", "darkblue"), labels = c("Reused", "Duplicated")) +
+  scale_fill_manual("Legend", values = c("lightblue", "darkblue")) +
   labs(title = "Reuse / programming experience") +
   xlab("Debt version") +
   ylab("Ratio of reuse")

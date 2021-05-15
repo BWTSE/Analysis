@@ -1,24 +1,27 @@
 ---
-title: "Scenario Quality Model"
-output:
-  html_notebook: 
-    toc: yes
-    theme: united
-    fig_width: 10
-    code_folding: show
+title: "Scenario quality"
 author: Hampus Broman & William Levén
-date: 2021-04
-editor_options: 
-  chunk_output_type: inline
+date: 2021-05
+output: 
+  html_document: 
+    pandoc_args: [ "-o", "html/scenario_quality.html" ]
 ---
 
-## Looking at the data
+```{r include-setup, include=FALSE}
+# Load setup file
+source(knitr::purl('setup.Rmd', output = tempfile()))
+```
 
-We plot the data and can see that there is no obvious large difference between the debt versions.
+
+## Looking at the data  {.tabset}
+
+We plot the data and can see that there is no obvious large difference between the debt levels or scenarios.
+
+### Per debt level
 
 ```{r}
 data.frame(
-  High_Debt_Version = d.both_completed %>%
+  High_debt_version = d.both_completed %>%
     filter(high_debt_version == "true") %>%
     pull(quality_pre_task) %>%
     revalue(c(
@@ -30,7 +33,7 @@ data.frame(
       "2"="Good",
       "3"="Very Good"
     )),
-  Low_Debt_Version = d.both_completed %>%
+  Low_debt_version = d.both_completed %>%
     filter(high_debt_version == "false") %>%
     pull(quality_pre_task) %>%
     revalue(c(
@@ -49,6 +52,8 @@ data.frame(
     facet = TRUE,
   )
 ```
+
+### Per scenario
 
 ```{r}
 data.frame(
@@ -85,18 +90,27 @@ data.frame(
 ```
 
 ## Initial model
+As the data is collected from a likert scale we will use a cumulative family.
 
-As the variance is much greater than the mean we will use a negative binomial family that allows us to model the variance separately.
+We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
+We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
 
-We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
 
-```{r}
-scenario_quality0.with <- extendable_model(
-  base_name = "scenario_quality0",
+
+### Selecting Priors {.tabset}
+
+We iterate over the model until we have sane priors.
+
+
+#### Base model with priors
+
+```{r initial-model-definition, class.source = 'fold-show'}
+scenario_quality.with <- extendable_model(
+  base_name = "scenario_quality",
   base_formula = "quality_pre_task ~ 1 + high_debt_version + (1 | session)",
   base_priors = c(
     prior(normal(0, 1), class = "b"),
-    prior(normal(0, 2.5), class = "Intercept"),
+    prior(normal(0, 2), class = "Intercept"),
     prior(exponential(1), class = "sd")
   ),
   family = cumulative(),
@@ -104,241 +118,505 @@ scenario_quality0.with <- extendable_model(
 )
 ```
 
+#### Default priors
 
-### Selecting Priors
-
-We iterate over the model until we have sane priors
-
-```{r}
-
-# Default priors:
-prior_summary(scenario_quality0.with(only_priors= TRUE))
-
-# Our priors:
-prior_summary(scenario_quality0.with(sample_prior = "only"))
-
-# Prior predictive check
-pp_check(scenario_quality0.with(sample_prior = "only"), nsamples = 200, type = "bars")
+```{r default-priors}
+prior_summary(scenario_quality.with(only_priors= TRUE))
 ```
 
-### Model fit
+#### Selected priors
 
-We check the posterior distribution and can see that the model seems to have been able to fit the data well
-
-```{r}
-# Posterior predictive check
-pp_check(scenario_quality0.with(), nsamples = 100, type = "bars")
-
-summary(scenario_quality0.with())
+```{r selected-priors, warning=FALSE}
+prior_summary(scenario_quality.with(sample_prior = "only"))
 ```
 
-## Model extenstions
+#### Prior Predictive Check
 
-We use loo to check some possible extensions on the model.
-
-```{r}
-
-edlvl_prior <- c(
-  prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
-)
-
-loo(
-  scenario_quality0.with(),
-  scenario_quality0.with("work_domain"),
-  scenario_quality0.with("work_experience_programming.s"),
-  scenario_quality0.with("work_experience_java.s"),
-  scenario_quality0.with("education_field"),
-  scenario_quality0.with("mo(education_level)", edlvl_prior),
-  scenario_quality0.with("workplace_peer_review"),
-  scenario_quality0.with("workplace_td_tracking"),
-  scenario_quality0.with("workplace_pair_programming"),
-  scenario_quality0.with("workplace_coding_standards"),
-  scenario_quality0.with("scenario"),
-  scenario_quality0.with("group"),
-  scenario_quality0.with("order")
-)
+```{r priors-check, warning=FALSE}
+pp_check(scenario_quality.with(sample_prior = "only"), nsamples = 200, type = "bars")
 ```
 
-We pick out some interesting variables and try combining them
+#### Beta Parameter Influence
 
-```{r}
+```{r priors-beta, warning=FALSE}
+sim.size <- 1000
+sim.intercept <- rnorm(sim.size, 0, 2)
+sim.beta <- rnorm(sim.size, 0, 1)
+sim.beta.diff <- (plogis(sim.intercept + sim.beta) / plogis(sim.intercept) * 100) - 100
 
-loo(
-  scenario_quality0.with(),
-  scenario_quality0.with("work_experience_programming.s"),
-  scenario_quality0.with("work_experience_java.s"),
-  scenario_quality0.with("workplace_peer_review"),
-  scenario_quality0.with("workplace_coding_standards"),
-  scenario_quality0.with("order"),
-  
-  
-  scenario_quality0.with(c("work_experience_programming.s", "work_experience_java.s")),
-  scenario_quality0.with(c("work_experience_programming.s", "workplace_peer_review")),
-  scenario_quality0.with(c("work_experience_programming.s", "workplace_coding_standards")),
-  scenario_quality0.with(c("work_experience_programming.s", "order")),
-  
-  
-  scenario_quality0.with(c("work_experience_java.s", "workplace_peer_review")),
-  scenario_quality0.with(c("work_experience_java.s", "workplace_coding_standards")),
-  scenario_quality0.with(c("work_experience_java.s", "order")),
-  
-  
-  scenario_quality0.with(c("workplace_peer_review", "workplace_coding_standards")),
-  scenario_quality0.with(c("workplace_peer_review", "order")),
-  
-  
-  scenario_quality0.with(c("workplace_coding_standards", "order"))
-)
+data.frame(x = sim.beta.diff) %>%
+  ggplot(aes(x)) +
+  geom_density() +
+  xlim(-150, 150) +
+  labs(
+    title = "Beta parameter prior influence",
+    x = "Estimate with beta as % of estimate without beta",
+    y = "Density"
+  )
+
 ```
 
-```{r}
+### Model fit {.tabset}
 
-loo(
-  scenario_quality0.with(),
-  scenario_quality0.with("work_experience_programming.s"),
-  scenario_quality0.with("work_experience_java.s"),
-  scenario_quality0.with("workplace_peer_review"),
-  scenario_quality0.with("workplace_coding_standards"),
-  scenario_quality0.with("order"),
+We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
+Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
+
+#### Posterior Predictive check
+
+```{r base-pp-check}
+pp_check(scenario_quality.with(), nsamples = 200, type = "bars")
+```
+
+#### Summary
+
+```{r base-summary}
+summary(scenario_quality.with())
+```
+
+#### Sampling plots
+
+```{r base-plot}
+plot(scenario_quality.with(), ask = FALSE)
+```
+
+## Model predictor extenstions {.tabset}
+
+```{r mo-priors}
+# default prior for monotonic predictor
+edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+```
+
+We use `loo` to check some possible extensions on the model.
+
+### One variable {.tabset}
+
+```{r model-extension-1, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  scenario_quality.with(),
   
-  
-  scenario_quality0.with(c("work_experience_programming.s", "order")),
-  scenario_quality0.with(c("work_experience_java.s", "order")),
-  scenario_quality0.with(c("workplace_peer_review", "order")),
-  scenario_quality0.with(c("workplace_coding_standards", "order")),
-  
-  
-  scenario_quality0.with(c("work_experience_java.s", "work_experience_programming.s", "order")),
-  scenario_quality0.with(c("workplace_peer_review", "work_experience_programming.s", "order")),
-  scenario_quality0.with(c("workplace_coding_standards", "work_experience_programming.s", "order")),
-  
-  scenario_quality0.with(c("workplace_peer_review", "work_experience_java.s", "order")),
-  scenario_quality0.with(c("workplace_coding_standards", "work_experience_java.s", "order")),
-  
-  scenario_quality0.with(c("workplace_coding_standards", "workplace_peer_review", "order"))
+  # New model(s)
+  scenario_quality.with("work_domain"),
+  scenario_quality.with("work_experience_programming.s"),
+  scenario_quality.with("work_experience_java.s"),
+  scenario_quality.with("education_field"),
+  scenario_quality.with("mo(education_level)", edlvl_prior),
+  scenario_quality.with("workplace_peer_review"),
+  scenario_quality.with("workplace_td_tracking"),
+  scenario_quality.with("workplace_pair_programming"),
+  scenario_quality.with("workplace_coding_standards"),
+  scenario_quality.with("scenario"),
+  scenario_quality.with("group")
 )
 ```
 
-## Candidate models
+#### Comparison
 
-We inspect some of our top performing models.
-
-All models seems to have sampled nicely (rhat is ca 1 and fluffy plots) they also have about the same fit to the data end similar estimated for the high_debt_version beta parameter
-
-```{r}
-scenario_quality0 <- scenario_quality0.with()
-summary(scenario_quality0)
-ranef(scenario_quality0)
-plot(scenario_quality0, ask = FALSE)
-
-pp_check(scenario_quality0, nsamples = 150, type= "bars")
-
+```{r model-extension-1-sum, warning=FALSE}
+loo_result[2]
 ```
 
-```{r}
-scenario_quality1 <- scenario_quality0.with("order")
-summary(scenario_quality1)
-ranef(scenario_quality1)
-plot(scenario_quality1, ask = FALSE)
+#### Diagnostics
 
-pp_check(scenario_quality1, nsamples = 150, type= "bars")
-
+```{r model-extension-1-dig, warning=FALSE}
+loo_result[1]
 ```
 
-```{r}
-scenario_quality2 <- scenario_quality0.with(c("order", "workplace_coding_standards"))
-summary(scenario_quality2)
-ranef(scenario_quality2)
-plot(scenario_quality2, ask = FALSE)
+### Two variables {.tabset}
 
-pp_check(scenario_quality2, nsamples = 150, type= "bars")
-
+```{r model-extension-2, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  scenario_quality.with(),
+  scenario_quality.with("work_experience_programming.s"),
+  scenario_quality.with("workplace_coding_standards"),
+  scenario_quality.with("workplace_peer_review"),
+  scenario_quality.with("work_experience_java.s"),
+  
+  # New model(s)
+  scenario_quality.with(c("work_experience_programming.s", "workplace_coding_standards")),
+  scenario_quality.with(c("work_experience_programming.s", "workplace_peer_review")),
+  scenario_quality.with(c("work_experience_programming.s", "work_experience_java.s")),
+  
+  scenario_quality.with(c("workplace_coding_standards", "workplace_peer_review")),
+  scenario_quality.with(c("workplace_coding_standards", "work_experience_java.s")),
+  
+  scenario_quality.with(c("workplace_peer_review", "work_experience_java.s"))
+)
 ```
 
-```{r}
-scenario_quality3 <- scenario_quality0.with(c("order", "workplace_coding_standards", "work_experience_programming.s"))
-summary(scenario_quality3)
-ranef(scenario_quality3)
-plot(scenario_quality3, ask = FALSE)
+#### Comparison
 
-pp_check(scenario_quality3, nsamples = 150, type= "bars")
-
+```{r model-extension-2-sum, warning=FALSE}
+loo_result[2]
 ```
 
-### Final model
+#### Diagnostics
 
-All models have sampled nicely and have similar estimated for the high debt version beat parameter. Loo does however late the simpler models significantly lower than the more complex models. `scenario_quality2` seems to bee the simpler model with a top score in loo and will therefore be selected as our final model.
+```{r model-extension-2-dig, warning=FALSE}
+loo_result[1]
+```
 
-### Trying to add covariance
+### Three variables {.tabset}
 
-```{r}
-scenario_quality2_with_c <- brm(
-  "quality_pre_task ~ 1 + high_debt_version + order + workplace_coding_standards  + (1 | c | session)",
+```{r model-extension-3, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  scenario_quality.with(),
+  
+  scenario_quality.with("work_experience_programming.s"),
+  scenario_quality.with("workplace_coding_standards"),
+  scenario_quality.with("workplace_peer_review"),
+  scenario_quality.with("work_experience_java.s"),
+  
+  scenario_quality.with(c("work_experience_programming.s", "workplace_coding_standards")),
+  scenario_quality.with(c("work_experience_programming.s", "workplace_peer_review")),
+  scenario_quality.with(c("workplace_coding_standards", "work_experience_java.s")),
+  
+  # New model(s)
+  scenario_quality.with(c("work_experience_programming.s", "workplace_coding_standards", "workplace_peer_review")),
+  scenario_quality.with(c("work_experience_programming.s", "workplace_coding_standards", "work_experience_java.s")),
+  scenario_quality.with(c("work_experience_programming.s", "work_experience_java.s", "workplace_peer_review")),
+  scenario_quality.with(c("workplace_coding_standards", "work_experience_java.s", "workplace_peer_review"))
+)
+```
+
+#### Comparison
+
+```{r model-extension-3-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-3-dig, warning=FALSE}
+loo_result[1]
+```
+
+## Candidate models  {.tabset}
+We pick some of our top performing models as candidates and inspect them closer.
+
+The candidate models are named and listed in order of complexity.
+
+### ScenarioQuality0  {.tabset}
+
+We select the simplest model as a baseline.
+
+```{r scenario_quality0, class.source = 'fold-show', warning=FALSE, message=FALSE}
+scenario_quality0 <- brm(
+  "quality_pre_task ~ 1 + high_debt_version + (1 | session)",
   prior = c(
     prior(normal(0, 1), class = "b"),
-    prior(normal(0, 2.5), class = "Intercept"),
+    prior(normal(0, 2), class = "Intercept"),
     prior(exponential(1), class = "sd")
   ),
   family = cumulative(),
   data = as.data.frame(d.both_completed),
-  file = "fits/scenario_quality2_with_c",
-  file_refit = "on_change"
-)
-
-summary(scenario_quality2_with_c)
-ranef(scenario_quality2_with_c)
-plot(scenario_quality2_with_c, ask = FALSE)
-
-pp_check(scenario_quality2_with_c, nsamples = 150, type= "bars")
-```
-
-```{r}
-loo(
-  scenario_quality2_with_c,
-  scenario_quality2
+  file = "fits/scenario_quality0",
+  file_refit = "on_change",
+  seed = 20210421
 )
 ```
 
-The covaraiance didn't seem to influence model much and we will therefore continue with the simpler model without it.
+#### Summary
 
-### Model with with incomplete data points
+```{r scenario_quality0-sum}
+summary(scenario_quality0)
+```
+
+#### Random effects
+
+```{r scenario_quality0-raneff}
+ranef(scenario_quality0)
+```
+
+#### Sampling plots
+
+```{r scenario_quality0-plot}
+plot(scenario_quality0, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r scenario_quality0-pp}
+pp_check(scenario_quality0, nsamples = 200, type = "bars")
+```
+
+### ScenarioQuality1  {.tabset}
+
+We select the best performing model with one variable.
+
+```{r scenario_quality1, class.source = 'fold-show', warning=FALSE, message=FALSE}
+scenario_quality1 <- brm(
+  "quality_pre_task ~ 1 + high_debt_version + work_experience_programming.s + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 2), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  family = cumulative(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/scenario_quality1",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r scenario_quality1-sum}
+summary(scenario_quality1)
+```
+
+#### Random effects
+
+```{r scenario_quality1-raneff}
+ranef(scenario_quality1)
+```
+
+#### Sampling plots
+
+```{r scenario_quality1-plot}
+plot(scenario_quality1, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r scenario_quality1-pp}
+pp_check(scenario_quality1, nsamples = 200, type = "bars")
+```
+
+### ScenarioQuality2  {.tabset}
+
+We select the best performing model with two variables.
+
+```{r scenario_quality2, class.source = 'fold-show', warning=FALSE, message=FALSE}
+scenario_quality2 <- brm(
+  "quality_pre_task ~ 1 + high_debt_version + work_experience_programming.s + workplace_coding_standards + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 2), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  family = cumulative(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/scenario_quality2",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r scenario_quality2-sum}
+summary(scenario_quality2)
+```
+
+#### Random effects
+
+```{r scenario_quality2-raneff}
+ranef(scenario_quality2)
+```
+
+#### Sampling plots
+
+```{r scenario_quality2-plot}
+plot(scenario_quality2, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r scenario_quality2-pp}
+pp_check(scenario_quality2, nsamples = 200, type = "bars")
+```
+
+### ScenarioQuality3  {.tabset}
+
+We select the best performing model with three variables.
+
+```{r scenario_quality3, class.source = 'fold-show', warning=FALSE, message=FALSE}
+scenario_quality3 <- brm(
+  "quality_pre_task ~ 1 + high_debt_version + work_experience_programming.s + workplace_coding_standards + work_experience_java.s + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 2), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  family = cumulative(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/scenario_quality3",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r scenario_quality3-sum}
+summary(scenario_quality3)
+```
+
+#### Random effects
+
+```{r scenario_quality3-raneff}
+ranef(scenario_quality3)
+```
+
+#### Sampling plots
+
+```{r scenario_quality3-plot}
+plot(scenario_quality3, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r scenario_quality3-pp}
+pp_check(scenario_quality3, nsamples = 200, type = "bars")
+```
+
+## Final Model 
+All candidate models look nice, none is significantly better than the others, we will proceed the model containing work experince as it otherwise ourd be added in the next step: `scenario_quality1`
+
+
+### All data points {.tabset}
 
 Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
 
-```{r}
-scenario_quality2.all <- brm(
-  "quality_pre_task ~ 1 + high_debt_version + order + workplace_coding_standards  + (1 | session)",
+```{r variation.all, class.source = 'fold-show'}
+scenario_quality1.all <- brm(
+  "quality_pre_task ~ 1 + high_debt_version + work_experience_programming.s + (1 | session)",
   prior = c(
     prior(normal(0, 1), class = "b"),
-    prior(normal(0, 2.5), class = "Intercept"),
+    prior(normal(0, 2), class = "Intercept"),
     prior(exponential(1), class = "sd")
   ),
   family = cumulative(),
   data = as.data.frame(d.completed),
-  file = "fits/scenario_quality2.all",
-  file_refit = "on_change"
+  file = "fits/scenario_quality1.all",
+  file_refit = "on_change",
+  seed = 20210421
 )
-summary(scenario_quality2.all)
-ranef(scenario_quality2.all)
-plot(scenario_quality2.all, ask = FALSE)
-
-pp_check(scenario_quality2.all, nsamples = 150, type= "bars")
 ```
 
-Training the model on all data points reduces the uncertainty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
+#### Summary
 
-Extract posterior samples:
+```{r variation.all-sum}
+summary(scenario_quality1.all)
+```
 
-```{r}
+#### Random effects
 
-post <- posterior_predict(scenario_quality2.all, newdata = data.frame(
+```{r variation.all-raneff}
+ranef(scenario_quality1.all)
+```
+
+#### Sampling plots
+
+```{r variation.all-plot}
+plot(scenario_quality1.all, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r variation.all-pp}
+pp_check(scenario_quality1.all, nsamples = 200, type = "bars")
+```
+
+### Final model
+* Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
+
+This means that our final model, with all data points and experience predictors, is `scenario_quality1.all`
+
+## Interpreting the model
+To begin interpreting the model we look at how it's parameters were estimated. As our research is focused on how the outcome of the model is effected we will mainly analyze the $\beta$ parameters.
+
+### $\beta$ parameters
+```{r interpret-beta-plot, warning=FALSE, message=FALSE}
+mcmc_areas(scenario_quality1.all, pars = c("b_high_debt_versionfalse", "b_work_experience_programming.s"), prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c("High debt version: false", "Professional programming experience")) +
+  ggtitle("Beta parameters densities in scenario quality model", subtitle = "Shaded region marks 95% of the density. Line marks the median")
+```
+
+```{r effect-size-1, message=FALSE, warning=FALSE}
+scale_programming_experience <- function(x) {
+  (x - mean(d.completed$work_experience_programming))/ sd(d.completed$work_experience_programming)
+}
+unscale_programming_experience <- function(x) {
+  x * sd(d.completed$work_experience_programming) + mean(d.completed$work_experience_programming)
+}
+
+post_settings <- expand.grid(
   high_debt_version = c("false", "true"),
   session = NA,
-  order = NA,
-  workplace_coding_standards = NA
-))
-post.low <-  post[,1]
-post.high <- post[,2]
-summary(post)
+  work_experience_programming.s = sapply(c(0, 3, 10, 25, 40), scale_programming_experience)
+)
+
+post <- posterior_predict(scenario_quality1.all, newdata = post_settings) %>%
+  melt(value.name = "estimate", varnames = c("sample_number", "settings_id")) %>%
+  left_join(
+    rowid_to_column(post_settings, var= "settings_id"),
+    by = "settings_id"
+  ) %>%
+  mutate(work_experience_programming = unscale_programming_experience(work_experience_programming.s)) %>%
+  select(
+    estimate,
+    high_debt_version,
+    work_experience_programming
+  )%>%
+  mutate(estimate = estimate)
+
+data.frame(
+  High_debt_version_3_years = post.nice %>%
+    filter(high_debt_version == "true", work_experience_programming == 3) %>%
+    pull(estimate),
+  Low_debt_version_3_years = post.nice %>%
+    filter(high_debt_version == "false", work_experience_programming == 3) %>%
+    pull(estimate)
+) %>%
+  likert() %>%
+  plot(
+    type="density",
+    facet = TRUE,
+  )
+
+data.frame(
+  High_debt_version_25_years = post.nice %>%
+    filter(high_debt_version == "true", work_experience_programming == 25) %>%
+    pull(estimate),
+  Low_debt_version_25_years = post.nice %>%
+    filter(high_debt_version == "false", work_experience_programming == 25) %>%
+    pull(estimate)
+) %>%
+  likert() %>%
+  plot(
+    type="density",
+    facet = TRUE,
+  )
+
+
 
 ```
+```{r effect-size-diff, warning=FALSE, message=FALSE}
+post.diff <- post %>% filter(high_debt_version == "true")
+post.diff$estimate = post.diff$estimate -  filter(post, high_debt_version == "false")$estimate
+
+post.diff %>%
+  ggplot(aes(x=estimate)) +
+  geom_boxplot(quantile_lines = TRUE, quantile_fun = hdi, vline_linetype = 2) +
+  facet_grid(rows = vars(work_experience_programming)) +
+  labs(
+    title = "Scenario rating diff / years of programming experience",
+    subtitle = "Difference as: high debt rating - low debt rating",
+    x = "Rating difference"
+  ) +
+  scale_y_continuous(breaks = NULL)
+```
+
+
+```{r}
+print("cases with high debt rated lower:")
+length(pull(filter(post.diff, work_experience_programming == 10, estimate < 0), estimate)) / length(pull(filter(post.diff, work_experience_programming == 10), estimate))
+print("cases with low debt rated lower:")
+length(pull(filter(post.diff, work_experience_programming == 10, estimate > 0), estimate)) / length(pull(filter(post.diff, work_experience_programming == 10), estimate))
+```
+We see that the high debt version is ranked as worse in 63 % of cases while the low debt version is ranked as worse in the 21 % of cases.

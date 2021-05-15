@@ -1,223 +1,711 @@
 ---
-title: "Utility Methods Model"
-output:
-  html_notebook: 
-    toc: yes
-    theme: united
-    fig_width: 10
-    code_folding: show
+title: "Utility Methods Outcome"
 author: Hampus Broman & William Levén
-date: 2021-04
-editor_options: 
-  chunk_output_type: inline
+date: 2021-05
+output: 
+  html_document: 
+    pandoc_args: [ "-o", "html/utility_methods.html" ]
 ---
 
+
+```{r include-setup, include=FALSE}
+# Load setup file
+source(knitr::purl('setup.Rmd', output = tempfile()))
+```
+
 ## Looking at the data
-We plot the data and can see that there is no obvious large difference between the debt versions.
+We plot the data and can see that there is no obvious difference between the debt versions.
 
 ```{r}
 d.both_completed %>%
-  ggplot(aes(high_debt_version, fill = hashcode_state)) +
-  geom_bar(position = "fill") +
-  scale_y_reverse() +
-  scale_fill_manual("legend", values = c("Good" = "green", "Duplicated" = "yellow", "Not implemented" = "red"), guide = guide_legend(reverse = TRUE))
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
+  ggplot(aes(high_debt_version)) +
+  geom_bar(aes(fill = hashcode.exists), position = position_fill(reverse = TRUE)) + 
+  scale_fill_manual("Legend", values = c("darkblue", "lightblue"), labels = c("Implemented", "Not implemented"),  guide = guide_legend(reverse = TRUE)) +
+  labs(title = "Hashcode Implementation") +
+  xlab("Debt version") +
+  ylab("Ratio of implementation")
 ```
-
-```{r}
-d.both_completed %>%
-  ggplot(aes(high_debt_version, fill = equals_state)) +
-  geom_bar(position = "fill") +
-  scale_y_reverse() +
-  scale_fill_manual("legend", values = c("Good" = "green", "Duplicated" = "yellow", "Not implemented" = "red"), guide = guide_legend(reverse = TRUE))
-```
-
 
 ## Initial model
-The type of the outcome is ordered categorical and is modeled as a cumulative family.
+For a boolean outcome, bernoulli is the most suitable family.
 
-We include `high_debt_verison` as well as a varying intercept for each individual in our initial model. Since they may correlate, hashcode and equals state are both included in a single multivariate model.
+We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
+We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
 
-```{r}
+Since they may correlate, hashcode inclusion and equals inclusion are both included in a single multivariate model.
 
-utility0.with <- extendable_model(
-  base_name = "utility0",
-  base_formula = "mvbind(hashcode_state, equals_state) ~ 1 + high_debt_version + (1 | c | session)",
+
+
+### Selecting Priors {.tabset}
+
+We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. 
+
+The prior `lkj(2)` will mean the model is skeptical of strong correlations.
+
+#### Base model with priors
+
+```{r initial-model-definition, class.source = 'fold-show'}
+utility.with <- extendable_model(
+  base_name = "utility",
+  base_formula = "mvbind(hashcode.exists, equals.exists) ~ 1 + high_debt_version + (1 | c | session)",
   base_priors = c(
-    prior(normal(0, 1), class = "b", resp = "equalsstate"),
-    prior(normal(0, 1), class = "b", resp = "hashcodestate"),
-    prior(normal(0.3, 1), class = "Intercept", resp = "equalsstate"),
-    prior(normal(0.3, 1), class = "Intercept", resp = "hashcodestate"),
-    prior(exponential(1), class = "sd", resp = "equalsstate"),
-    prior(exponential(1), class = "sd", resp = "hashcodestate"),
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = "equalsexists"),
+    prior(exponential(1), class = "sd", resp = "hashcodeexists"),
     prior(lkj(2), class = "L")
   ),
-  family = sratio(),
+  family = bernoulli(),
   data = d.both_completed,
 )
 ```
 
-### Selecting Priors
-We iterate over the model until we have sane priors
+#### Default priors
 
-```{r}
-
-# Default priors:
-prior_summary(utility0.with(only_priors= TRUE))
-
-# Our priors:
-prior_summary(utility0.with(sample_prior = "only"))
-
-# Prior predictive check
-pp_check(utility0.with(sample_prior = "only"), nsamples = 200, type = "bars", resp = "equalsstate")
+```{r default-priors}
+prior_summary(utility.with(only_priors= TRUE))
 ```
 
-### Model fit
-We check the posterior distribution and can see that the model seems to have been able to fit the data well
-```{r}
-# Posterior predictive check
-pp_check(utility0.with(), nsamples = 100, type = "bars", resp = "equalsstate")
-pp_check(utility0.with(), nsamples = 100, type = "bars", resp = "hashcodestate")
+#### Selected priors
 
-summary(utility0.with())
+```{r selected-priors, warning=FALSE}
+prior_summary(utility.with(sample_prior = "only"))
 ```
-## Model extenstions
 
-We use loo to check some possible extensions on the model.
+#### Prior Predictive Check
 
-```{r}
+##### Equals implemented
 
+```{r priors-check-constructor, warning=FALSE, message=FALSE}
+pp_check(utility.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "equalsexists")
+```
+
+##### Hashcode implemented
+
+```{r priors-check-validation, warning=FALSE, message=FALSE}
+pp_check(utility.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "hashcodeexists")
+```
+
+#### Beta Parameter Influence
+
+```{r priors-beta, warning=FALSE}
+sim.size <- 1000
+sim.intercept <- rnorm(sim.size, 0, 0.5)
+sim.beta <- rnorm(sim.size, 0, 1)
+sim.beta.diff <- (plogis(sim.intercept + sim.beta) / plogis(sim.intercept) * 100) - 100
+
+data.frame(x = sim.beta.diff) %>%
+  ggplot(aes(x)) +
+  geom_density() +
+  xlim(-150, 150) +
+  labs(
+    title = "Beta parameter prior influence",
+    x = "Estimate with beta as % of estimate without beta",
+    y = "Density"
+  )
+
+```
+
+### Model fit {.tabset}
+
+We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
+Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
+
+#### Posterior Predictive check
+
+##### Equals implemented
+```{r base-pp-check-equals, warning=FALSE, message=FALSE}
+pp_check(utility.with(), type = "bars", nsamples = 200, resp = "equalsexists")
+```
+
+##### Hashcode implemented
+
+```{r base-pp-check-hashcode, warning=FALSE, message=FALSE}
+pp_check(utility.with(), type = "bars", nsamples = 200, resp = "hashcodeexists")
+```
+
+#### Summary
+
+```{r base-summary, warning=FALSE,}
+summary(utility.with())
+```
+
+#### Sampling plots
+
+```{r base-plot, warning=FALSE, message=FALSE}
+plot(utility.with(), ask = FALSE)
+```
+
+
+
+## Model predictor extenstions {.tabset}
+
+```{r mo-priors}
+# default prior for monotonic predictor
 edlvl_prior <- c(
-  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "equalsstate"),
-  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "hashcodestate")
-)
-
-loo(
-  utility0.with(),
-  utility0.with("work_domain"),
-  utility0.with("work_experience_programming.s"),
-  utility0.with("work_experience_java.s"),
-  utility0.with("education_field"),
-  utility0.with("mo(education_level)", edlvl_prior),
-  utility0.with("workplace_peer_review"),
-  utility0.with("workplace_td_tracking"),
-  utility0.with("workplace_pair_programming"),
-  utility0.with("workplace_coding_standards"),
-  utility0.with("scenario"),
-  utility0.with("group"),
-  utility0.with("order")
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "equalsexists"),
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", resp = "hashcodeexists")
 )
 ```
 
-We pick out some mildly interesting variables and try combining them
+We use `loo` to check some possible extensions on the model.
 
-```{r}
-loo(
-  utility0.with(),
-  utility0.with("workplace_pair_programming"),
-  utility0.with("scenario"),
-  utility0.with("workplace_td_tracking"),
+### One variable {.tabset}
+
+```{r model-extension-1, message=FALSE, warning=FALSE, class.source =  'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  utility.with(),
   
-  
-  utility0.with(c("workplace_pair_programming", "scenario")),
-  utility0.with(c("workplace_pair_programming", "workplace_td_tracking")),
-  utility0.with(c("scenario", "workplace_td_tracking")),
-  utility0.with(c("workplace_pair_programming", "scenario", "workplace_td_tracking"))
+  # New model(s)
+  utility.with("work_domain"),
+  utility.with("work_experience_programming.s"),
+  utility.with("work_experience_java.s"),
+  utility.with("education_field"),
+  utility.with("mo(education_level)", edlvl_prior),
+  utility.with("workplace_peer_review"),
+  utility.with("workplace_td_tracking"),
+  utility.with("workplace_pair_programming"),
+  utility.with("workplace_coding_standards"),
+  utility.with("scenario"),
+  utility.with("group")
 )
 ```
 
+#### Comparison
 
-## Candidate models
-We inspect some of our top performing models. 
+```{r model-extension-1-sum, warning=FALSE}
+loo_result[2]
+```
 
-All models seems to have sampled nicely (rhat is ca 1 and fluffy plots) they also have about the same fit to the data and similar estimates for the high_debt_version beta parameters
+#### Diagnostics
 
+```{r model-extension-1-dig, warning=FALSE}
+loo_result[1]
+```
 
+### Two variables {.tabset}
 
-```{r}
-utility0 <- utility0.with()
+```{r model-extension-2, message=FALSE, warning=FALSE, class.source =  'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  utility.with(),
+  utility.with("scenario"),
+  utility.with("workplace_td_tracking"),
+  utility.with("workplace_pair_programming"),
+  utility.with("work_experience_java.s"),
+  
+  # New model(s)
+  utility.with(c("scenario", "workplace_td_tracking")),
+  utility.with(c("scenario", "workplace_pair_programming")),
+  utility.with(c("scenario", "work_experience_java.s")),
+  
+  utility.with(c("workplace_td_tracking", "workplace_pair_programming")),
+  utility.with(c("workplace_td_tracking", "work_experience_java.s")),
+  
+  utility.with(c("workplace_pair_programming", "work_experience_java.s"))
+)
+```
+
+#### Comparison
+
+```{r model-extension-2-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-2-dig, warning=FALSE}
+loo_result[1]
+```
+
+### Three variables {.tabset}
+
+```{r model-extension-3, message=FALSE, warning=FALSE, class.source =  'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  utility.with(),
+  
+  utility.with("scenario"),
+  utility.with("workplace_td_tracking"),
+  utility.with("workplace_pair_programming"),
+  utility.with("work_experience_java.s"),
+  
+  utility.with(c("scenario", "workplace_pair_programming")),
+  utility.with(c("scenario", "work_experience_java.s")),
+  
+  # New model(s)
+  utility.with(c("scenario", "workplace_pair_programming", "work_experience_java.s"))
+)
+```
+
+#### Comparison
+
+```{r model-extension-3-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-3-dig, warning=FALSE}
+loo_result[1]
+```
+
+## Candidate models  {.tabset}
+We pick some of our top performing models as candidates and inspect them closer.
+
+The candidate models are named and listed in order of complexity.
+
+### Utility0  {.tabset}
+
+We select the simplest model as a baseline.
+
+```{r utility0, class.source = 'fold-show', warning=FALSE, message=FALSE}
+utility0 <- brm(
+  "mvbind(hashcode.exists, equals.exists) ~ 1 + high_debt_version + (1 | c | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = "equalsexists"),
+    prior(exponential(1), class = "sd", resp = "hashcodeexists"),
+    prior(lkj(2), class = "L")
+  ),
+  family = bernoulli(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/utility0",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r utility0-sum}
 summary(utility0)
+```
+
+#### Random effects
+
+```{r utility0-raneff}
 ranef(utility0)
+```
+
+#### Sampling plots
+
+```{r utility0-plot}
 plot(utility0, ask = FALSE)
-
-pp_check(utility0, nsamples = 200, type = "bars", resp = "equalsstate")
-pp_check(utility0, nsamples = 200, type = "bars", resp = "hashcodestate")
-
 ```
 
-```{r}
-utility1 <- utility0.with("workplace_pair_programming")
+#### Posterior predictive check
+
+##### hashcode
+
+```{r utility0-pp-h}
+pp_check(utility0, nsamples = 200, type = "bars", resp = "equalsexists")
+```
+
+##### equals
+
+```{r utility0-pp}
+pp_check(utility0, nsamples = 200, type = "bars", resp = "hashcodeexists")
+```
+
+### Utility1  {.tabset}
+
+We select the best performing model with one variable.
+
+```{r utility1, class.source = 'fold-show', warning=FALSE, message=FALSE}
+utility1 <- brm(
+  "mvbind(hashcode.exists, equals.exists) ~ 1 + high_debt_version + scenario + (1 | c | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = "equalsexists"),
+    prior(exponential(1), class = "sd", resp = "hashcodeexists"),
+    prior(lkj(2), class = "L")
+  ),
+  family = bernoulli(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/utility1",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r utility1-sum}
 summary(utility1)
+```
+
+#### Random effects
+
+```{r utility1-raneff}
 ranef(utility1)
+```
+
+#### Sampling plots
+
+```{r utility1-plot}
 plot(utility1, ask = FALSE)
-
-pp_check(utility1, nsamples = 200, type = "bars", resp = "equalsstate")
-pp_check(utility1, nsamples = 200, type = "bars", resp = "hashcodestate")
-
 ```
-```{r}
-utility2 <- utility0.with("scenario")
+
+#### Posterior predictive check
+
+##### hashcode
+
+```{r utility1-pp-h}
+pp_check(utility1, nsamples = 200, type = "bars", resp = "equalsexists")
+```
+
+##### equals
+
+```{r utility1-pp}
+pp_check(utility1, nsamples = 200, type = "bars", resp = "hashcodeexists")
+```
+
+### Utility2  {.tabset}
+
+We select the best performing model with two variables.
+
+```{r utility2, class.source = 'fold-show', warning=FALSE, message=FALSE}
+utility2 <- brm(
+  "mvbind(hashcode.exists, equals.exists) ~ 1 + high_debt_version + scenario + work_experience_java.s + (1 | c | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = "equalsexists"),
+    prior(exponential(1), class = "sd", resp = "hashcodeexists"),
+    prior(lkj(2), class = "L")
+  ),
+  family = bernoulli(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/utility2",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r utility2-sum}
 summary(utility2)
-ranef(utility2)
-plot(utility2, ask = FALSE)
-
-pp_check(utility2, nsamples = 200, type = "bars", resp = "equalsstate")
-pp_check(utility2, nsamples = 200, type = "bars", resp = "hashcodestate")
-
 ```
-### Final model
-All models have sampled well and have similar predictions. We will proceed with the simplest model utility0.
+
+#### Random effects
+
+```{r utility2-raneff}
+ranef(utility2)
+```
+
+#### Sampling plots
+
+```{r utility2-plot}
+plot(utility2, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+##### hashcode
+
+```{r utility2-pp-h}
+pp_check(utility2, nsamples = 200, type = "bars", resp = "equalsexists")
+```
+
+##### equals
+
+```{r utility2-pp}
+pp_check(utility2, nsamples = 200, type = "bars", resp = "hashcodeexists")
+```
 
 
-### Model with with incomplete data points
+### Utility3  {.tabset}
+
+We select the best performing model with three variables.
+
+```{r utility3, class.source = 'fold-show', warning=FALSE, message=FALSE}
+utility3 <- brm(
+  "mvbind(hashcode.exists, equals.exists) ~ 1 + high_debt_version + scenario + work_experience_java.s + workplace_pair_programming + (1 | c | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = "equalsexists"),
+    prior(exponential(1), class = "sd", resp = "hashcodeexists"),
+    prior(lkj(2), class = "L")
+  ),
+  family = bernoulli(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/utility3",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r utility3-sum}
+summary(utility3)
+```
+
+#### Random effects
+
+```{r utility3-raneff}
+ranef(utility3)
+```
+
+#### Sampling plots
+
+```{r utility3-plot}
+plot(utility3, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+##### hashcode
+
+```{r utility3-pp-h}
+pp_check(utility3, nsamples = 200, type = "bars", resp = "equalsexists")
+```
+
+##### equals
+
+```{r utility3-pp}
+pp_check(utility3, nsamples = 200, type = "bars", resp = "hashcodeexists")
+```
+
+## Final Model 
+All candidate models look nice, canidate 1 performes better than all less complex models, we will proceed with: `utility1`
+
+### Variations {.tabset}
+We will try a few different variations of the selected candidate model.
+
+#### All data points {.tabset}
 
 Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
 
-```{r}
-utility0.all <- brm(
-  mvbind(hashcode_state, equals_state) ~ 1 + high_debt_version + (1 | c | session),
+```{r variation.all, class.source = 'fold-show', warning=FALSE, message=FALSE}
+utility1.all <- brm(
+  "mvbind(hashcode.exists, equals.exists) ~ 1 + high_debt_version + scenario + (1 | c | session)",
   prior = c(
-    prior(normal(0, 1), class = "b", resp = "equalsstate"),
-    prior(normal(0, 1), class = "b", resp = "hashcodestate"),
-    prior(normal(0.3, 1), class = "Intercept", resp = "equalsstate"),
-    prior(normal(0.3, 1), class = "Intercept", resp = "hashcodestate"),
-    prior(exponential(1), class = "sd", resp = "equalsstate"),
-    prior(exponential(1), class = "sd", resp = "hashcodestate"),
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = "equalsexists"),
+    prior(exponential(1), class = "sd", resp = "hashcodeexists"),
     prior(lkj(2), class = "L")
   ),
-  family = sratio(),
+  family = bernoulli(),
   data = as.data.frame(d.completed),
-  file = "fits/utility0.all",
-  file_refit = "on_change"
+  file = "fits/utility1.all",
+  file_refit = "on_change",
+  seed = 20210421
 )
-summary(utility0.all)
-ranef(utility0.all)
-plot(utility0.all, ask = FALSE)
-
-
-pp_check(utility0.all, nsamples = 200, type = "bars", resp = "equalsstate")
-pp_check(utility0.all, nsamples = 200, type = "bars", resp = "hashcodestate")
 ```
 
-Training the model on all data points only slightly increases the uncertanty and did not result in any sampling problems. We will proceed with the model fitted to all the data.
+##### Summary
+
+```{r variation.all-sum, warning=FALSE}
+summary(utility1.all)
+```
+
+##### Random effects
+
+```{r variation.all-raneff, warning=FALSE}
+ranef(utility1.all)
+```
+
+##### Sampling plots
+
+```{r variation.all-plot, message=FALSE, warning=FALSE}
+plot(utility1.all, ask = FALSE)
+```
+
+##### Posterior predictive check
+
+###### hashcode
+
+```{r variation.all-pp-constructor, warning=FALSE, message=FALSE}
+pp_check(utility1.all, type = "bars", nsamples = 200, resp = "hashcodeexists")
+```
+
+###### equals
+
+```{r variation.all-pp-validation, warning=FALSE, message=FALSE}
+pp_check(utility1.all, type = "bars", nsamples = 200, resp = "equalsexists")
+```
+
+
+#### With experience predictor {.tabset}
+
+As including all data points didn't harm the model we will create this variant with all data points as well.
+
+This variation includes `work_experience_programming.s` predictors as it can give further insight into how experience play a factor in the effect we try to measure. This is especially important as our sampling shewed towards containing less experienced developer than the population at large.
+
+```{r variation.all.exp, class.source = 'fold-show', message=FALSE, warning=FALSE}
+utility1.all.exp <- brm(
+  "mvbind(hashcode.exists, equals.exists) ~ 1 + high_debt_version + scenario + work_experience_programming.s + (1 | c | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.5), class = "Intercept"),
+    prior(exponential(1), class = "sd", resp = "equalsexists"),
+    prior(exponential(1), class = "sd", resp = "hashcodeexists"),
+    prior(lkj(2), class = "L")
+  ),
+  family = bernoulli(),
+  data = as.data.frame(d.completed),
+  file = "fits/utility1.all.exp",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+##### Summary
+
+```{r variation.all.exp-sum}
+summary(utility1.all.exp)
+```
+
+##### Random effects
+
+```{r variation.all.exp-raneff}
+ranef(utility1.all.exp)
+```
+
+##### Loo comparison
+
+```{r variation.all.exp-loo, warning=FALSE}
+loo(
+  utility1.all,
+  utility1.all.exp
+)
+```
+
+##### Sampling plots
+
+```{r variation.all.exp-plot}
+plot(utility1.all.exp, ask = FALSE)
+```
+
+##### Posterior predictive check
+
+###### hashcode
+
+```{r variation.all.exp-pp-constructor, warning=FALSE, message=FALSE}
+pp_check(utility1.all.exp, type = "bars", nsamples = 200, resp = "hashcodeexists")
+```
+
+###### equals
+
+```{r variation.all.exp-pp-validation, warning=FALSE, message=FALSE}
+pp_check(utility1.all.exp, type = "bars", nsamples = 200, resp = "equalsexists")
+```
+
+### Final model
+* Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
+* Adding the experience predictors did not significantly damage the model and will be used as it provides useful insight.
+
+This means that our final model, with all data points and experience predictors, is `utility1.all.exp`
+
+### Final model
+* Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
+
+This means that our final model, with all data points and experience predictors, is `scenario_quality1.all`
 
 ## Interpreting the model
+To begin interpreting the model we look at how it's parameters were estimated. As our research is focused on how the outcome of the model is effected we will mainly analyze the $\beta$ parameters.
 
-Extract posterior samples:
-```{r}
+### $\beta$ parameters
 
-post <- posterior_predict(utility0.all, newdata = data.frame(
+#### equals
+
+```{r interpret-beta-plot-constructor, warning=FALSE, message=FALSE}
+mcmc_areas(utility1.all.exp, pars = c("b_equalsexists_high_debt_versionfalse", "b_equalsexists_work_experience_programming.s", "b_equalsexists_scenariotickets"), prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c("High debt version: false", "Professional programming experience", "Tickets scenario")) +
+  ggtitle("Beta parameters densities equals implemntationl", subtitle = "Shaded region marks 95% of the density. Line marks the median")
+```
+
+#### hashcode
+
+```{r interpret-beta-plot, warning=FALSE, message=FALSE}
+mcmc_areas(utility1.all.exp, pars = c("b_hashcodeexists_high_debt_versionfalse", "b_hashcodeexists_work_experience_programming.s", "b_hashcodeexists_scenariotickets"), prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c("High debt version: false", "Professional programming experience", "Tickets scenario")) +
+  ggtitle("Beta parameters densities for hashcode implemntation", subtitle = "Shaded region marks 95% of the density. Line marks the median")
+```
+
+### Effects sizes
+
+When we look at effect size we will look at both outcomes combined
+```{r effect-size, fig.width=8}
+scale_programming_experience <- function(x) {
+  (x - mean(d.completed$work_experience_programming))/ sd(d.completed$work_experience_programming)
+}
+unscale_programming_experience <- function(x) {
+  x * sd(d.completed$work_experience_programming) + mean(d.completed$work_experience_programming)
+}
+
+post_settings <- expand.grid(
   high_debt_version = c("false", "true"),
-  session = NA
-))
+  session = NA,
+  scenario = c("tickets", "booking"),
+  work_experience_programming.s = sapply(c(0, 3, 10, 25, 40), scale_programming_experience)
+)
 
-post_hashcode <- post[,,"hashcodestate"]
-post_hashcode.low <-  post_hashcode[,1]
-post_hashcode.high <- post_hashcode[,2]
-summary(post_hashcode)
+post <- posterior_predict(utility1.all.exp, newdata = post_settings) %>%
+  melt(value.name = "estimate", varnames = c("sample_number", "settings_id", "model")) %>%
+  left_join(
+    rowid_to_column(post_settings, var= "settings_id"),
+    by = "settings_id"
+  ) %>%
+  mutate(work_experience_programming = unscale_programming_experience(work_experience_programming.s)) %>%
+  select(
+    estimate,
+    high_debt_version,
+    work_experience_programming,
+    scenario,
+    model
+  )
 
-post_equals <- post[,,"equalsstate"]
-post_equals.low <-  post_equals[,1]
-post_equals.high <- post_equals[,2]
-summary(post_equals)
+post %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
+  mutate_at("estimate", 
+            function(x) case_when(
+              x == 1 ~ "Implemented",
+              x == 0 ~ "Not implemented"
+            )) %>%
+  ggplot(aes(high_debt_version)) +
+  geom_bar(aes(fill = estimate), position = "fill") + 
+  facet_grid(rows = vars(work_experience_programming)) +
+  scale_fill_manual("Legend", values = c("lightblue", "darkblue")) +
+  labs(title = "Utility methods implementation / programming experience") +
+  xlab("Debt version") +
+  ylab("Ratio of utility methods implementation")
+
+
+post %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
+  mutate_at("estimate", 
+            function(x) case_when(
+              x == 1 ~ "Implemented",
+              x == 0 ~ "Not implemented"
+            )) %>%
+  ggplot(aes(high_debt_version)) +
+  geom_bar(aes(fill = estimate), position = "fill") + 
+  facet_grid(rows = vars(scenario)) +
+  scale_fill_manual("Legend", values = c("lightblue", "darkblue")) +
+  labs(title = "Utility methods implementation / Scenario") +
+  xlab("Debt version") +
+  ylab("Ratio of utility methods implementation")
 
 ```

@@ -1,256 +1,591 @@
 ---
-title: "dropouts"
-output: html_notebook
+title: "Dropouts Outcome"
+author: Hampus Broman & William Levén
+date: 2021-05
+output: 
+  html_document: 
+    pandoc_args: [ "-o", "html/dropouts.html" ]
 ---
 
-## Looking at the data
-We plot the data and can see that there is no obvious large difference between the debt versions. We do however see a defference when it comes to which scenario the droput was on.
-```{r}
+```{r include-setup, include=FALSE}
+# Load setup file
+source(knitr::purl('setup.Rmd', output = tempfile()))
+```
+
+## Looking at the data {.tabset}
+
+We plot the data and can see that there is no obvious large difference between the debt versions. We do however see a difference when it comes to which scenario the dropout was on.
+
+### Per session
+
+```{r plo1}
 d.sessions %>%
-  ggplot(aes(task_completion)) +
+  ggplot(aes(task_completion, fill = task_completion)) +
   geom_bar() +
   labs(title = "Task completion per session") +
   xlab("Least completed task per session") +
-  ylab("Number of sessions")
+  ylab("Number of sessions") +
+  scale_fill_manual(values = rep("#7070FF", 4), guide = NULL)
+```
+
+### Per debt level
+
+```{r plot2}
+d %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
+  filter(task_completion == "Not submitted") %>%
+  ggplot(aes(x=high_debt_version, fill = high_debt_version)) +
+  geom_bar() +
+  labs(title = "Droputs per debt level") +
+  xlab("Debt level") +
+  ylab("Number of dropouts") +
+  scale_fill_manual(values = rep("#7070FF", 2), guide = NULL) +
+  scale_y_continuous(breaks = c(0, 2, 4, 6, 8))
+```
+
+### Per scenario
+
+```{r plot3}
 
 d %>%
   filter(task_completion == "Not submitted") %>%
-  group_by(high_debt_version) %>%
-  summarise(n = n()) %>%
-  ggplot(aes(x=high_debt_version, y=n)) +
-  geom_bar(stat = "identity") +
-  # geom_text(aes(label=n), vjust=1.7, size=5, color = "white") +
-  labs(title = "Dropputs per debt level") +
-  xlab("Version") +
-  ylab("Number of dropouts")
-
-
-d %>%
-  filter(task_completion == "Not submitted") %>%
-  ggplot(aes(scenario)) +
+  ggplot(aes(scenario, fill = scenario)) +
   geom_bar() +
   labs(title = "Dropputs per scenraio") +
   ylab("Number of dropouts") +
-  xlab("Scenario")
+  xlab("Scenario") +
+  scale_fill_manual(values = rep("#7070FF", 2), guide = NULL) +
+  scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10))
+```
 
+### Per signup group
+
+```{r plot4}
 d.sessions %>%
-  ggplot(aes(group, fill=task_completion)) +
-  geom_bar() +
+  mutate_at("group", 
+            function(x) x <- case_when(
+              x == "code-interested" ~ "code-int.",
+              x == "product-company" ~ "prod.-comp.",
+              x == "professional-contact" ~ "prof.-cont.",
+              TRUE ~ as.character(x)
+            )) %>%
+  ggplot(aes(group, fill=task_completion, position = "fill")) +
+  geom_bar(position = "fill") +
   labs(title = "Dropputs per signup group") +
-  ylab("Number of dropouts") +
-  xlab("Signup Group")
+  ylab("Ratio") +
+  xlab("Signup Group") +
+  scale_fill_manual("Task completion", values = c("transparent", "lightblue", "#7070FF", "darkblue"))
 ```
 
 ## Initial model
 The outcome model represent incremental steps and will therefore be modeled with stopping ratio
 
-We include `high_debt_verison` in our initial model.
+We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 
+### Selecting Priors {.tabset}
 
-### Selecting Priors
-We iterate over the model until we have sane priors
-```{r}
+We iterate over the model until we have sane priors.
 
-dropouts0.with <- extendable_model(
-  base_name = "dropouts0",
+#### Base model with priors
+
+```{r initial-model-definition, class.source = 'fold-show'}
+dropouts.with <- extendable_model(
+  base_name = "dropouts",
   base_formula = "task_completion ~ 1 + high_debt_version",
   base_priors = c(
-    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 0.4), class = "b"),
     prior(normal(-2, 1), class = "Intercept")
   ),
   family = sratio(),
   data = d,
-  # base_control = list(adapt_delta = 0.95)
 )
-
-# Default priors:
-prior_summary(dropouts0.with(only_priors= TRUE))
-
-# Our priors:
-prior_summary(dropouts0.with(sample_prior = "only"))
-
-# Prior predictive check
-pp_check(dropouts0.with(sample_prior = "only"), nsamples = 200, type = "bars")
 ```
 
-### Model fit
-We check the posterior distribution and can see that the model seems to have been able to fit the data well
-```{r}
-# Posterior predictive check
-pp_check(dropouts0.with(), nsamples = 100, type = "bars")
 
-summary(dropouts0.with())
+#### Default priors
+
+```{r default-priors}
+prior_summary(dropouts.with(only_priors= TRUE))
 ```
 
-## Model extenstions
+#### Selected priors
 
-We use loo to check some possible extensions on the model.
+```{r selected-priors}
+prior_summary(dropouts.with(sample_prior = "only"))
+```
 
-```{r}
+#### Prior Predictive Check
 
+```{r priors-check, warning=FALSE}
+pp_check(dropouts.with(sample_prior = "only"), nsamples = 200, type = "bars")
+```
+
+#### Beta Parameter Influence
+
+```{r priors-beta, warning=FALSE}
+sim.size <- 1000
+sim.intercept <- rnorm(sim.size, -2, 1)
+sim.beta <- rnorm(sim.size, 0, 0.4)
+sim.beta.diff <- (plogis(sim.intercept + sim.beta) / plogis(sim.intercept) * 100) - 100
+
+data.frame(x = sim.beta.diff) %>%
+  ggplot(aes(x)) +
+  geom_density() +
+  xlim(-80, 80) +
+  labs(
+    title = "Beta parameter prior influence",
+    x = "Estimate with beta as % of estimate without beta",
+    y = "Density"
+  )
+
+```
+
+### Model fit {.tabset}
+
+We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
+Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
+
+#### Posterior Predictive check
+
+```{r base-pp-check}
+pp_check(dropouts.with(), nsamples = 200, type = "bars")
+```
+
+#### Summary
+
+```{r base-summary}
+summary(dropouts.with())
+```
+
+#### Sampling plots
+
+```{r base-plot}
+plot(dropouts.with(), ask = FALSE)
+```
+
+## Model predictor extenstions {.tabset}
+
+```{r mo-priors}
+# default prior for monotonic predictor
 edlvl_prior <- prior(dirichlet(2), class = "simo", coef = "moeducation_level1")
+```
 
-loo(
-  dropouts0.with(),
-  dropouts0.with("work_domain"),
-  dropouts0.with("work_experience_programming.s"),
-  dropouts0.with("work_experience_java.s"),
-  dropouts0.with("education_field"),
-  dropouts0.with("mo(education_level)", edlvl_prior),
-  dropouts0.with("workplace_peer_review"),
-  dropouts0.with("workplace_td_tracking"),
-  dropouts0.with("workplace_pair_programming"),
-  dropouts0.with("workplace_coding_standards"),
-  dropouts0.with("scenario"),
-  dropouts0.with("group"),
-  dropouts0.with("order")
+We use `loo` to check some possible extensions on the model.
+
+### One variable {.tabset}
+
+```{r model-extension-1, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  dropouts.with(),
+  
+  # New model(s)
+  dropouts.with("work_domain"),
+  dropouts.with("work_experience_programming.s"),
+  dropouts.with("work_experience_java.s"),
+  dropouts.with("education_field"),
+  dropouts.with("mo(education_level)", edlvl_prior),
+  dropouts.with("workplace_peer_review"),
+  dropouts.with("workplace_td_tracking"),
+  dropouts.with("workplace_pair_programming"),
+  dropouts.with("workplace_coding_standards"),
+  dropouts.with("scenario"),
+  dropouts.with("group")
 )
 ```
 
-We try combining some of the most prominent features
+#### Comparison
 
-```{r}
-
-loo(
-  dropouts0.with(),
-  dropouts0.with("group"),
-  dropouts0.with("education_field"),
-  dropouts0.with("work_experience_programming.s"),
-  dropouts0.with("work_experience_java.s"),
-  dropouts0.with("workplace_pair_programming"),
-  dropouts0.with("scenario"),
-  
-  dropouts0.with(c("group", "education_field")),
-  dropouts0.with(c("group", "work_experience_programming.s")),
-  dropouts0.with(c("group", "work_experience_java.s")),
-  dropouts0.with(c("group", "workplace_pair_programming")),
-  dropouts0.with(c("group", "scenario")),
-  
-  dropouts0.with(c("education_field", "work_experience_programming.s")),
-  dropouts0.with(c("education_field", "work_experience_java.s")),
-  dropouts0.with(c("education_field", "workplace_pair_programming")),
-  dropouts0.with(c("education_field", "scenario")),
-  
-  dropouts0.with(c("work_experience_programming.s", "work_experience_java.s")),
-  dropouts0.with(c("work_experience_programming.s", "workplace_pair_programming")),
-  dropouts0.with(c("work_experience_programming.s", "scenario")),
-  
-  dropouts0.with(c("work_experience_java.s", "workplace_pair_programming")),
-  dropouts0.with(c("work_experience_java.s", "scenario")),
-  
-  dropouts0.with(c("workplace_pair_programming", "scenario"))
-)
+```{r model-extension-1-sum, warning=FALSE}
+loo_result[2]
 ```
-We pick out some interesting models and try combining them
-```{r}
 
-loo(
-  dropouts0.with(),
-  
-  dropouts0.with("group"),
-  dropouts0.with("scenario"),
-  
-  dropouts0.with(c("group", "education_field")),
-  dropouts0.with(c("education_field", "workplace_pair_programming")),
-  dropouts0.with(c("group", "scenario")),
-  
-  dropouts0.with(c("group", "education_field", "scenario")),
-  dropouts0.with(c("group", "education_field", "workplace_pair_programming")),
-  dropouts0.with(c("group", "workplace_pair_programming", "scenario")),
-  dropouts0.with(c("education_field", "workplace_pair_programming", "scenario")),
-  
-  
-  dropouts0.with(c("group", "education_field", "workplace_pair_programming", "scenario"))
+#### Diagnostics
 
+```{r model-extension-1-dig, warning=FALSE}
+loo_result[1]
+```
+
+### Two variables {.tabset}
+
+```{r model-extension-2, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  dropouts.with(),
+  
+  dropouts.with("education_field"),
+  dropouts.with("workplace_pair_programming"),
+  dropouts.with("scenario"),
+  dropouts.with("group"),
+  
+  # New model(s)
+  dropouts.with(c("education_field", "workplace_pair_programming")),
+  dropouts.with(c("education_field", "scenario")),
+  dropouts.with(c("education_field", "group")),
+  
+  dropouts.with(c("workplace_pair_programming", "scenario")),
+  dropouts.with(c("workplace_pair_programming", "group")),
+  
+  dropouts.with(c("scenario", "group"))
 )
 ```
 
-## Candidate models
-We inspect some of our top performing models. 
+#### Comparison
 
-All models seems to have sampled nicely (rhat = 1 and fluffy plots) they also have about the same fit to the data end similar estimates for the high_debt_version beta parameter. 
-
-```{r}
-dropouts0 <- dropouts0.with()
-summary(dropouts0)
-plot(dropouts0, ask = FALSE)
-
-pp_check(dropouts0, nsamples = 150, type = "bars")
+```{r model-extension-2-sum, warning=FALSE}
+loo_result[2]
 ```
 
-```{r}
-dropouts1 <- dropouts0.with("group")
-summary(dropouts1)
-plot(dropouts1, ask = FALSE)
+#### Diagnostics
 
-pp_check(dropouts1, nsamples = 150, type = "bars")
+```{r model-extension-2-dig, warning=FALSE}
+loo_result[1]
 ```
 
-```{r}
-dropouts2 <- dropouts0.with(c("group", "education_field"))
-summary(dropouts2)
-plot(dropouts2, ask = FALSE)
+### Three variables {.tabset}
 
-pp_check(dropouts2, nsamples = 150, type = "bars")
+```{r model-extension-3, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  dropouts.with(),
+  
+  dropouts.with("education_field"),
+  dropouts.with("workplace_pair_programming"),
+  dropouts.with("scenario"),
+  dropouts.with("group"),
+  
+  dropouts.with(c("education_field", "workplace_pair_programming")),
+  dropouts.with(c("education_field", "scenario")),
+  dropouts.with(c("workplace_pair_programming", "scenario")),
+  dropouts.with(c("education_field", "group")),
+  
+  # New model(s)
+  dropouts.with(c("education_field", "workplace_pair_programming", "scenario")),
+  dropouts.with(c("group", "workplace_pair_programming", "scenario")),
+  dropouts.with(c("education_field", "group", "scenario")),
+  dropouts.with(c("education_field", "workplace_pair_programming", "group"))
+)
 ```
 
-```{r}
-dropouts3 <- dropouts0.with(c("group", "education_field", "scenario"))
-summary(dropouts3)
-plot(dropouts3, ask = FALSE)
+#### Comparison
 
-pp_check(dropouts3, nsamples = 150, type = "bars")
+```{r model-extension-3-sum, warning=FALSE}
+loo_result[2]
 ```
 
-```{r}
-dropouts4 <- dropouts0.with(c("group", "education_field", "scenario", "workplace_pair_programming"))
-summary(dropouts4)
-plot(dropouts4, ask = FALSE)
+#### Diagnostics
 
-pp_check(dropouts4, nsamples = 150, type = "bars")
+```{r model-extension-3-dig, warning=FALSE}
+loo_result[1]
 ```
 
-### Final model
-All models look nice. According to loo some of the more complex models perform better than the simpler ones. We can also see that the estimate for `high_debt_versionfalse` becomes slightly more uncertain with the more complex models. `dropouts2` has a good estimate and is not significantly worse than the best performing model according to loo. 
+### Four variables {.tabset}
+
+```{r model-extension-4, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  dropouts.with(),
+  
+  dropouts.with("education_field"),
+  dropouts.with("workplace_pair_programming"),
+  dropouts.with("scenario"),
+  dropouts.with("group"),
+  
+  dropouts.with(c("education_field", "workplace_pair_programming")),
+  dropouts.with(c("education_field", "scenario")),
+  dropouts.with(c("workplace_pair_programming", "scenario")),
+  dropouts.with(c("education_field", "group")),
+  
+  dropouts.with(c("education_field", "workplace_pair_programming", "scenario")),
+  dropouts.with(c("education_field", "workplace_pair_programming", "group")),
+  
+  # New model(s)
+  dropouts.with(c("education_field", "workplace_pair_programming", "group", "scenario"))
+)
+```
+
+#### Comparison
+
+```{r model-extension-4-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-4-dig, warning=FALSE}
+loo_result[1]
+```
+
+
+## Candidate models  {.tabset}
+We pick some of our top performing models as candidates and inspect them closer.
+
+The candidate models are named and listed in order of complexity.
+
+### Dropouts0  {.tabset}
+
+We select the simplest model as a baseline.
+
+```{r droputs0, class.source = 'fold-show'}
+droputs0 <- brm(
+  "task_completion ~ 1 + high_debt_version",
+  prior = c(
+    prior(normal(0, 0.4), class = "b"),
+    prior(normal(-2, 1), class = "Intercept")
+  ),
+  family = sratio(),
+  data = as.data.frame(d),
+  file = "fits/droputs0",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r droputs0-sum}
+summary(droputs0)
+```
+
+#### Sampling plots
+
+```{r droputs0-plot}
+plot(droputs0, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r droputs0-pp}
+pp_check(droputs0, nsamples = 200, type = "bars")
+```
+
+### Dropouts1  {.tabset}
+
+We select the best performing model with one variable.
+
+```{r droputs1, class.source = 'fold-show'}
+droputs1 <- brm(
+  "task_completion ~ 1 + high_debt_version + education_field",
+  prior = c(
+    prior(normal(0, 0.4), class = "b"),
+    prior(normal(-2, 1), class = "Intercept")
+  ),
+  family = sratio(),
+  data = as.data.frame(d),
+  file = "fits/droputs1",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r droputs1-sum}
+summary(droputs1)
+```
+
+#### Sampling plots
+
+```{r droputs1-plot}
+plot(droputs1, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r droputs1-pp}
+pp_check(droputs1, nsamples = 200, type = "bars")
+```
+
+### Dropouts2  {.tabset}
+
+We select the best performing model with two variables.
+
+```{r droputs2, class.source = 'fold-show'}
+droputs2 <- brm(
+  "task_completion ~ 1 + high_debt_version + education_field + workplace_pair_programming",
+  prior = c(
+    prior(normal(0, 0.4), class = "b"),
+    prior(normal(-2, 1), class = "Intercept")
+  ),
+  family = sratio(),
+  data = as.data.frame(d),
+  file = "fits/droputs2",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r droputs2-sum}
+summary(droputs2)
+```
+
+#### Sampling plots
+
+```{r droputs2-plot}
+plot(droputs2, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r droputs2-pp}
+pp_check(droputs2, nsamples = 200, type = "bars")
+```
+
+### Dropouts3  {.tabset}
+
+We select the best performing model with three variables.
+
+```{r droputs3, class.source = 'fold-show'}
+droputs3 <- brm(
+  "task_completion ~ 1 + high_debt_version + education_field + workplace_pair_programming + scenario",
+  prior = c(
+    prior(normal(0, 0.4), class = "b"),
+    prior(normal(-2, 1), class = "Intercept")
+  ),
+  family = sratio(),
+  data = as.data.frame(d),
+  file = "fits/droputs3",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r droputs3-sum}
+summary(droputs3)
+```
+
+#### Sampling plots
+
+```{r droputs3-plot}
+plot(droputs3, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r droputs3-pp}
+pp_check(droputs3, nsamples = 200, type = "bars")
+```
+
+### Dropouts4  {.tabset}
+
+We select the best performing model with four variables.
+
+```{r droputs4, class.source = 'fold-show'}
+droputs4 <- brm(
+  "task_completion ~ 1 + high_debt_version + education_field + workplace_pair_programming + scenario + group",
+  prior = c(
+    prior(normal(0, 0.4), class = "b"),
+    prior(normal(-2, 1), class = "Intercept")
+  ),
+  family = sratio(),
+  data = as.data.frame(d),
+  file = "fits/droputs4",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r droputs4-sum}
+summary(droputs4)
+```
+
+#### Sampling plots
+
+```{r droputs4-plot}
+plot(droputs4, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r droputs4-pp}
+pp_check(droputs4, nsamples = 200, type = "bars")
+```
+
+## Final Model 
+All candidate models look nice, the more complex models are slightly betters, we choose the simplest model that is not significantly worse then the best model: `dropouts2`
 
 ## Interpreting the model
+To begin interpreting the model we look at how it's parameters were estimated. As our research is focused on how the outcome of the model is effected we will mainly analyze the $\beta$ parameters.
 
-Extract posterior samples:
-```{r}
+### $\beta$ parameters
 
-post <- posterior_predict(dropouts2, newdata = data.frame(high_debt_version = c("false", "true"), group = NA, education_field = NA))
-post.low <-  post[,1]
-post.high <- post[,2]
-post.diff <- post.high - post.low
-
+```{r interpret-beta-plot, warning=FALSE, message=FALSE}
+mcmc_areas(droputs2, 
+           pars = c(
+             "b_high_debt_versionfalse", 
+             "b_education_fieldComputerScience", 
+             "b_education_fieldElectricalEngineering",
+             "b_education_fieldIndustrialengineering",
+             "b_education_fieldInteractionDesign",
+             "b_education_fieldNone",
+             "b_education_fieldSoftwareEngineering",
+             "b_workplace_pair_programmingfalse"
+                    ),
+           prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c(
+    "High debt version: false",
+    "Education field: Computer Science",
+    "Education field: Electrical Engineering",
+    "Education field: Industrial Engineering",
+    "Education field: Interaction Design",
+    "Education field: None",
+    "Education field: Software Engineering",
+    "No workplace pair programming"
+    )) +
+  ggtitle("Beta parameters densities for task completion", subtitle = "Shaded region marks 95% of the density. Line marks the median")
 ```
 
+### Effects sizes
 
+```{r effect-size, fig.width=8}
+post_settings <- expand.grid(
+  high_debt_version = c("false", "true"),
+  education_field = NA,
+  workplace_pair_programming = NA
+)
 
-
-```{r}
-
-data.frame(
-  task_completion = factor(
-    c(post.low, post.high),
-    ordered = TRUE,
-    levels = c(1, 2, 3, 4),
-    labels = c("Not submitted", "Does not compile", "Incorrect", "Correct")
-  ), 
-  debt_version = c(
-    rep("Low Debt", length(post.low)),
-    rep("High Debt", length(post.high))
+post <- posterior_predict(droputs2, newdata = post_settings) %>%
+  melt(value.name = "estimate", varnames = c("sample_number", "settings_id")) %>%
+  left_join(
+    rowid_to_column(post_settings, var= "settings_id"),
+    by = "settings_id"
+  ) %>%
+  select(
+    estimate,
+    high_debt_version
   )
-) %>%
-  ggplot(aes(debt_version, fill=task_completion)) +
-  geom_bar() +
-  labs(title = "Dropputs per signup group") +
-  ylab("Number of dropouts") +
-  xlab("Version")
-sum(post.diff < 0)/length(post.diff)
-sum(post.diff > 0)/length(post.diff)
 
+post %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
+  mutate_at("estimate", 
+            function(x) case_when(
+              x == 1 ~ "Not submitted",
+              x == 2 ~ "Does not compile",
+              x == 3 ~ "Invalid solution",
+              x == 4 ~ "Completed"
+            )) %>%
+  ggplot(aes(high_debt_version)) +
+  geom_bar(aes(fill = estimate), position = "fill") + 
+  scale_y_reverse() +
+  scale_fill_manual("Legend", values = c("darkblue", "#7070FF", "lightblue", "transparent"), guide = guide_legend(reverse = TRUE)) +
+  labs(title = "Task completion") +
+  xlab("Debt version") +
+  ylab("Ratio of task completion")
 
 ```
 
-
+We can see that task completion ratios are very similar for both high and low debt.

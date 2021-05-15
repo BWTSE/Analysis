@@ -10,8 +10,8 @@ output:
 
 ```{r load-libraries, class.source = 'fold-show', message=FALSE}
 # Data manipulation
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(tidyr)
 library(reshape2)
 library(tibble)
@@ -54,6 +54,9 @@ encode.categorical <- function(column, categories) {
 encode.bool <- function(column) {
   encode.categorical(column, c("true", "false"))
 }
+encode.logic <- function(column) {
+  encode.categorical(column, c(TRUE, FALSE))
+}
 
 encode.orderedcategorical <- function(column, categories) {
   as.ordered(encode.categorical(column, categories))
@@ -72,11 +75,11 @@ d <- data.frame(
   reused_logic_constructor = encode.bool(d.orig$reused_logic_constructor),
   reused_logic_validation  = encode.bool(d.orig$reused_logic_validation),
   
-  equals_state   = encode.orderedcategorical(
+  equals.state   = encode.orderedcategorical(
     d.orig$equals_state, 
     c("Not implemented", "Duplicated", "Good")
   ),
-  hashcode_state = encode.orderedcategorical(
+  hashcode.state = encode.orderedcategorical(
     d.orig$hashcode_state, 
     c("Not implemented", "Duplicated", "Good")
   ),
@@ -143,6 +146,9 @@ d <- data.frame(
   large_structure_change = encode.bool(d.orig$large_structure_change)
 )
 
+d$equals.exists <- encode.logic(d$equals.state != "Not implemented")
+d$hashcode.exists <-encode.logic(d$hashcode.state != "Not implemented")
+
 str(d)
 ```
 
@@ -190,6 +196,8 @@ d.completed <- d %>% filter(task_completion == "Completed")
 
 d.completed$work_experience_programming.s = scale(d.completed$work_experience_programming)
 d.completed$work_experience_java.s = scale(d.completed$work_experience_java)
+d.completed$time.s = scale(d.completed$time)
+d.completed$sonarqube_issues.s = scale(d.completed$sonarqube_issues)
 
 d.completed
 ```
@@ -200,6 +208,8 @@ d.both_completed <- d %>% semi_join(d.sessions.completed, by = "session")
 
 d.both_completed$work_experience_programming.s = scale(d.both_completed$work_experience_programming)
 d.both_completed$work_experience_java.s = scale(d.both_completed$work_experience_java)
+d.both_completed$time.s = scale(d.both_completed$time)
+d.both_completed$sonarqube_issues.s = scale(d.both_completed$sonarqube_issues)
 
 d.both_completed
 ```

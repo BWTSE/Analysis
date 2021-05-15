@@ -118,6 +118,7 @@ pp_check(variable_names.with(sample_prior = "only"), nsamples = 200)
 ```
 
 #### Beta Parameter Influence
+
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
 sim.intercept <- rnorm(sim.size, 2, 1)
