@@ -5,7 +5,7 @@ date: 2021-05
 output: 
   html_document: 
     toc: no
-    pandoc_args: [ "-o", "html/environment.html" ]
+    pandoc_args: [ "-o", "docs/environment.html" ]
 ---
 
 ```{r include-setup, include=FALSE}

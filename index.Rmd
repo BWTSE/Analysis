@@ -4,7 +4,7 @@ author: Hampus Broman & William Levén
 date: 2021-05
 output: 
   html_document: 
-    pandoc_args: [ "-o", "html/index.html" ]
+    pandoc_args: [ "-o", "docs/index.html" ]
     toc: no
 ---
 This is a replication package for the Broken Windows Investigation thesis conducted by [Hampus Broman](https://github.com/HBroman) and [William Levén](https://github.com/williamleven) in 2021.

@@ -4,7 +4,7 @@ author: Hampus Broman & William Levén
 date: 2021-05
 output: 
   html_document: 
-    pandoc_args: [ "-o", "html/implemented_utility_methods.html" ]
+    pandoc_args: [ "-o", "docs/implemented_utility_methods.html" ]
 ---
 
 
