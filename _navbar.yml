@@ -5,29 +5,29 @@ left:
     href: index.html
   - text: "Setup"
     href: setup.html
-  - text: "Data Exploration"
-    href: data_exploration.html
-  - text: "Baysian Models"
+  - text: "Data description"
+    href: data_description.html
+  - text: "Models"
     menu:
-    - text: "Time Model"
-      href: time.html
-    - text: "Variable Names Model"
-      href: variable_names.html
-    - text: "Reuse Model"
-      href: reuse.html
-    - text: "Sonarqube Issues Model"
+    - text: "Logic reuse"
+      href: logic_reuse.html
+    - text: "Variable naming"
+      href: variable_naming.html
+    - text: "Self reported quality"
+      href: self_reported_quality.html
+    - text: "Sonarqube issues"
       href: sonarqube_issues.html
-    - text: "Documentation Model"
-      href: documentation.html
-    - text: "Utility Methods Model"
-      href: utility_methods.html
-    - text: "Experienced Quality Model"
-      href: experienced_quality.html
-    - text: "Self Assessed Quality Model"
-      href: self_assessed_quality.html
-    - text: "Dropouts Model"
-      href: dropouts.html
-  - text: "Computational Environment"
+    - text: "Implemented utility methods"
+      href: implemented_utility_methods.html
+    - text: "Documentation state"
+      href: documentation_state.html
+    - text: "Task completion"
+      href: task_completion.html
+    - text: "Time to complete task"
+      href: time_to_complete_task.html
+    - text: "Reported scenario quality"
+      href: reported_scenario_quality.html
+  - text: "Environment"
     href: environment.html
 right:
   - text: " Source"

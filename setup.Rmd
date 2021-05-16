@@ -1,7 +1,7 @@
 ---
-title: "Setup & Data preparation"
+title: "Setup & Data Preparation"
 author: Hampus Broman & William Levén
-date: 2021-04
+date: 2021-05
 output: 
   html_document: 
     pandoc_args: [ "-o", "html/setup.html" ]

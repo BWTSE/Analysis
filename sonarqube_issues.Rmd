@@ -1,7 +1,7 @@
 ---
-title: "SonarQube Issues"
+title: "SonarQube Issues Model"
 author: Hampus Broman & William Levén
-date: 2021-04
+date: 2021-05
 output: 
   html_document: 
     pandoc_args: [ "-o", "html/sonarqube_issues.html" ]
@@ -468,7 +468,7 @@ ggplot(post.diff, aes(x=estimate)) +
   scale_y_continuous(breaks = NULL)
 ```
 
-```{r stuff}
+```{r stuff, class.source = 'fold-show'}
 print("All:")
 mean(post.diff$estimate)
 

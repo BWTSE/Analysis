@@ -1,0 +1,929 @@
+---
+title: "Documentation State Model"
+author: Hampus Broman & William Levén
+date: 2021-05
+output: 
+  html_document: 
+    pandoc_args: [ "-o", "html/documentation_state.html" ]
+---
+
+```{r include-setup, include=FALSE}
+# Load setup file
+source(knitr::purl('setup.Rmd', output = tempfile()))
+```
+
+
+
+## Looking at the data
+We plot the data and can see that there is some difference between the debt versions
+
+```{r}
+d.both_completed %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
+  ggplot(aes(high_debt_version, fill = documentation)) +
+  geom_bar() +
+  scale_y_reverse() +
+  xlab("Debt level") +
+  scale_fill_manual("Documentation state", values = c("Correct" = "darkblue", "None" = "transparent", "Incorrect" = "lightblue"), guide = guide_legend(reverse = TRUE))
+```
+
+## Initial model
+The type of the outcome is categorical and is hence modeled as categorical
+
+We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
+We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
+
+### Selecting Priors {.tabset}
+
+We iterate over the model until we have sane priors.
+
+#### Base model with priors
+```{r initial-model-definition, class.source = 'fold-show'}
+documentation.with <- extendable_model(
+  base_name = "documentation",
+  base_formula = "documentation ~ 1 + high_debt_version + (1 | session)",
+  base_priors = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = d.both_completed,
+)
+```
+
+
+#### Default priors
+
+```{r default-priors}
+prior_summary(documentation.with(only_priors= TRUE))
+```
+
+#### Selected priors
+
+```{r selected-priors, warning=FALSE}
+prior_summary(documentation.with(sample_prior = "only"))
+```
+
+#### Prior Predictive Check
+
+```{r priors-check, warning=FALSE}
+pp_check(documentation.with(sample_prior = "only"), nsamples = 200, type = "bars")
+```
+
+#### Beta Parameter Influence
+
+```{r priors-beta, warning=FALSE}
+sim.size <- 1000
+sim.intercept <- rnorm(sim.size, 0, 1)
+sim.beta <- rnorm(sim.size, 0, 1)
+sim.beta.diff <- (plogis(sim.intercept + sim.beta) / plogis(sim.intercept) * 100) - 100
+
+data.frame(x = sim.beta.diff) %>%
+  ggplot(aes(x)) +
+  geom_density() +
+  xlim(-80, 80) +
+  labs(
+    title = "Beta parameter prior influence",
+    x = "Estimate with beta as % of estimate without beta",
+    y = "Density"
+  )
+
+```
+
+### Model fit {.tabset}
+
+We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
+Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
+
+#### Posterior Predictive check
+
+```{r base-pp-check, warning=FALSE}
+pp_check(documentation.with(), nsamples = 200, type = "bars")
+```
+
+#### Summary
+
+```{r base-summary, warning=FALSE}
+summary(documentation.with())
+```
+
+#### Sampling plots
+
+```{r base-plot, message=FALSE, warning=FALSE}
+plot(documentation.with(), ask = FALSE)
+```
+
+## Model predictor extenstions {.tabset}
+
+```{r mo-priors}
+# default prior for monotonic predictor
+edlvl_prior <- c(
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muIncorrect"),
+  prior(dirichlet(2), class = "simo", coef = "moeducation_level1", dpar = "muNone")
+)
+```
+
+We use `loo` to check some possible extensions on the model.
+
+### One variable {.tabset}
+
+```{r model-extension-1, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  documentation.with(),
+  
+  # New model(s)
+  documentation.with("work_domain"),
+  documentation.with("work_experience_programming.s"),
+  documentation.with("work_experience_java.s"),
+  documentation.with("education_field"),
+  documentation.with("mo(education_level)", edlvl_prior),
+  documentation.with("workplace_peer_review"),
+  documentation.with("workplace_td_tracking"),
+  documentation.with("workplace_pair_programming"),
+  documentation.with("workplace_coding_standards"),
+  documentation.with("scenario"),
+  documentation.with("group")
+)
+```
+
+#### Comparison
+
+```{r model-extension-1-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-1-dig, warning=FALSE}
+loo_result[1]
+```
+
+### Two variables {.tabset}
+
+```{r model-extension-2, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  documentation.with(),
+  
+  documentation.with("group"),
+  documentation.with("work_domain"),
+  documentation.with("workplace_peer_review"),
+  documentation.with("workplace_td_tracking"),
+  documentation.with("workplace_pair_programming"),
+  documentation.with("education_field"),
+  
+  # New model(s)
+  documentation.with(c("group", "work_domain")),
+  documentation.with(c("group", "workplace_peer_review")),
+  documentation.with(c("group", "workplace_td_tracking")),
+  documentation.with(c("group", "workplace_pair_programming")),
+  documentation.with(c("group", "education_field")),
+  
+  documentation.with(c("work_domain", "workplace_peer_review")),
+  documentation.with(c("work_domain", "workplace_td_tracking")),
+  documentation.with(c("work_domain", "workplace_pair_programming")),
+  documentation.with(c("work_domain", "education_field")),
+  
+  documentation.with(c("workplace_peer_review", "workplace_td_tracking")),
+  documentation.with(c("workplace_peer_review", "workplace_pair_programming")),
+  documentation.with(c("workplace_peer_review", "education_field")),
+  
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming")),
+  documentation.with(c("workplace_td_tracking", "education_field")),
+  
+  documentation.with(c("workplace_pair_programming", "education_field"))
+)
+```
+
+#### Comparison
+
+```{r model-extension-2-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-2-dig, warning=FALSE}
+loo_result[1]
+```
+
+### Three variables {.tabset}
+
+```{r model-extension-3, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  documentation.with(),
+  
+  documentation.with("group"),
+  documentation.with("work_domain"),
+  documentation.with("workplace_peer_review"),
+  documentation.with("workplace_td_tracking"),
+  documentation.with("workplace_pair_programming"),
+  documentation.with("education_field"),
+  
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming")),
+  documentation.with(c("group", "work_domain")),
+  documentation.with(c("group", "workplace_peer_review")),
+  documentation.with(c("group", "workplace_pair_programming")),
+  documentation.with(c("workplace_peer_review", "workplace_td_tracking")),
+  
+  # New model(s)
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming", "group")),
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming", "work_domain")),
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming", "workplace_peer_review")),
+  
+  documentation.with(c("group", "work_domain", "workplace_td_tracking")),
+  documentation.with(c("group", "work_domain", "workplace_pair_programming")),
+  documentation.with(c("group", "work_domain", "workplace_peer_review")),
+  
+  documentation.with(c("group", "workplace_peer_review", "workplace_td_tracking")),
+  documentation.with(c("group", "workplace_peer_review", "workplace_pair_programming")),
+  
+  documentation.with(c("group", "workplace_pair_programming", "work_domain")),
+  
+  documentation.with(c("workplace_peer_review", "workplace_td_tracking", "work_domain"))
+)
+```
+
+#### Comparison
+
+```{r model-extension-3-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-3-dig, warning=FALSE}
+loo_result[1]
+```
+
+### Four variables {.tabset}
+
+```{r model-extension-4, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  documentation.with(),
+  
+  documentation.with("group"),
+  documentation.with("work_domain"),
+  documentation.with("workplace_peer_review"),
+  documentation.with("workplace_td_tracking"),
+  documentation.with("workplace_pair_programming"),
+  documentation.with("education_field"),
+  
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming")),
+  documentation.with(c("group", "work_domain")),
+  documentation.with(c("group", "workplace_peer_review")),
+  documentation.with(c("group", "workplace_pair_programming")),
+  documentation.with(c("workplace_peer_review", "workplace_td_tracking")),
+  
+  documentation.with(c("group", "work_domain", "workplace_peer_review")),
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming", "workplace_peer_review")),
+  documentation.with(c("group", "workplace_peer_review", "workplace_pair_programming")),
+  documentation.with(c("group", "workplace_peer_review", "workplace_td_tracking")),
+  
+  # New model(s)
+  documentation.with(c("work_domain", "workplace_peer_review", "workplace_td_tracking", "workplace_pair_programming")),
+  documentation.with(c("group", "workplace_peer_review", "workplace_td_tracking", "workplace_pair_programming")),
+  documentation.with(c("group", "work_domain", "workplace_peer_review", "workplace_pair_programming")),
+  documentation.with(c("group", "work_domain", "workplace_peer_review", "workplace_td_tracking"))
+)
+```
+
+#### Comparison
+
+```{r model-extension-4-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-4-dig, warning=FALSE}
+loo_result[1]
+```
+
+### Five variables {.tabset}
+
+```{r model-extension-5, warning=FALSE, class.source = 'fold-show'}
+loo_result <- loo(
+  # Benchmark model(s)
+  documentation.with(),
+  
+  documentation.with("group"),
+  documentation.with("work_domain"),
+  documentation.with("workplace_peer_review"),
+  documentation.with("workplace_td_tracking"),
+  documentation.with("workplace_pair_programming"),
+  documentation.with("education_field"),
+  
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming")),
+  documentation.with(c("group", "work_domain")),
+  documentation.with(c("group", "workplace_peer_review")),
+  documentation.with(c("group", "workplace_pair_programming")),
+  documentation.with(c("workplace_peer_review", "workplace_td_tracking")),
+  
+  documentation.with(c("group", "work_domain", "workplace_peer_review")),
+  documentation.with(c("workplace_td_tracking", "workplace_pair_programming", "workplace_peer_review")),
+  documentation.with(c("group", "workplace_peer_review", "workplace_pair_programming")),
+  documentation.with(c("group", "workplace_peer_review", "workplace_td_tracking")),
+  
+  documentation.with(c("group", "work_domain", "workplace_peer_review", "workplace_td_tracking")),
+  documentation.with(c("group", "work_domain", "workplace_peer_review", "workplace_pair_programming")),
+  
+  # New model(s)
+  documentation.with(c("group", "work_domain", "workplace_peer_review", "workplace_pair_programming", "workplace_td_tracking"))
+)
+```
+
+#### Comparison
+
+```{r model-extension-5-sum, warning=FALSE}
+loo_result[2]
+```
+
+#### Diagnostics
+
+```{r model-extension-5-dig, warning=FALSE}
+loo_result[1]
+```
+
+
+## Candidate models  {.tabset}
+We pick some of our top performing models as candidates and inspect them closer.
+
+The candidate models are named and listed in order of complexity.
+
+### Documentation0  {.tabset}
+
+We select the simplest model as a baseline.
+
+```{r documentation0, class.source = 'fold-show', warning=FALSE, message=FALSE}
+documentation0 <- brm(
+  "documentation ~ 1 + high_debt_version + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/documentation0",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r documentation0-sum}
+summary(documentation0)
+```
+
+#### Random effects
+
+```{r documentation0-raneff}
+ranef(documentation0)
+```
+
+#### Sampling plots
+
+```{r documentation0-plot}
+plot(documentation0, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r documentation0-pp}
+pp_check(documentation0, nsamples = 200, type = "bars")
+```
+
+### Documentation1  {.tabset}
+
+We select the best performing model with one variable.
+
+```{r documentation1, class.source = 'fold-show', warning=FALSE, message=FALSE}
+documentation1 <- brm(
+  "documentation ~ 1 + high_debt_version + group + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/documentation1",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r documentation1-sum}
+summary(documentation1)
+```
+
+#### Random effects
+
+```{r documentation1-raneff}
+ranef(documentation1)
+```
+
+#### Sampling plots
+
+```{r documentation1-plot}
+plot(documentation1, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r documentation1-pp}
+pp_check(documentation1, nsamples = 200, type = "bars")
+```
+
+### Documentation2  {.tabset}
+
+We select the best performing model with two variables.
+
+```{r documentation2, class.source = 'fold-show', warning=FALSE, message=FALSE}
+documentation2 <- brm(
+  "documentation ~ 1 + high_debt_version + group + work_domain + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/documentation2",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r documentation2-sum}
+summary(documentation2)
+```
+
+#### Random effects
+
+```{r documentation2-raneff}
+ranef(documentation2)
+```
+
+#### Sampling plots
+
+```{r documentation2-plot}
+plot(documentation2, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r documentation2-pp}
+pp_check(documentation2, nsamples = 200, type = "bars")
+```
+
+### Documentation3  {.tabset}
+
+We select the best performing model with three variables.
+
+```{r documentation3, class.source = 'fold-show', warning=FALSE, message=FALSE}
+documentation3 <- brm(
+  "documentation ~ 1 + high_debt_version + group + work_domain + workplace_peer_review + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/documentation3",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r documentation3-sum}
+summary(documentation3)
+```
+
+#### Random effects
+
+```{r documentation3-raneff}
+ranef(documentation3)
+```
+
+#### Sampling plots
+
+```{r documentation3-plot}
+plot(documentation3, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r documentation3-pp}
+pp_check(documentation3, nsamples = 200, type = "bars")
+```
+
+### Documentation4  {.tabset}
+
+We select the best performing model with four variables.
+
+```{r documentation4, class.source = 'fold-show', warning=FALSE, message=FALSE}
+documentation4 <- brm(
+  "documentation ~ 1 + high_debt_version + group + work_domain + workplace_peer_review + workplace_td_tracking + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/documentation4",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r documentation4-sum}
+summary(documentation4)
+```
+
+#### Random effects
+
+```{r documentation4-raneff}
+ranef(documentation4)
+```
+
+#### Sampling plots
+
+```{r documentation4-plot}
+plot(documentation4, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r documentation4-pp}
+pp_check(documentation4, nsamples = 200, type = "bars")
+```
+
+### Documentation5  {.tabset}
+
+We select the best performing model with five variables.
+
+```{r documentation5, class.source = 'fold-show', warning=FALSE, message=FALSE}
+documentation5 <- brm(
+  "documentation ~ 1 + high_debt_version + group + work_domain + workplace_peer_review + workplace_td_tracking + workplace_pair_programming + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = as.data.frame(d.both_completed),
+  file = "fits/documentation5",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+#### Summary
+
+```{r documentation5-sum}
+summary(documentation5)
+```
+
+#### Random effects
+
+```{r documentation5-raneff}
+ranef(documentation5)
+```
+
+#### Sampling plots
+
+```{r documentation5-plot}
+plot(documentation5, ask = FALSE)
+```
+
+#### Posterior predictive check
+
+```{r documentation5-pp}
+pp_check(documentation5, nsamples = 200, type = "bars")
+```
+
+## Final Model 
+All candidate models look nice, candidate 3 is significantly better than the other candidates, we will proceed with: `documentation3`
+
+### Variations {.tabset}
+We will try a few different variations of the selected candidate model.
+
+#### All data points {.tabset}
+
+Some participants did only complete one scenario. Those has been excluded from the initial dataset to improve sampling of the models. We do however want to use all data we can and will therefore try to fit the model with the complete dataset.
+
+```{r variation.all, message=FALSE, warning=FALSE, class.source = 'fold-show'}
+documentation3.all <- brm(
+  "documentation ~ 1 + high_debt_version + group + work_domain + workplace_peer_review + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  file = "fits/documentation3.all",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+##### Summary
+
+```{r variation.all-sum}
+summary(documentation3.all)
+```
+
+##### Random effects
+
+```{r variation.all-raneff}
+ranef(documentation3.all)
+```
+
+##### Sampling plots
+
+```{r variation.all-plot}
+plot(documentation3.all, ask = FALSE)
+```
+
+##### Posterior predictive check
+
+```{r variation.all-pp}
+pp_check(documentation3.all, nsamples = 200, type = "bars")
+```
+
+#### With experience predictor {.tabset}
+
+As including all data points didn't harm the model we will create this variant with all data points as well.
+
+This variation includes `work_experience_programming.s` predictors as it can give further insight into how experience play a factor in the effect we try to measure. This is especially important as our sampling shewed towards containing less experienced developer than the population at large.
+
+```{r variation.all.exp, class.source = 'fold-show', message=FALSE, warning=FALSE}
+documentation3.all.exp <- brm(
+  "documentation ~ 1 + high_debt_version + group + work_domain + workplace_peer_review + work_experience_programming.s + (1 | session)",
+  prior = c(
+    prior(normal(0, 1), class = "b"),
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(1), class = "sd", dpar = "muIncorrect"),
+    prior(exponential(1), class = "sd", dpar = "muNone")
+  ),
+  family = categorical(),
+  data = as.data.frame(d.completed),
+  file = "fits/documentation3.all.exp",
+  file_refit = "on_change",
+  seed = 20210421
+)
+```
+
+##### Summary
+
+```{r variation.all.exp-sum}
+summary(documentation3.all.exp)
+```
+
+##### Random effects
+
+```{r variation.all.exp-raneff}
+ranef(documentation3.all.exp)
+```
+
+##### Loo comparison
+
+```{r variation.all.exp-loo, warning=FALSE}
+loo(
+  documentation3.all,
+  documentation3.all.exp
+)
+```
+
+##### Sampling plots
+
+```{r variation.all.exp-plot}
+plot(documentation3.all.exp, ask = FALSE)
+```
+
+##### Posterior predictive check
+
+```{r variation.all.exp-pp}
+pp_check(documentation3.all.exp, nsamples = 200, type = "bars")
+```
+
+### Final model
+* Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
+* Adding the experience predictors did not significantly damage the model and will be used as it provides useful insight.
+
+This means that our final model, with all data points and experience predictors, is `documentation3.all.exp`
+
+## Interpreting the model
+To begin interpreting the model we look at how it's parameters were estimated. As our research is focused on how the outcome of the model is effected we will mainly analyze the $\beta$ parameters.
+
+### $\beta$ parameters
+
+#### No documentation
+
+```{r interpret-beta-plot, warning=FALSE, message=FALSE}
+mcmc_areas(documentation3.all.exp, pars = c(
+    "b_muNone_high_debt_versionfalse", 
+    "b_muNone_work_experience_programming.s",
+    "b_muNone_workplace_peer_reviewfalse",
+    "b_muNone_groupconsultants",
+    "b_muNone_groupfriends",
+    "b_muNone_groupopen",
+    "b_muNone_groupproductMcompany",
+    "b_muNone_groupprofessionalMcontact",
+    "b_muNone_groupstudents",
+    "b_muNone_work_domainApp",
+    "b_muNone_work_domainAutomotive",
+    "b_muNone_work_domainDevops",
+    "b_muNone_work_domainEMCommerce",
+    "b_muNone_work_domainEmbedded",
+    "b_muNone_work_domainFinance",
+    "b_muNone_work_domainMixed",
+    "b_muNone_work_domainMusic",
+    "b_muNone_work_domainNone",
+    "b_muNone_work_domainRetail",
+    "b_muNone_work_domainTelecom",
+    "b_muNone_work_domainWeb"
+  ), prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c(
+    "High debt version: false", 
+    "Professional programming experience",
+    "Group: consultants",
+    "Group: frinds",
+    "Group: open",
+    "Group: product-company",
+    "Group: professional-contacts",
+    "Group: students",
+    "Domain: App",
+    "Domain: Automotive",
+    "Domain: Dev-ops",
+    "Domain: E-Commerce",
+    "Domain: students",
+    "Domain: Embedded",
+    "Domain: Finance",
+    "Domain: Mixed",
+    "Domain: Music",
+    "Domain: None",
+    "Domain: Retail",
+    "Domain: Telecom",
+    "Domain: Web"
+  )) +
+  ggtitle("Beta parameters densities for no documentation", subtitle = "Shaded region marks 95% of the density. Line marks the median")
+```
+
+#### Incorrect documentation
+
+```{r interpret-beta-plot-2, warning=FALSE, message=FALSE}
+mcmc_areas(documentation3.all.exp, pars = c(
+    "b_muIncorrect_high_debt_versionfalse", 
+    "b_muIncorrect_work_experience_programming.s",
+    "b_muIncorrect_workplace_peer_reviewfalse",
+    "b_muIncorrect_groupconsultants",
+    "b_muIncorrect_groupfriends",
+    "b_muIncorrect_groupopen",
+    "b_muIncorrect_groupproductMcompany",
+    "b_muIncorrect_groupprofessionalMcontact",
+    "b_muIncorrect_groupstudents",
+    "b_muIncorrect_work_domainApp",
+    "b_muIncorrect_work_domainAutomotive",
+    "b_muIncorrect_work_domainDevops",
+    "b_muIncorrect_work_domainEMCommerce",
+    "b_muIncorrect_work_domainEmbedded",
+    "b_muIncorrect_work_domainFinance",
+    "b_muIncorrect_work_domainMixed",
+    "b_muIncorrect_work_domainMusic",
+    "b_muIncorrect_work_domainNone",
+    "b_muIncorrect_work_domainRetail",
+    "b_muIncorrect_work_domainTelecom",
+    "b_muIncorrect_work_domainWeb"
+  ), prob = 0.95) + scale_y_discrete() +
+  scale_y_discrete(labels=c(
+    "High debt version: false", 
+    "Professional programming experience",
+    "Group: consultants",
+    "Group: frinds",
+    "Group: open",
+    "Group: product-company",
+    "Group: professional-contacts",
+    "Group: students",
+    "Domain: App",
+    "Domain: Automotive",
+    "Domain: Dev-ops",
+    "Domain: E-Commerce",
+    "Domain: students",
+    "Domain: Embedded",
+    "Domain: Finance",
+    "Domain: Mixed",
+    "Domain: Music",
+    "Domain: None",
+    "Domain: Retail",
+    "Domain: Telecom",
+    "Domain: Web"
+  )) +
+  ggtitle("Beta parameters densities for incorrect documentation", subtitle = "Shaded region marks 95% of the density. Line marks the median")
+```
+
+### Effects sizes
+
+```{r effect-size, fig.width=8}
+
+scale_programming_experience <- function(x) {
+  (x - mean(d.completed$work_experience_programming))/ sd(d.completed$work_experience_programming)
+}
+unscale_programming_experience <- function(x) {
+  x * sd(d.completed$work_experience_programming) + mean(d.completed$work_experience_programming)
+}
+
+post_settings <- expand.grid(
+  high_debt_version = c("false", "true"),
+  group = NA,
+  work_domain = NA,
+  session = NA,
+  workplace_peer_review = NA,
+  work_experience_programming.s = sapply(c(0, 3, 10, 25, 40), scale_programming_experience)
+)
+
+post <- posterior_predict(documentation3.all.exp, newdata = post_settings) %>%
+  melt(value.name = "estimate", varnames = c("sample_number", "settings_id")) %>%
+  left_join(
+    rowid_to_column(post_settings, var= "settings_id"),
+    by = "settings_id"
+  ) %>%
+  mutate(work_experience_programming = unscale_programming_experience(work_experience_programming.s)) %>%
+  select(
+    estimate,
+    high_debt_version,
+    work_experience_programming
+  )
+
+post %>%
+  mutate_at("high_debt_version", 
+            function(x) case_when(
+              x == "false" ~ "Low debt",
+              x == "true" ~ "High debt"
+            )) %>%
+  mutate_at("estimate", 
+            function(x) case_when(
+              x == 1 ~ "Correct",
+              x == 2 ~ "Incorrect",
+              x == 3 ~ "Missing"
+            )) %>%
+  ggplot(aes(high_debt_version)) +
+  geom_bar(aes(fill = estimate), position = "fill") + 
+  facet_grid(rows = vars(work_experience_programming)) +
+  scale_y_reverse() +
+  scale_fill_manual("Legend", values = c("darkblue", "#7070FF", "lightblue"), guide = guide_legend(reverse = TRUE)) +
+  labs(title = "Documentation state") +
+  xlab("Debt version") +
+  ylab("Ratio of documentation state")
+
+```
+
+We can see that task completion ratios are similar for both high and low debt but that there is some difference in how often they leave incorrect documentation.
+
+```{r}
+print("All:")
+length(pull(filter(post, high_debt_version == "true", estimate == 2), estimate)) /
+length(pull(filter(post, high_debt_version == "false", estimate == 2), estimate))
+
+
+print("3 years of experience:")
+length(pull(filter(post, high_debt_version == "true", estimate == 2, work_experience_programming == 3), estimate)) /
+length(pull(filter(post, high_debt_version == "false", estimate == 2, work_experience_programming == 3), estimate))
+
+
+print("25 years of experience:")
+length(pull(filter(post, high_debt_version == "true", estimate == 2, work_experience_programming == 25), estimate)) /
+length(pull(filter(post, high_debt_version == "false", estimate == 2, work_experience_programming == 25), estimate))
+```
+
+The results show that developers are ca `30%` more likely to leave incorrect documentation in the high debt version. The effect varies somewhat for different experience levels landing on `42%` for developers with three years of programming experience and `31%` for those with 25.

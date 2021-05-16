@@ -1,7 +1,7 @@
 ---
 title: "Broken Windows Investigation Replication Package"
 author: Hampus Broman & William Levén
-date: 2021-04
+date: 2021-05
 output: 
   html_document: 
     pandoc_args: [ "-o", "html/index.html" ]
@@ -17,8 +17,15 @@ Read the Broken Window Investigation thesis for more information and justificati
 
 * [Overview](index.html) - Provides an overview if the replication package.
 * [Setup](setup.html) - Data preparation, utility function and library imports.
-* [Data Exploration](data_exploration.html) - Plots and data descriptions not relating to the outcomes, those are found in "Baysian Models".
-* Baysian Models - All our models grouped by which outcome they measure.
-  * [Time Model](time.html) - Exploration and models related to the time outcome.
-  * [Reuse Model](reuse.html) - Exploration and models related to code reuse.
-* [Computational Environment](environment.html) - Description of the environment used to perform the analysis.
+* [Data description](data_description.html) - Plots and data descriptions not relating to the outcomes, those are found in "Baysian Models".
+* Models - All our models grouped by which outcome they measure.
+  * [Logic reuse](logic_reuse.html) - Exploration and models related to code reuse.
+  * [Variable naming](variable_naming.html) - Exploration and models related to variable naming.
+  * [Self reported quality](self_reported_quality.html) - Exploration and models related to how participants reported the quality of their own work.
+  * [Sonarqube issues](sonarqube_issues.html) - Exploration and models related to introduced sonarqube issues.
+  * [Implemented utility methods](implemented_utility_methods.html) - Exploration and models related to the implementation of utility methods.
+  * [Documentation state](documentation_state.html) - Exploration and models related to the state of the validation documentation.
+  * [Task completion](task_completion.html) - Exploration and models related to dropouts and task completion.
+  * [Time to complete task](time_to_complete_task.html) - Exploration and models related to the time outcome.
+  * [Reported scenario quality](reported_scenario_quality.html) - Exploration and models related how participants rathed the quality of the scenario.
+* [Environment](environment.html) - Description of the computational environment used to perform the analysis.
