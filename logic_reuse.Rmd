@@ -646,8 +646,8 @@ post %>%
             )) %>%
   mutate_at("estimate", 
             function(x) case_when(
-              x == 1 ~ "Reused",
-              x == 0 ~ "Duplicated"
+              x == 0 ~ "Reused",
+              x == 1 ~ "Duplicated"
             )) %>%
   ggplot(aes(high_debt_version)) +
   geom_bar(aes(fill = estimate), position = "fill") + 
