@@ -610,11 +610,6 @@ pp_check(utility1.all.exp, type = "bars", nsamples = 200, resp = "equalsexists")
 
 This means that our final model, with all data points and experience predictors, is `utility1.all.exp`
 
-### Final model
-* Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
-
-This means that our final model, with all data points and experience predictors, is `scenario_quality1.all`
-
 ## Interpreting the model
 To begin interpreting the model we look at how it's parameters were estimated. As our research is focused on how the outcome of the model is effected we will mainly analyze the $\beta$ parameters.
 
