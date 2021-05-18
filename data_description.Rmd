@@ -14,58 +14,86 @@ source(knitr::purl('setup.Rmd', output = tempfile()))
 ```
 
 
-Education:
+* 22 out of 43 participant completed both scenarios
+* 51 complete submissions were submitted
+
+
+
+## Education
+
+### Education level
+
 ```{r}
 d.sessions.completed %>%
-  ggplot(aes(education_level)) +
+  ggplot(aes(education_level, fill = education_level)) +
   geom_bar() +
-  labs(title = "Education level distribution") +
+  labs(title = "Education level distribution for completed sessions") +
   xlab("Education Level") +
-  ylab("Count")
+  ylab("Count") +
+  scale_fill_manual(values = rep("#7070FF", 5), guide = NULL)
 
+```
+
+### Education field
+
+```{r}
 d.sessions.completed %>%
-  ggplot(aes(education_field)) + geom_bar() +
+  ggplot(aes(education_field, fill = education_field)) +
   geom_bar() +
-  labs(title = "Education field distribution") +
+  labs(title = "Education field distribution for completed sessions") +
   xlab("Education field") +
-  ylab("Count")
+  ylab("Count") +
+  scale_fill_manual(values = rep("#7070FF", 4), guide = NULL)
 ```
 
 
-Work experience:
+## Work experience
+
+### Work domain
+
 ```{r}
 d.sessions.completed %>%
-  ggplot(aes(work_domain)) +
+  ggplot(aes(work_domain, fill =work_domain)) +
   geom_bar() +
-  labs(title = "Work domain distribution") +
+  labs(title = "Work domain distribution for completed sessions") +
   xlab("Work domain") +
-  ylab("Count")
+  ylab("Count") +
+  scale_fill_manual(values = rep("#7070FF", 11), guide = NULL)
 
+```
 
+### Professional programming experience
+
+```{r}
 d.sessions.completed %>%
   ggplot(aes(work_experience_programming)) +
-  geom_histogram(breaks = c(-1, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60), closed="right") +
-  labs(title = "Professional programming experience distribution") +
+  geom_histogram(breaks = c(-1, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60), closed="right", fill= "#7070FF", color="black") +
+  labs(title = "Professional programming experience distribution for completed sessions") +
   xlab("Experience in years") +
   ylab("Count")
+```
 
+### Professional Java experience
+
+```{r}
 d.sessions.completed %>%
   ggplot(aes(work_experience_java)) +
-  geom_histogram(breaks = c(-1, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60), closed="right") +
-  labs(title = "Professional Java experience distribution") +
+  geom_histogram(breaks = c(-1, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60), closed="right", fill= "#7070FF", color="black") +
+  labs(title = "Professional Java experience distribution for completed sessions") +
   xlab("Experience in years") +
   ylab("Count")
 ```
 
 
-Signup Codes:
+## Signup Code
 ```{r}
 d.sessions.completed %>%
-  ggplot(aes(group)) +
+  ggplot(aes(group, fill = group)) +
   geom_bar() +
-  labs(title = "signup group distribution") +
+  labs(title = "Signup group distribution for completed sessions for completed sessions") +
   xlab("Signup Group") +
-  ylab("Count")
+  ylab("Count") +
+  scale_fill_manual(values = rep("#7070FF", 5), guide = NULL)
 
 ```
 
