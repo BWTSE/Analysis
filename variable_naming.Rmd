@@ -531,8 +531,6 @@ variable_names0.all.exp <- brm(
   file_refit = "on_change",
   seed = 20210421
 )
-
-summary(variable_names0.all)
 ```
 
 ##### Summary
@@ -650,7 +648,7 @@ ggplot(post, aes(x=estimate, fill = high_debt_version)) +
   ) +
   facet_grid(rows = vars(work_experience_programming)) +
   labs(
-    title = "Rate of good variable naming",
+    title = "Rate of good variable naming / professional programmign experience",
     x = "Rate",
     y = "Density"
   )
@@ -705,3 +703,10 @@ ggplot(post, aes(x=estimate, fill = high_debt_version)) +
   scale_y_continuous(limits = NULL, breaks = c(500,1000,1500,2000,2500), labels = c("10%","20%","30%","40%","50%")) + theme(legend.position = "hidden")
 
 ```
+
+```{r es-10, class.source = 'fold-show'}
+d.high <- 10 - (post %>% filter(high_debt_version == "High debt version") %>% pull(estimate))
+d.low <- 10 - (post %>% filter(high_debt_version == "Low debt version") %>% pull(estimate))
+sum(d.high) / sum(d.low)
+```
+more than 5 times more likely to introduce none-descriptive variable names
