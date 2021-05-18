@@ -387,7 +387,7 @@ pp_check(sonarqube_issues0.all.exp, nsamples = 200, type = "bars") + xlim(-1, 15
 * Fitting the model to all data point did not significantly damage the model and will be used as is a more fair representation of reality.
 * Adding the experience predictors did not significantly damage the model and will be used as it provides useful insight.
 
-This means that our final model, with all data points and experience predictors, is `sonarqube_issues.all.exp`
+This means that our final model, with all data points and experience predictors, is `sonarqube_issues0.all.exp`
 
 ## Interpreting the model
 To begin interpreting the model we look at how it's parameters were estimated. As our research is focused on how the outcome of the model is effected we will mainly analyze the $\beta$ parameters.
