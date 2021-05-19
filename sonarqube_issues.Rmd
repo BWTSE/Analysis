@@ -472,11 +472,11 @@ ggplot(post.diff, aes(x=estimate)) +
 print("All:")
 mean(post.diff$estimate)
 
-print("3 years:")
-mean(post.diff %>% filter(work_experience_programming == 3) %>% pull(estimate))
+print("10 years:")
+sum(pull(filter(post, work_experience_programming == 10, high_debt_version == "true"), estimate)) / sum(pull(filter(post, work_experience_programming == 10, high_debt_version == "false"), estimate))
 
 print("25 years:")
-mean(post.diff %>% filter(work_experience_programming == 25) %>% pull(estimate))
+sum(pull(filter(post, work_experience_programming == 25, high_debt_version == "true"), estimate)) / sum(pull(filter(post, work_experience_programming == 25, high_debt_version == "false"), estimate))
 ```
 
 In the context of the assignment the participant were given, preexisting technical debt caused developers to on average introduce `1.18` sonarqube issues more. The effect varies with the professional programming experience of the developer with an average of `1.33` for those with 3 years of experience and an average of `0.87` for those with 25 years of experience.

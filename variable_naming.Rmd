@@ -585,7 +585,7 @@ mcmc_areas(
   scale_y_discrete() +
   scale_y_discrete(labels=c("High debt version: false", "Professional programming experience")) +
   ggtitle(
-    "Beta parameters densities in time model", 
+    "Beta parameters densities in variable naming model", 
     subtitle = "Shaded region marks 95% of the density. Line marks the median"
   )
 ```
