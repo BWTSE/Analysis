@@ -82,7 +82,7 @@ d.sessions %>%
 ```
 
 ## Initial model
-The outcome model represent incremental steps and will therefore be modeled with stopping ratio
+The outcome model represent incremental steps and will therefore be modeled with stopping ratio. Other incremental models were considered but stopping ratio seems to best fit both the data and the underlying data generation process.
 
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 
@@ -125,6 +125,8 @@ pp_check(dropouts.with(sample_prior = "only"), nsamples = 200, type = "bars")
 ```
 
 #### Beta parameter influence
+
+We choose a beta parameter priors allowing for the beta parameter to account for 75% of the effect but that is skeptical to such strong effects from the beta parameter.
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -588,4 +590,4 @@ post %>%
 
 ```
 
-We can see that task completion ratios are very similar for both high and low debt.
+We can see that task completion ratios are very similar for both high and low debt and will not proceed to calculate any specific probabilities.

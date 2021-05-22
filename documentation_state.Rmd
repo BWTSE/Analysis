@@ -32,7 +32,7 @@ d.both_completed %>%
 ```
 
 ## Initial model
-The type of the outcome is categorical and is hence modeled as categorical
+The type of the outcome is categorical and is hence modeled as categorical. 
 
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
@@ -77,6 +77,8 @@ pp_check(documentation.with(sample_prior = "only"), nsamples = 200, type = "bars
 ```
 
 #### Beta parameter influence
+
+We choose a beta parameter priors allowing for the beta parameter to account for 100% of the effect but that is skeptical to such strong effects from the beta parameter.
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -908,22 +910,28 @@ post %>%
 
 ```
 
-We can see that task completion ratios are similar for both high and low debt but that there is some difference in how often they leave incorrect documentation.
+We can see that task completion ratios are similar for both high and low debt but that there is some difference in how often they leave incorrect documentation and will therefore proceed to calculate some probabilities of leaving incorrect documentation.
 
-```{r}
-print("All:")
-length(pull(filter(post, high_debt_version == "true", estimate == 2), estimate)) /
-length(pull(filter(post, high_debt_version == "false", estimate == 2), estimate))
-
-
-print("3 years of experience:")
-length(pull(filter(post, high_debt_version == "true", estimate == 2, work_experience_programming == 3), estimate)) /
-length(pull(filter(post, high_debt_version == "false", estimate == 2, work_experience_programming == 3), estimate))
-
-
-print("25 years of experience:")
-length(pull(filter(post, high_debt_version == "true", estimate == 2, work_experience_programming == 25), estimate)) /
-length(pull(filter(post, high_debt_version == "false", estimate == 2, work_experience_programming == 25), estimate))
+```{r, class.source = 'fold-show'}
+d <- post %>% filter(estimate == 2)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+length(d.high) / length(d.low)
 ```
+Given all the simulated cases we find that developers are `33%` more likely to leave incorrect documentation in the high debt version of the scenarios.
 
-The results show that developers are ca `30%` more likely to leave incorrect documentation in the high debt version. The effect varies somewhat for different experience levels landing on `42%` for developers with three years of programming experience and `31%` for those with 25.
+```{r, class.source = 'fold-show'}
+d <- post %>% filter(estimate == 2, work_experience_programming == 10)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+length(d.high) / length(d.low)
+```
+Given developers with 10 years of professional programming experience we find that they are `34%` more likely to leave incorrect documentation in the high debt version of the scenarios.
+
+```{r, class.source = 'fold-show'}
+d <- post %>% filter(estimate == 2, work_experience_programming == 25)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+length(d.high) / length(d.low)
+```
+Given developers with 25 years of professional programming experience we find that they are `31%` more likely to leave incorrect documentation in the high debt version of the scenarios.

@@ -114,6 +114,8 @@ pp_check(reuse.with(sample_prior = "only"), type = "bars", nsamples = 200, resp 
 
 #### Beta parameter influence
 
+We choose a beta parameter priors allowing for the beta parameter to account for 100% of the effect but that is skeptical to such strong effects from the beta parameter.
+
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
 sim.intercept <- rnorm(sim.size, 0, 1)

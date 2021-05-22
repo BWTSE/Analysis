@@ -90,12 +90,10 @@ data.frame(
 ```
 
 ## Initial model
-As the data is collected from a likert scale we will use a cumulative family.
+As the data is collected from a likert scale we will use a cumulative family, indicating that each level on the scale is an incremental step. This model is also able to fit the data well.
 
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
-
-
 
 ### Selecting priors {.tabset}
 
@@ -137,6 +135,8 @@ pp_check(scenario_quality.with(sample_prior = "only"), nsamples = 200, type = "b
 ```
 
 #### Beta parameter influence
+
+We choose a beta parameter priors allowing for the beta parameter to account for 100% of the effect but that is skeptical to such strong effects from the beta parameter.
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -606,6 +606,7 @@ data.frame(
 
 
 ```
+
 ```{r effect-size-diff, warning=FALSE, message=FALSE}
 post.diff <- post %>% filter(high_debt_version == "true")
 post.diff$estimate = post.diff$estimate -  filter(post, high_debt_version == "false")$estimate
@@ -622,11 +623,12 @@ post.diff %>%
   scale_y_continuous(breaks = NULL)
 ```
 
+We can then proceed to calculate some likelihoods:
 
-```{r}
-print("cases with high debt rated lower:")
-length(pull(filter(post.diff, work_experience_programming == 10, estimate < 0), estimate)) / length(pull(filter(post.diff, work_experience_programming == 10), estimate))
-print("cases with low debt rated lower:")
-length(pull(filter(post.diff, work_experience_programming == 10, estimate > 0), estimate)) / length(pull(filter(post.diff, work_experience_programming == 10), estimate))
+```{r, class.source = 'fold-show'}
+post.diff.10 <- post.diff %>% filter(work_experience_programming == 10)
+high_debt_rated_higher <- sum(post.diff.10$estimate > 0)
+low_debt_rated_higher <- sum(post.diff.10$estimate < 0)
+low_debt_rated_higher / high_debt_rated_higher
 ```
-We see that the high debt version is ranked as worse in 63 % of cases while the low debt version is ranked as worse in the 21 % of cases.
+Participants with 10 years of professional programming experience were `203%` more likely to rate the high debt version scenario as worse than then they were to rate the low debt version scenario as worse.

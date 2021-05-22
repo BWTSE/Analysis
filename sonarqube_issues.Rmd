@@ -49,7 +49,7 @@ We also include a varying intercept for each individual to prevent the model fro
 
 ### Selecting priors {.tabset}
 
-We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases.
+We iterate over the model until we have sane priors, in this case a prior that reasonably cna fit our data without being too restrictive.
 
 #### Base model with priors
 
@@ -87,6 +87,8 @@ pp_check(sonarqube_issues.with(sample_prior = "only"), nsamples = 400, type = "b
 ```
 
 #### Beta parameter influence
+
+We choose a beta prior that allows for large effects (+-10 issues) but is skeptical to any effects larger than +-4 issues.
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -468,15 +470,37 @@ ggplot(post.diff, aes(x=estimate)) +
   scale_y_continuous(breaks = NULL)
 ```
 
-```{r stuff, class.source = 'fold-show'}
-print("All:")
-mean(post.diff$estimate)
+We can then proceed to calculate some likelihoods:
 
-print("10 years:")
-sum(pull(filter(post, work_experience_programming == 10, high_debt_version == "true"), estimate)) / sum(pull(filter(post, work_experience_programming == 10, high_debt_version == "false"), estimate))
-
-print("25 years:")
-sum(pull(filter(post, work_experience_programming == 25, high_debt_version == "true"), estimate)) / sum(pull(filter(post, work_experience_programming == 25, high_debt_version == "false"), estimate))
+```{r es-a, class.source = 'fold-show'}
+d <- post
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+sum(d.high) / sum(d.low)
 ```
+Given all the simulated cases we find that they introduce `117%` more issues in the high debt version.
 
-In the context of the assignment the participant were given, preexisting technical debt caused developers to on average introduce `1.18` sonarqube issues more. The effect varies with the professional programming experience of the developer with an average of `1.33` for those with 3 years of experience and an average of `0.87` for those with 25 years of experience.
+```{r es-10, class.source = 'fold-show'}
+d <- post %>% filter(work_experience_programming == 10)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+sum(d.high) / sum(d.low)
+```
+Considering developers with 10 years of professional programming experience we find that they introduce `120%` more issues in the high debt version.
+
+```{r es-0, class.source = 'fold-show'}
+d <- post %>% filter(work_experience_programming == 0)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+sum(d.high) / sum(d.low)
+```
+Considering developers with no of professional programming experience we find that they introduce `115%` more issues in the high debt version.
+
+
+```{r es-25, class.source = 'fold-show'}
+d <- post %>% filter(work_experience_programming == 25)
+d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
+d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
+sum(d.high) / sum(d.low)
+```
+Considering developers with 25 years of professional programming experience we find that they introduce `109%` more issues in the high debt version.

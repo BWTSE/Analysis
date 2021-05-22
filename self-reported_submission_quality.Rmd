@@ -53,7 +53,7 @@ data.frame(
 ```
 
 ## Initial model
-As the data is collected from a likert scale we will use a cumulative family.
+As the data is collected from a likert scale we will use a cumulative family, indicating that each level on the scale is an incremental step. This model is also able to fit the data well.
 
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
@@ -96,6 +96,8 @@ pp_check(own_quality.with(sample_prior = "only"), nsamples = 200, type = "bars")
 ```
 
 #### Beta parameter influence
+
+We choose a beta parameter priors allowing for the beta parameter to account for 100% of the effect but that is skeptical to such strong effects from the beta parameter.
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -687,8 +689,7 @@ mcmc_areas(own_quality0.all,
   ggtitle("Beta parameters densities in self assesed quality model", subtitle = "Shaded region marks 95% of the density. Line marks the median")
 ```
 
-As we have a low of effects playing small roles we will simulate two scenarios, one where the developer, according to us does well and one where the developers doesnt do so well and se if the participant rating approves with us.
-
+As we have a low of effects playing small roles we will simulate two scenarios, one where the developer, according to us does well and one where the developers does not do so well and see if the participant rating approves with us.
 
 
 ```{r interpret-post, message=FALSE, warning=FALSE}
@@ -746,3 +747,27 @@ data.frame(
   )
 
 ```
+
+```{r effect-size-diff, warning=FALSE, message=FALSE}
+post.diff <- post %>% filter(submission == "Bad")
+post.diff$estimate = post.diff$estimate -  filter(post, submission == "Good")$estimate
+
+post.diff %>%
+  ggplot(aes(x=estimate)) +
+  geom_boxplot(quantile_lines = TRUE, quantile_fun = hdi, vline_linetype = 2) +
+  labs(
+    title = "Submission rating diff",
+    subtitle = "Difference as: bad submission rating - good submission rating",
+    x = "Rating difference"
+  ) +
+  scale_y_continuous(breaks = NULL)
+```
+
+We can then proceed to calculate some likelihoods:
+
+```{r, class.source = 'fold-show'}
+bad_rated_higher <- sum(post.diff < 0)
+good_rated_higher <- sum(post.diff > 0)
+good_rated_higher / bad_rated_higher
+```
+Participants were `117%` more likely to rate the bad submission as worse then they were to rate the good submission as worse. 
