@@ -7,7 +7,7 @@ output:
     pandoc_args: [ "-o", "docs/index.html" ]
     toc: no
 ---
-This is a replication package for the Broken Windows Investigation thesis conducted by [Hampus Broman](https://github.com/HBroman) and [William Levén](https://github.com/williamleven) in 2021.
+This is a replication package for the *Broken Windows Investigation* thesis conducted by [Hampus Broman](https://github.com/HBroman) and [William Levén](https://github.com/williamleven) in 2021.
 
 The package contains a presentation as well as the [source](https://github.com/BrokenWindowsInvestigation/Analysis) for the whole analysis performed.
 
