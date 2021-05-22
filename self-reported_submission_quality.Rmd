@@ -768,6 +768,7 @@ We can then proceed to calculate some likelihoods:
 ```{r, class.source = 'fold-show'}
 bad_rated_higher <- sum(post.diff < 0)
 good_rated_higher <- sum(post.diff > 0)
-good_rated_higher / bad_rated_higher
+x <- good_rated_higher / bad_rated_higher
+x
 ```
-Participants were `117%` more likely to rate the bad submission as worse then they were to rate the good submission as worse. 
+Participants were `r scales::label_percent()(x - 1)` more likely to rate the bad submission as worse then they were to rate the good submission as worse. 

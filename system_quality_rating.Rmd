@@ -629,6 +629,8 @@ We can then proceed to calculate some likelihoods:
 post.diff.10 <- post.diff %>% filter(work_experience_programming == 10)
 high_debt_rated_higher <- sum(post.diff.10$estimate > 0)
 low_debt_rated_higher <- sum(post.diff.10$estimate < 0)
-low_debt_rated_higher / high_debt_rated_higher
+x <- low_debt_rated_higher / high_debt_rated_higher
+x
 ```
-Participants with 10 years of professional programming experience were `203%` more likely to rate the high debt version scenario as worse than then they were to rate the low debt version scenario as worse.
+
+Participants with 10 years of professional programming experience were `r scales::label_percent()(x - 1)` more likely to rate the high debt version scenario as worse than then they were to rate the low debt version scenario as worse.

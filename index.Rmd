@@ -18,6 +18,7 @@ Read the Broken Windows Investigation thesis for more information and justificat
 If you have any questions or feel that anything in the replication package is amiss, please [open an issue](https://github.com/BrokenWindowsInvestigation/Analysis/issues).
 
 1. Most models have been run with moment matching to improve pareto-k diagnostics. We found no consistent errors in the loo estimates and did not include the moment matching in the replication package due its resource intensiveness.
+2. Seeds have been used where possible to reduce the effects of randomness for those who wish to execute this replication package themselves. All steps does however not support seeding (especially loo and posterior sampling) and may therefore produce slightly different results on each execution. Seeds were selected as the date of the day they were introduced on.
 
 ## Sub pages:
 

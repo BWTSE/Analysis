@@ -719,6 +719,8 @@ ggplot(post, aes(x=estimate, fill = high_debt_version)) +
 ```{r es-10, class.source = 'fold-show'}
 bad_names.high <- 10 - (post %>% filter(high_debt_version == "High debt version") %>% pull(estimate))
 bad_names.low <- 10 - (post %>% filter(high_debt_version == "Low debt version") %>% pull(estimate))
-sum(bad_names.high) / sum(bad_names.low)
+x <- sum(bad_names.high) / sum(bad_names.low)
+x
 ```
-Considering developers with 10 years of professional programming experience we find that they introduce `415%` more none descriptive variable names in the high debt version.
+
+Considering developers with 10 years of professional programming experience we find that they introduce `r scales::label_percent()(x - 1)` more non-descriptive variable names in the high debt version.

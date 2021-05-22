@@ -668,31 +668,39 @@ We can then proceed to calculate some likelihoods of duplication:
 d <- post
 d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
 d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
-sum(d.high) / sum(d.low)
+x <- sum(d.high) / sum(d.low)
+x
 ```
-Given all the simulated cases we find that developers are `88%` more likely to duplicate code in our high debt scenario.
+
+Given all the simulated cases we find that developers are `r scales::label_percent()(x - 1)` more likely to duplicate code in our high debt scenario.
 
 ```{r es-10, class.source = 'fold-show'}
 d <- post %>% filter(work_experience_programming == 10)
 d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
 d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
-sum(d.high) / sum(d.low)
+x <- sum(d.high) / sum(d.low)
+x
 ```
-Considering developers with 10 years of professional programming experience we find that they are `104%` more likely to duplicate code in our high debt scenario.
+
+Considering developers with 10 years of professional programming experience we find that they are `r scales::label_percent()(x - 1)` more likely to duplicate code in our high debt scenario.
 
 ```{r es-0, class.source = 'fold-show'}
 d <- post %>% filter(work_experience_programming == 0)
 d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
 d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
-sum(d.high) / sum(d.low)
+x <- sum(d.high) / sum(d.low)
+x
 ```
-Considering developers with no professional programming experience we find that they are `112%` more likely to duplicate code in our high debt scenario.
+
+Considering developers with no professional programming experience we find that they are `r scales::label_percent()(x - 1)` more likely to duplicate code in our high debt scenario.
 
 
 ```{r es-25, class.source = 'fold-show'}
 d <- post %>% filter(work_experience_programming == 25)
 d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
 d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
-sum(d.high) / sum(d.low)
+x <- sum(d.high) / sum(d.low)
+x
 ```
-Considering developers with 25 years of professional programming experience we find that they are `85%` more likely to duplicate code in our high debt scenario.
+
+Considering developers with 25 years of professional programming experience we find that they are `r scales::label_percent()(x - 1)` more likely to duplicate code in our high debt scenario.

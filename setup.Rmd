@@ -16,6 +16,9 @@ library(tidyr)
 library(reshape2)
 library(tibble)
 
+# Pretty printing
+library(scales)
+
 # Fetching data
 library(curl)
 

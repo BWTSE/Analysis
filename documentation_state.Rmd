@@ -916,22 +916,25 @@ We can see that task completion ratios are similar for both high and low debt bu
 d <- post %>% filter(estimate == 2)
 d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
 d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
-length(d.high) / length(d.low)
+x <- length(d.high) / length(d.low)
+x
 ```
-Given all the simulated cases we find that developers are `33%` more likely to leave incorrect documentation in the high debt version of the scenarios.
+Given all the simulated cases we find that developers are `r scales::label_percent()(x - 1)` more likely to leave incorrect documentation in the high debt version of the scenarios.
 
 ```{r, class.source = 'fold-show'}
 d <- post %>% filter(estimate == 2, work_experience_programming == 10)
 d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
 d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
-length(d.high) / length(d.low)
+x <- length(d.high) / length(d.low)
+x
 ```
-Given developers with 10 years of professional programming experience we find that they are `34%` more likely to leave incorrect documentation in the high debt version of the scenarios.
+Given developers with 10 years of professional programming experience we find that they are `r scales::label_percent()(x - 1)` more likely to leave incorrect documentation in the high debt version of the scenarios.
 
 ```{r, class.source = 'fold-show'}
 d <- post %>% filter(estimate == 2, work_experience_programming == 25)
 d.high <- d %>% filter(high_debt_version == "true") %>% pull(estimate)
 d.low <- d %>% filter(high_debt_version == "false") %>% pull(estimate)
-length(d.high) / length(d.low)
+x <- length(d.high) / length(d.low)
+x
 ```
-Given developers with 25 years of professional programming experience we find that they are `31%` more likely to leave incorrect documentation in the high debt version of the scenarios.
+Given developers with 25 years of professional programming experience we find that they are `r scales::label_percent()(x - 1)` more likely to leave incorrect documentation in the high debt version of the scenarios.
