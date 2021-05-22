@@ -6,4 +6,8 @@ The package contains a [presentation](https://brokenwindowsinvestigation.github.
 
 Read the Broken Windows Investigation thesis for more information and justification about the analysis and procedure.
 
+## Notes
+
 If you have any questions or feel that anything in the replication package is amiss, please [open an issue](https://github.com/BrokenWindowsInvestigation/Analysis/issues).
+
+1. Most models have been run with moment matching to improve pareto-k diagnostics. We found no consistent errors in the loo estimates and did not include the moment matching in the replication package due its resource intensiveness.
