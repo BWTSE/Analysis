@@ -622,7 +622,7 @@ To begin interpreting the model we look at how it's parameters were estimated. A
 ```{r interpret-beta-plot-constructor, warning=FALSE, message=FALSE}
 mcmc_areas(utility1.all.exp, pars = c("b_equalsexists_high_debt_versionfalse", "b_equalsexists_work_experience_programming.s", "b_equalsexists_scenariotickets"), prob = 0.95) + scale_y_discrete() +
   scale_y_discrete(labels=c("High debt version: false", "Professional programming experience", "Tickets scenario")) +
-  ggtitle("Beta parameters densities for equals implemntationl", subtitle = "Shaded region marks 95% of the density. Line marks the median")
+  ggtitle("Beta parameters densities for equals implemntation", subtitle = "Shaded region marks 95% of the density. Line marks the median")
 ```
 
 #### hashcode

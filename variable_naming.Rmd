@@ -24,7 +24,7 @@ d.both_completed %>%
   ggplot(aes(x=var_names_new_good.ratio, fill=high_debt_version)) + 
   geom_boxplot() +
   labs(
-    title = "Distribution of good variable naming rate for the different debt levels (new variables)",
+    title = "Distribution of good variable naming rate (new variables)",
     x ="Ratio of good variable name selection"
   ) +
   scale_y_continuous(breaks = NULL) +
@@ -44,7 +44,7 @@ d.both_completed %>%
   ggplot(aes(x=var_names_copied_good.ratio, fill=high_debt_version)) + 
   geom_boxplot() +
   labs(
-    title = "Distribution of good variable naming rate for the different debt levels (copied variables)",
+    title = "Distribution of good variable naming rate (copied variables)",
     x ="Ratio of good variable name selection"
   ) +
   scale_y_continuous(breaks = NULL) +
