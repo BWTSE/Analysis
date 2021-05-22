@@ -15,7 +15,7 @@ source(knitr::purl('setup.Rmd', output = tempfile()))
 ## Looking at the data {.tabset}
 There appears to be significant difference in the rate of bad variable naming between the low and high debt groups.
 
-### New Variable Names 
+### New variable names 
 ```{r plot1}
 
 d.both_completed %>%
@@ -35,7 +35,7 @@ d.both_completed %>%
 
 ```
 
-### Copied Variable Names
+### Copied variable names
 ```{r plot2}
 d.both_completed %>%
   ggplot(aes(x=var_names_copied_good.ratio, fill=high_debt_version)) + 
@@ -54,9 +54,9 @@ d.both_completed %>%
 
 ```
 
-## Descriptive Statistics: {.tabset}
+## Descriptive statistics: {.tabset}
 
-### New Variable Names
+### New variable names
 ```{r descriptive-statistics-new-vars}
 d.both_completed %>%
   pull(var_names_new_good.ratio) %>% 
@@ -65,7 +65,7 @@ d.both_completed %>%
 sprintf("Variance: %.2f", var(pull(d.both_completed, var_names_new_good.ratio)))
 ```
 
-### Copied Variable Names
+### Copied variable names
 ```{r descriptive-statistics-copied-vars}
 d.both_completed %>%
   pull(var_names_copied_good.ratio) %>% 
@@ -79,7 +79,7 @@ Variable names are modeled using the binomial family, where the amount of trials
 
 We include `high_debt_verison` as well as a varying intercept for each individual in our initial model.
 
-### Selecting Priors {.tabset}
+### Selecting priors {.tabset}
 We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. The prior "lkj(2)" will mean the model is skeptical of strong correlations.
 
 #### Base model with priors
@@ -111,13 +111,13 @@ prior_summary(variable_names.with(only_priors= TRUE))
 prior_summary(variable_names.with(sample_prior = "only"))
 ```
 
-#### Prior Predictive Check
+#### Prior predictive check
 
 ```{r priors-check, warning=FALSE}
 pp_check(variable_names.with(sample_prior = "only"), nsamples = 200)
 ```
 
-#### Beta Parameter Influence
+#### Beta parameter influence
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -142,7 +142,7 @@ data.frame(x = sim.beta.diff) %>%
 We check the posterior distribution and can see that the model seems to have been able to fit the data well
 Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
 
-#### Posterior Predictive check
+#### Posterior predictive check
 
 ```{r base-pp-check}
 pp_check(variable_names.with(), nsamples = 200, type = "bars")
@@ -457,7 +457,7 @@ pp_check(variable_names3, nsamples = 200, type = "bars")
 ```
 
 
-## Final Model 
+## Final model 
 All candidate models look nice, none is significantly better than the others, we will proceed the simplest model: `variable_names0`
 
 ### Variations {.tabset}

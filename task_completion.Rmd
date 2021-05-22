@@ -86,7 +86,7 @@ The outcome model represent incremental steps and will therefore be modeled with
 
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 
-### Selecting Priors {.tabset}
+### Selecting priors {.tabset}
 
 We iterate over the model until we have sane priors.
 
@@ -118,13 +118,13 @@ prior_summary(dropouts.with(only_priors= TRUE))
 prior_summary(dropouts.with(sample_prior = "only"))
 ```
 
-#### Prior Predictive Check
+#### Prior predictive check
 
 ```{r priors-check, warning=FALSE}
 pp_check(dropouts.with(sample_prior = "only"), nsamples = 200, type = "bars")
 ```
 
-#### Beta Parameter Influence
+#### Beta parameter influence
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -149,7 +149,7 @@ data.frame(x = sim.beta.diff) %>%
 We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
 Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
 
-#### Posterior Predictive check
+#### Posterior predictive check
 
 ```{r base-pp-check}
 pp_check(dropouts.with(), nsamples = 200, type = "bars")
@@ -511,7 +511,7 @@ plot(droputs4, ask = FALSE)
 pp_check(droputs4, nsamples = 200, type = "bars")
 ```
 
-## Final Model 
+## Final model 
 All candidate models look nice, the more complex models are slightly betters, we choose the simplest model that is not significantly worse then the best model: `dropouts2`
 
 ## Interpreting the model

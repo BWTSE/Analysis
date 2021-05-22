@@ -36,7 +36,7 @@ d.both_completed %>%
   ) 
 ```
 
-## Descriptive Statistics
+## Descriptive statistics
 
 ```{r descriptive-statistics}
 d.both_completed %>%
@@ -52,7 +52,7 @@ As the variance is much greater than the mean we will use a negative binomial fa
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
 
-### Selecting Priors {.tabset}
+### Selecting priors {.tabset}
 
 We iterate over the model until we have sane priors.
 
@@ -86,13 +86,13 @@ prior_summary(time.with(only_priors= TRUE))
 prior_summary(time.with(sample_prior = "only"))
 ```
 
-#### Prior Predictive Check
+#### Prior predictive check
 
 ```{r priors-check, warning=FALSE}
 pp_check(time.with(sample_prior = "only"), nsamples = 200) + scale_x_log10()
 ```
 
-#### Beta Parameter Influence
+#### Beta parameter influence
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -118,7 +118,7 @@ data.frame(x = sim.beta.diff.min) %>%
 We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
 Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
 
-#### Posterior Predictive check
+#### Posterior predictive check
 
 ```{r base-pp-check}
 pp_check(time.with(), nsamples = 200) + scale_x_log10()
@@ -427,7 +427,7 @@ plot(time3, ask = FALSE)
 pp_check(time3, nsamples = 200) + scale_x_log10()
 ```
 
-## Final Model 
+## Final model 
 All candidate models look nice, none is significantly better than the others, we will proceed the simplest model: `time0`
 
 ### Variations {.tabset}

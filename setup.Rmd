@@ -34,7 +34,7 @@ library(ggridges)
 library(brms)
 ```
 
-## Data Fetching
+## Data fetching
 
 We begin by importing the csv data from the [data repository](https://github.com/BrokenWindowsInvestigation/Data).
 
@@ -303,7 +303,7 @@ extendable_model <- function(
 Example usage:
 
 ```{r, eval=FALSE, class.source = 'fold-show'}
-## Not run: 
+## Not run
 m.with <- extendable_model(
   base_name = "m", 
   base_formula = "time ~ 1",

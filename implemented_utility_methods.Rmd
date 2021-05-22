@@ -41,7 +41,7 @@ Since they may correlate, hashcode inclusion and equals inclusion are both inclu
 
 
 
-### Selecting Priors {.tabset}
+### Selecting priors {.tabset}
 
 We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. 
 
@@ -77,7 +77,7 @@ prior_summary(utility.with(only_priors= TRUE))
 prior_summary(utility.with(sample_prior = "only"))
 ```
 
-#### Prior Predictive Check
+#### Prior predictive check
 
 ##### Equals implemented
 
@@ -91,7 +91,7 @@ pp_check(utility.with(sample_prior = "only"), type = "bars", nsamples = 200, res
 pp_check(utility.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "hashcodeexists")
 ```
 
-#### Beta Parameter Influence
+#### Beta parameter influence
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -116,7 +116,7 @@ data.frame(x = sim.beta.diff) %>%
 We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
 Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
 
-#### Posterior Predictive check
+#### Posterior predictive check
 
 ##### Equals implemented
 ```{r base-pp-check-equals, warning=FALSE, message=FALSE}
@@ -478,7 +478,7 @@ pp_check(utility3, nsamples = 200, type = "bars", resp = "equalsexists")
 pp_check(utility3, nsamples = 200, type = "bars", resp = "hashcodeexists")
 ```
 
-## Final Model 
+## Final model 
 All candidate models look nice, canidate 1 performes better than all less complex models, we will proceed with: `utility1`
 
 ### Variations {.tabset}

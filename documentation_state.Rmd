@@ -37,7 +37,7 @@ The type of the outcome is categorical and is hence modeled as categorical
 We include `high_debt_verison` as a predictor in our model as this variable represent the very effect we want to measure.
 We also include a varying intercept for each individual to prevent the model from learning too much from single participants with extreme measurements.
 
-### Selecting Priors {.tabset}
+### Selecting priors {.tabset}
 
 We iterate over the model until we have sane priors.
 
@@ -70,13 +70,13 @@ prior_summary(documentation.with(only_priors= TRUE))
 prior_summary(documentation.with(sample_prior = "only"))
 ```
 
-#### Prior Predictive Check
+#### Prior predictive check
 
 ```{r priors-check, warning=FALSE}
 pp_check(documentation.with(sample_prior = "only"), nsamples = 200, type = "bars")
 ```
 
-#### Beta Parameter Influence
+#### Beta parameter influence
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -101,7 +101,7 @@ data.frame(x = sim.beta.diff) %>%
 We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
 Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
 
-#### Posterior Predictive check
+#### Posterior predictive check
 
 ```{r base-pp-check, warning=FALSE}
 pp_check(documentation.with(), nsamples = 200, type = "bars")
@@ -630,7 +630,7 @@ plot(documentation5, ask = FALSE)
 pp_check(documentation5, nsamples = 200, type = "bars")
 ```
 
-## Final Model 
+## Final model 
 All candidate models look nice, candidate 3 is significantly better than the other candidates, we will proceed with: `documentation3`
 
 ### Variations {.tabset}

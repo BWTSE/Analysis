@@ -17,7 +17,7 @@ source(knitr::purl('setup.Rmd', output = tempfile()))
 
 There appears to be significant difference in the reuse rate between high and low debt versions.
 
-### Constructor Reuse
+### Constructor reuse
 
 ```{r plot-constructor}
 d.completed %>%
@@ -34,7 +34,7 @@ d.completed %>%
   ylab("Ratio of reuse")
 ```
 
-### Validation Reuse
+### Validation reuse
 
 ```{r plot-validation}
 d.completed %>%
@@ -59,7 +59,7 @@ We also include a varying intercept for each individual to prevent the model fro
 
 Since they may correlate, constructor and logic reuse are both included in a single multivariate model.
 
-### Selecting Priors {.tabset}
+### Selecting priors {.tabset}
 
 We iterate over the model until we have sane priors, in this case a prior giving a 50/50 chance was chosen in both cases. 
 The prior `lkj(2)` will mean the model is skeptical of strong correlations.
@@ -98,21 +98,21 @@ prior_summary(reuse.with(only_priors= TRUE))
 prior_summary(reuse.with(sample_prior = "only"))
 ```
 
-#### Prior Predictive Check
+#### Prior predictive check
 
-##### Constructor Reuse
+##### Constructor reuse
 
 ```{r priors-check-constructor, warning=FALSE, message=FALSE}
 pp_check(reuse.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
 ```
 
-##### Validation Reuse
+##### Validation reuse
 
 ```{r priors-check-validation, warning=FALSE, message=FALSE}
 pp_check(reuse.with(sample_prior = "only"), type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
 ```
 
-#### Beta Parameter Influence
+#### Beta parameter influence
 
 ```{r priors-beta, warning=FALSE}
 sim.size <- 1000
@@ -137,14 +137,14 @@ data.frame(x = sim.beta.diff) %>%
 We check the posterior distribution and can see that the model seems to have been able to fit the data well. 
 Sampling seems to also have worked well as Rhat values are close to 1 and the sampling plots look nice.
 
-#### Posterior Predictive check
+#### Posterior predictive check
 
-##### Constructor Reuse
+##### Constructor reuse
 ```{r base-pp-check-constructor, warning=FALSE, message=FALSE}
 pp_check(reuse.with(), type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
 ```
 
-##### Validation Reuse
+##### Validation reuse
 
 ```{r base-pp-check-validation, warning=FALSE, message=FALSE}
 pp_check(reuse.with(), type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
@@ -322,13 +322,13 @@ plot(reuse0, ask = FALSE)
 
 #### Posterior predictive check
 
-##### Constructor Reuse
+##### Constructor reuse
 
 ```{r reuse0-pp-constructor}
 pp_check(reuse0, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
 ```
 
-##### Validation Reuse
+##### Validation reuse
 
 ```{r reuse0-pp-validation}
 pp_check(reuse0, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
@@ -378,13 +378,13 @@ plot(reuse1, ask = FALSE)
 
 #### Posterior predictive check
 
-##### Constructor Reuse
+##### Constructor reuse
 
 ```{r reuse1-pp-constructor}
 pp_check(reuse1, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
 ```
 
-##### Validation Reuse
+##### Validation reuse
 
 ```{r reuse1-pp-validation}
 pp_check(reuse1, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
@@ -434,19 +434,19 @@ plot(reuse2, ask = FALSE)
 
 #### Posterior predictive check
 
-##### Constructor Reuse
+##### Constructor reuse
 
 ```{r reuse2-pp-constructor}
 pp_check(reuse2, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
 ```
 
-##### Validation Reuse
+##### Validation reuse
 
 ```{r reuse2-pp-validation}
 pp_check(reuse2, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
 ```
 
-## Final Model 
+## Final model 
 All candidate models look nice, none is significantly better than the others, we will proceed the simplest model: `reuse0`
 
 ### Variations {.tabset}
@@ -498,13 +498,13 @@ plot(reuse0.all, ask = FALSE)
 
 ##### Posterior predictive check
 
-###### Constructor Reuse
+###### Constructor reuse
 
 ```{r variation.all-pp-constructor, warning=FALSE, message=FALSE}
 pp_check(reuse0.all, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
 ```
 
-###### Validation Reuse
+###### Validation reuse
 
 ```{r variation.all-pp-validation, warning=FALSE, message=FALSE}
 pp_check(reuse0.all, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")
@@ -568,13 +568,13 @@ plot(reuse0.all.exp, ask = FALSE)
 
 ##### Posterior predictive check
 
-###### Constructor Reuse
+###### Constructor reuse
 
 ```{r variation.all.exp-pp-constructor, warning=FALSE, message=FALSE}
 pp_check(reuse0.all.exp, type = "bars", nsamples = 200, resp = "reusedlogicconstructor")
 ```
 
-###### Validation Reuse
+###### Validation reuse
 
 ```{r variation.all.exp-pp-validation, warning=FALSE, message=FALSE}
 pp_check(reuse0.all.exp, type = "bars", nsamples = 200, resp = "reusedlogicvalidation")

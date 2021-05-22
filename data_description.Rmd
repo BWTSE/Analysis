@@ -85,7 +85,7 @@ d.sessions.completed %>%
 ```
 
 
-## Signup Code
+## Signup code
 ```{r}
 d.sessions.completed %>%
   ggplot(aes(group, fill = group)) +
