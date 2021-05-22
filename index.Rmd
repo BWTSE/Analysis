@@ -11,7 +11,9 @@ This is a replication package for the Broken Windows Investigation thesis conduc
 
 The package contains a presentation as well as the [source](https://github.com/BrokenWindowsInvestigation/Analysis) for the whole analysis performed.
 
-Read the Broken Window Investigation thesis for more information and justification about the analysis and procedure.
+Read the Broken Windows Investigation thesis for more information and justification about the analysis and procedure.
+
+If you have any questions or feel that anything in the replication package is amiss, please [open an issue](https://github.com/BrokenWindowsInvestigation/Analysis/issues).
 
 ## Sub pages:
 
