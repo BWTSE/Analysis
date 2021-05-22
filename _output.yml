@@ -2,7 +2,6 @@ html_document:
   toc: yes
   toc_float: yes
   theme: "united"
-  fig_width: 12
   code_download: yes
   code_folding: "hide"
   self_contained: yes
