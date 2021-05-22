@@ -1,5 +1,7 @@
 # Broken Windows Investigation Replication Package
 
+[![DOI](https://zenodo.org/badge/349066817.svg)](https://zenodo.org/badge/latestdoi/349066817)
+
 This is a replication package for the *Broken Windows Investigation* thesis conducted by [Hampus Broman](https://github.com/HBroman) and [William Levén](https://github.com/williamleven) in 2021.
 
 The package contains a [presentation](https://brokenwindowsinvestigation.github.io/Analysis/index.html) as well as the source for the whole analysis performed.
