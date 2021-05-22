@@ -13,8 +13,6 @@ left:
       href: logic_reuse.html
     - text: "Variable naming"
       href: variable_naming.html
-    - text: "Self reported quality"
-      href: self_reported_quality.html
     - text: "Sonarqube issues"
       href: sonarqube_issues.html
     - text: "Implemented utility methods"
@@ -25,8 +23,10 @@ left:
       href: task_completion.html
     - text: "Time to complete task"
       href: time_to_complete_task.html
-    - text: "Reported scenario quality"
-      href: reported_scenario_quality.html
+    - text: "System quality rating"
+      href: system_quality_rating.html
+    - text: "Self-reported submission quality"
+      href: self-reported_submission_quality.html
   - text: "Environment"
     href: environment.html
 right:
