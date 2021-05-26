@@ -7,7 +7,7 @@ This is a replication package for the thesis [*The Broken Windows Theory in Soft
 
 The package contains a [presentation](https://bwtse.github.io/Analysis/index.html) as well as the source for the whole analysis performed.
 
-Read the Broken Windows Investigation thesis for more information and justification about the analysis and procedure.
+Read the thesis for more information and justification about the analysis and procedure.
 
 ## Notes
 
