@@ -1,4 +1,4 @@
-# Broken Windows Investigation Replication Package
+# Replication Package
 
 [![DOI](https://zenodo.org/badge/349066817.svg)](https://zenodo.org/badge/latestdoi/349066817)
 
