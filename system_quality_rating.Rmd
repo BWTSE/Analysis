@@ -20,23 +20,10 @@ We plot the data and can see that there is no obvious large difference between t
 ### Per debt level
 
 ```{r}
-data.frame(
-  High_debt_version = d.both_completed %>%
-    filter(high_debt_version == "true") %>%
-    pull(quality_pre_task) %>%
-    revalue(c(
-      "-3"="Very Bad",
-      "-2"="Bad",
-      "-1"="Somewhat Bad",
-      "0"="Neutral",
-      "1"="Somewhat Good",
-      "2"="Good",
-      "3"="Very Good"
-    )),
-  Low_debt_version = d.both_completed %>%
-    filter(high_debt_version == "false") %>%
-    pull(quality_pre_task) %>%
-    revalue(c(
+likert.data <- d.both_completed %>%
+  select(high_debt_version, quality_pre_task)
+
+likert.data$quality_pre_task <- revalue(likert.data$quality_pre_task, c(
       "-3"="Very Bad",
       "-2"="Bad",
       "-1"="Somewhat Bad",
@@ -45,34 +32,29 @@ data.frame(
       "2"="Good",
       "3"="Very Good"
     ))
-) %>%
-  likert() %>%
-  plot(
-    type="density",
-    facet = TRUE,
-  )
+
+likert.data$high_debt_version <- revalue(likert.data$high_debt_version, c(
+      "true"="High Debt",
+      "false"="Low Debt"
+    ))
+
+ggplot(likert.data, aes(x=quality_pre_task)) +
+  geom_bar(fill= "Light Blue") +
+  facet_grid(rows = vars(high_debt_version)) +
+    scale_y_continuous(limits = NULL, breaks = c(2,4,6,8), labels = c("2","4","6","8")) +
+  theme(axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+
+
 ```
 
 ### Per scenario
 
 ```{r}
-data.frame(
-  Tickets = d.both_completed %>%
-    filter(scenario == "tickets") %>%
-    pull(quality_pre_task) %>%
-    revalue(c(
-      "-3"="Very Bad",
-      "-2"="Bad",
-      "-1"="Somewhat Bad",
-      "0"="Neutral",
-      "1"="Somewhat Good",
-      "2"="Good",
-      "3"="Very Good"
-    )),
-  Booking = d.both_completed %>%
-    filter(scenario == "booking") %>%
-    pull(quality_pre_task) %>%
-    revalue(c(
+likert.data <- d.both_completed %>%
+  select(scenario, quality_pre_task)
+
+likert.data$quality_pre_task <- revalue(likert.data$quality_pre_task, c(
       "-3"="Very Bad",
       "-2"="Bad",
       "-1"="Somewhat Bad",
@@ -81,12 +63,13 @@ data.frame(
       "2"="Good",
       "3"="Very Good"
     ))
-) %>%
-  likert() %>%
-  plot(
-    type="density",
-    facet = TRUE,
-  )
+
+ggplot(likert.data, aes(x=quality_pre_task)) +
+  geom_bar(fill= "Light Blue") +
+  facet_grid(rows = vars(scenario)) +
+    scale_y_continuous(limits = NULL, breaks = c(2,4,6,8), labels = c("2","4","6","8")) +
+  theme(axis.title.x=element_blank(),
+        axis.title.y=element_blank())
 ```
 
 ## Initial model
@@ -565,6 +548,7 @@ post <- posterior_predict(scenario_quality1.all, newdata = post_settings) %>%
   )%>%
   mutate(estimate = estimate)
 
+
 post.nice <- post %>%  mutate_at("estimate", function(x) revalue(as.ordered(x), c(
       "1"="Very Bad",
       "2"="Bad",
@@ -575,35 +559,52 @@ post.nice <- post %>%  mutate_at("estimate", function(x) revalue(as.ordered(x), 
       "7"="Very Good"
     )))
 
-data.frame(
-  High_debt_version_3_years = post.nice %>%
-    filter(high_debt_version == "true", work_experience_programming == 3) %>%
-    pull(estimate),
-  Low_debt_version_3_years = post.nice %>%
-    filter(high_debt_version == "false", work_experience_programming == 3) %>%
-    pull(estimate)
-) %>%
-  likert() %>%
-  plot(
-    type="density",
-    facet = TRUE,
-  )
-
-data.frame(
-  High_debt_version_25_years = post.nice %>%
-    filter(high_debt_version == "true", work_experience_programming == 25) %>%
-    pull(estimate),
-  Low_debt_version_25_years = post.nice %>%
-    filter(high_debt_version == "false", work_experience_programming == 25) %>%
-    pull(estimate)
-) %>%
-  likert() %>%
-  plot(
-    type="density",
-    facet = TRUE,
-  )
+post.nice$high_debt_version <- revalue(post.nice$high_debt_version, c(
+      "true"="High Debt",
+      "false"="Low Debt"
+    ))
 
 
+
+post.nice.3 <- filter(post.nice, work_experience_programming == 3)
+
+vline.data.3 <- post.nice.3 %>%
+              group_by(high_debt_version) %>%
+                    summarize(z = mean(as.numeric(estimate)))
+
+sprintf("Estimations for 3 years experience")
+
+post.nice.3 %>%
+    ggplot() +
+      geom_histogram(aes(x=estimate),fill= "Light Blue", stat = "count") +
+      geom_vline(aes(xintercept = z),
+            vline.data.3,
+             col = "Dark Blue",
+             lwd = 1)+
+      facet_grid(rows = vars(high_debt_version)) +
+        scale_y_continuous(limits = NULL, breaks = c(400,800,1200,1600), labels = c("10%","20%","30%","40%")) +
+      theme(axis.title.x=element_blank(),
+            axis.title.y=element_blank())
+
+post.nice.25 <- filter(post.nice, work_experience_programming == 25)
+
+vline.data.25 <- post.nice.25 %>%
+              group_by(high_debt_version) %>%
+                    summarize(z = mean(as.numeric(estimate)))
+
+sprintf("Estimations for 25 years experience")
+
+post.nice.25 %>%
+    ggplot() +
+      geom_histogram(aes(x=estimate),fill= "Light Blue", stat = "count") +
+      geom_vline(aes(xintercept = z),
+            vline.data.25,
+             col = "Dark Blue",
+             lwd = 1)+
+      facet_grid(rows = vars(high_debt_version)) +
+        scale_y_continuous(limits = NULL, breaks = c(400,800,1200,1600), labels = c("10%","20%","30%","40%")) +
+      theme(axis.title.x=element_blank(),
+            axis.title.y=element_blank())
 
 ```
 
