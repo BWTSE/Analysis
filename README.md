@@ -2,8 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/349066817.svg)](https://zenodo.org/badge/latestdoi/349066817)
 
-
-This is a replication package for the thesis [*The Broken Windows Theory in Software Engineering: An experiment on technical debt propagation*](https://doi.org/10.5281/zenodo.4812956) conducted by [Hampus Broman](https://github.com/HBroman) and [William Levén](https://github.com/williamleven) in 2021.
+This repository contains a replication package used to investigate the Broken Windows Theory of Software Engineering. 
 
 The package contains a [presentation](https://bwtse.github.io/Analysis/index.html) as well as the source for the whole analysis performed.
 
