@@ -1,17 +1,15 @@
 ---
 title: "Broken Windows Investigation Replication Package"
 author: Hampus Broman & William Levén
-date: 2021-05
+date: 2022-08
 output: 
   html_document: 
     pandoc_args: [ "-o", "docs/index.html" ]
     toc: no
 ---
-This is a replication package for the thesis [*The Broken Windows Theory in Software Engineering: An experiment on technical debt propagation*](https://doi.org/10.5281/zenodo.4812956) conducted by [Hampus Broman](https://github.com/HBroman) and [William Levén](https://github.com/williamleven) in 2021.
+This is the replication package used to investigate the Broken Windows Theory of Software Engineering.
 
 The package contains a presentation as well as the [source](https://github.com/BWTSE/Analysis) for the whole analysis performed.
-
-Read the Broken Windows Investigation thesis for more information and justification about the analysis and procedure.
 
 ## Notes
 
