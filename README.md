@@ -6,8 +6,6 @@ This repository contains a replication package used to investigate the Broken Wi
 
 The package contains a [presentation](https://bwtse.github.io/Analysis/index.html) as well as the source for the whole analysis performed.
 
-Read the thesis for more information and justification about the analysis and procedure.
-
 ## Notes
 
 If you have any questions or feel that anything in the replication package is amiss, please [open an issue](https://github.com/BWTSE/Analysis/issues).
