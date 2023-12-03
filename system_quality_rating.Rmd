@@ -582,7 +582,7 @@ post.nice.3 %>%
              col = "Dark Blue",
              lwd = 1)+
       facet_grid(rows = vars(high_debt_version)) +
-        scale_y_continuous(limits = NULL, breaks = c(400,800,1200,1600), labels = c("10%","20%","30%","40%")) +
+        scale_y_continuous(limits = NULL, breaks = sapply(c(0.1, 0.2, 0.3, 0.4), function(x) x*nrow(post.nice.3) / 2), labels = c("10%","20%","30%","40%")) +
       theme(axis.title.x=element_blank(),
             axis.title.y=element_blank())
 
@@ -602,7 +602,7 @@ post.nice.25 %>%
              col = "Dark Blue",
              lwd = 1)+
       facet_grid(rows = vars(high_debt_version)) +
-        scale_y_continuous(limits = NULL, breaks = c(400,800,1200,1600), labels = c("10%","20%","30%","40%")) +
+        scale_y_continuous(limits = NULL, breaks = sapply(c(0.1, 0.2, 0.3, 0.4), function(x) x*nrow(post.nice.25) / 2), labels = c("10%","20%","30%","40%")) +
       theme(axis.title.x=element_blank(),
             axis.title.y=element_blank())
 
